@@ -28,7 +28,7 @@ const login = async () => {
   console.log("login")
 }
 const forgotPassword = async () => {
-  console.log("forgot password")
+  alert("Chức năng cập nhật ở version sau")
 }
 const signUp = async () => {
   console.log("signing up")
