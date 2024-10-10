@@ -8,6 +8,7 @@ npm run dev
 ```
 ## Json for Postman
 POST: http://localhost:3000/api/register
+```
 {
   "firstName": "Dong",
   "lastName": "Thanh",
@@ -16,9 +17,10 @@ POST: http://localhost:3000/api/register
   "confirmPassword": "123456",
   "dateOfBirth": "2003-11-13"
 }
+```
 POST: http://localhost:3000/api/login
 {
   "email": "thanhdong1317@gmail.com",
   "password": "123456"
 }
-
+```
