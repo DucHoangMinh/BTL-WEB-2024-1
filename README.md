@@ -19,6 +19,7 @@ POST: http://localhost:3000/api/register
 }
 ```
 POST: http://localhost:3000/api/login
+```
 {
   "email": "thanhdong1317@gmail.com",
   "password": "123456"
