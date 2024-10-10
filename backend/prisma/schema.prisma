@@ -1,0 +1,175 @@
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Model Log
+model Log {
+  id        Int      @id @default(autoincrement())
+  user_id   Int
+  action    String
+  timestamp DateTime @default(now())
+  User      User     @relation(fields: [user_id], references: [id])
+
+  @@map("Log")
+}
+
+// Model Movie
+model Movie {
+  id          Int       @id @default(autoincrement())
+  title       String
+  genre       String?
+  duration    Int
+  rating      Float?
+  release_date DateTime?
+  description String?
+  Showtimes   Showtime[]  
+
+  @@map("Movie")
+}
+
+
+// Model Promotion
+model Promotion {
+  id                Int        @id @default(autoincrement())
+  promotion_name    String
+  description       String?
+  discount_percentage Float?
+  start_date        DateTime
+  end_date          DateTime
+  Tickets           Ticket[]  // Thêm trường này để tạo quan hệ đối ứng với Ticket
+
+  @@map("Promotion")
+}
+
+
+// Model Role
+model Role {
+  id        Int    @id @default(autoincrement())
+  role_name String @unique
+
+  User_Role User_Role[]
+  
+  @@map("Role")
+}
+
+// Model Room
+model Room {
+  id       Int    @id @default(autoincrement())
+  name     String
+  capacity Int
+
+  Seat     Seat[]
+  Showtime Showtime[]
+
+  @@map("Room")
+}
+
+// Model Seat
+model Seat {
+  id        Int      @id @default(autoincrement())
+  room_id   Int
+  seat_number String
+  seat_type String?
+  row       String
+  column    Int
+  Room      Room     @relation(fields: [room_id], references: [id])
+  Tickets   Ticket[]  // Thêm trường này để tạo quan hệ đối ứng với Ticket
+
+  @@map("Seat")
+}
+
+
+// Model Showtime
+model Showtime {
+  id         Int      @id @default(autoincrement())
+  movie_id   Int
+  room_id    Int
+  show_date  DateTime
+  start_time DateTime
+  end_time   DateTime
+  price      Float
+
+  Movie      Movie    @relation(fields: [movie_id], references: [id])
+  Room       Room     @relation(fields: [room_id], references: [id])
+  Ticket     Ticket[]
+
+  @@map("Showtime")
+}
+
+// Model Snack
+model Snack {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float
+
+  Ticket_Snack Ticket_Snack[]
+
+  @@map("Snack")
+}
+
+// Model Ticket
+model Ticket {
+  id            Int        @id @default(autoincrement())
+  user_id       Int
+  showtime_id   Int
+  seat_id       Int
+  purchase_date DateTime   @default(now())
+  promotion_id  Int?       // Quan hệ tùy chọn
+  User          User       @relation(fields: [user_id], references: [id])
+  Showtime      Showtime   @relation(fields: [showtime_id], references: [id])
+  Seat          Seat       @relation(fields: [seat_id], references: [id])
+  Promotion     Promotion? @relation(fields: [promotion_id], references: [id]) // Quan hệ tùy chọn
+  Ticket_Snack  Ticket_Snack[]
+
+  @@unique([seat_id, showtime_id])
+  @@map("Ticket")
+}
+
+
+// Model Ticket_Snack
+model Ticket_Snack {
+  ticket_id Int
+  snack_id  Int
+  quantity  Int
+
+  Ticket    Ticket  @relation(fields: [ticket_id], references: [id])
+  Snack     Snack   @relation(fields: [snack_id], references: [id])
+
+  @@id([ticket_id, snack_id])
+  @@map("Ticket_Snack")
+}
+
+// Model User
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String?  @unique
+  phone_number String?  @unique
+  password     String
+  full_name    String
+  date_of_birth DateTime?
+  created_at   DateTime @default(now())
+
+  Log          Log[]
+  Ticket       Ticket[]
+  User_Role    User_Role[]
+
+  @@map("User")
+}
+
+// Model User_Role
+model User_Role {
+  user_id Int
+  role_id Int
+
+  User    User  @relation(fields: [user_id], references: [id])
+  Role    Role  @relation(fields: [role_id], references: [id])
+
+  @@id([user_id, role_id])
+  @@map("User_Role")
+}

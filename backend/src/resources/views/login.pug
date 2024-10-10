@@ -1,0 +1,15 @@
+extends layouts/main
+
+block content
+  .container
+    .row.justify-content-center
+      .col-md-6
+        h1.text-center.display-4 Login
+        form(action="/login" method="post")
+          .form-group
+            label(for="email") Email address
+            input.form-control.mt-2(type="email" name="email" id="email" placeholder="Enter your email" required)
+          .form-group.mt-2
+            label(for="password") Password
+            input.form-control.mt-2(type="password" name="password" id="password" placeholder="Enter your password" required)
+          button.btn.btn-primary.mt-2(type="submit") Login

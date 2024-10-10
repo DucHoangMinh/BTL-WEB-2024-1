@@ -19,6 +19,16 @@ export default defineNuxtConfig({
         transformAssetUrls,
       },
     },
-    assetsInclude: ['**/*.MP4', '**/*.mp4', '**/*.mp3', '**/*.m4a']
-  },
+    assetsInclude: ['**/*.MP4', '**/*.mp4', '**/*.mp3', '**/*.m4a'],
+    server: {
+      proxy: {
+        '/api': {
+          target: 'http://localhost:8080', 
+          changeOrigin: true, 
+          rewrite: (path) => path.replace(/^\/api/, ''), 
+        },
+      },
+    },
+  }
 })
+

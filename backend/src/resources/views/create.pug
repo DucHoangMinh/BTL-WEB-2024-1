@@ -1,0 +1,12 @@
+extends layouts/main
+
+block content
+  h1.text-center Create New Todo
+  form(action=`/todo/${userId}/create` method="POST")
+    .form-group.mt-2.mb-2
+      label.mb-2(for="title") Title
+      input.form-control(type="text" name="title" id="title" placeholder="Enter todo title" required)
+    .form-group
+      label.mb-2(for="description") Description
+      textarea.form-control(name="description" id="description" placeholder="Enter todo description" required)
+    button.btn.btn-primary.mt-2(type="submit") Create Todo
