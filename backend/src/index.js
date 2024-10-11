@@ -34,6 +34,9 @@ app.post('/post', (req, res) => {
   console.log('Connected to React');
   res.redirect('/');
 });
+app.get('/', (req, res) => {
+    return "API running successfully"
+});
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
