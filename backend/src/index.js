@@ -6,9 +6,7 @@ const session = require('express-session');
 const methodOverride = require('method-override');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const prismaSoftDeleteMiddleware = require('./middleware/prismaSoftDeleteMiddleware');
 
-prisma.$use(prismaSoftDeleteMiddleware);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -23,10 +21,6 @@ app.use(
     cookie: { secure: false },
   })
 );
-
-app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'resources/views'));
-app.use(express.static(path.join(__dirname, 'public')));
 
 route(app);
 
