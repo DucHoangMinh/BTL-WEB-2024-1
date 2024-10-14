@@ -21,12 +21,35 @@
 
 </template>
 <script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router'; 
+import axios from 'axios'; 
+const router = useRouter();
+
 const email = ref('')
 const password = ref('')
 const rememberMe = ref(false)
 const login = async () => {
-  console.log("login")
-}
+  try {
+    // API dang nhap
+    const response = await axios.post('http://localhost:3000/api/login', {
+      email: email.value,
+      password: password.value
+    });
+
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token); 
+
+      router.push('/home');
+    } else {
+      console.error('Đăng nhập thất bại, không nhận được token');
+    }
+  } catch (error) {
+    console.error('Error during login:', error);
+    alert('Đăng nhập không thành công. Vui lòng kiểm tra lại thông tin.');
+  }
+};
+
 const forgotPassword = async () => {
   alert("Chức năng cập nhật ở version sau")
 }
