@@ -132,6 +132,48 @@ class PromotionController {
       return res.status(500).json({ message: 'Internal Server Error' });
     }
   };
+
+   // Tìm kiếm chương trình khuyến mãi
+   searchPromotions = async (req, res) => {
+    const { query } = req.query; // Lấy chuỗi tìm kiếm từ query parameter
+
+    if (!query || query.trim() === '') {
+      return res.status(400).json({ message: 'Chuỗi tìm kiếm không hợp lệ' });
+    }
+
+    try {
+      const searchStr = query.trim(); // Bỏ khoảng trắng
+
+      const promotions = await prisma.promotion.findMany({
+        where: {
+          OR: [
+            { promotion_name: { contains: searchStr, mode: 'insensitive' } }, // tên khuyến mãi
+            { description: { contains: searchStr, mode: 'insensitive' } },    // mô tả
+            { location: { contains: searchStr, mode: 'insensitive' } },       // địa điểm
+            // Nếu searchStr là một ngày hợp lệ, sẽ kiểm tra ngày bắt đầu và kết thúc
+            {
+              start_date: {
+                gte: isNaN(Date.parse(searchStr)) ? undefined : new Date(searchStr)
+              }
+            },
+            {
+              end_date: {
+                lte: isNaN(Date.parse(searchStr)) ? undefined : new Date(searchStr)
+              }
+            }
+          ]
+        }
+      });
+
+      return res.status(200).json({
+        message: 'Danh sách chương trình khuyến mãi tìm thấy',
+        promotions
+      });
+    } catch (error) {
+      console.error('Error while searching promotions:', error);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
 }
 
 module.exports = new PromotionController();
