@@ -27,6 +27,8 @@ model Movie {
   rating      Float?
   release_date DateTime?
   description String?
+  thumbnail    String?    
+  trailer      String?
   Showtimes   Showtime[]  
 
   @@map("Movie")
@@ -41,8 +43,9 @@ model Promotion {
   discount_percentage Float?
   start_date        DateTime
   end_date          DateTime
+  location          String
   Tickets           Ticket[]  // Thêm trường này để tạo quan hệ đối ứng với Ticket
-
+  thumbnail         String?
   @@map("Promotion")
 }
 
