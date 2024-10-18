@@ -3,6 +3,9 @@ const promotionController = require('../app/controllers/PromotionController');
 
 const router = express.Router();
 
+// Tìm kiếm chương trình khuyến mãi
+router.get('/search', promotionController.searchPromotions);
+
 // Lấy tất cả các chương trình khuyến mãi
 router.get('/', promotionController.getAllPromotions);
 
