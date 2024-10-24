@@ -25,3 +25,10 @@ POST: http://localhost:3000/api/login
   "password": "123456"
 }
 ```
+## How to send token with request with POSTMAN
+Ở trình duyệt, nhấn ctrl+shifi+i<br>
+Chọn tab Application, ở sidebar bên trái, chọn local storage -> http://localhost:3000<br>
+Copy giá trị của token<br>
+Trong POSTMAN, tạo 1 req GET http://localhost:3000/api/movies<br>
+Chọn tab Authorization, ở Auth Type chọn Bearer token -> nhập token vừa copy<br>
+Send request<br>
