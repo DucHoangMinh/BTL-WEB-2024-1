@@ -1,3 +1,4 @@
+-- Active: 1729160685260@@ep-royal-mountain-a4mq6xgg-pooler.us-east-1.aws.neon.tech@5432@postgres
 -- CreateTable
 CREATE TABLE "Log" (
     "id" SERIAL NOT NULL,
@@ -44,6 +45,7 @@ CREATE TABLE "Role" (
 -- CreateTable
 CREATE TABLE "Room" (
     "id" SERIAL NOT NULL,
+    "theater_id" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "capacity" INTEGER NOT NULL,
 
@@ -91,6 +93,7 @@ CREATE TABLE "Ticket" (
     "user_id" INTEGER NOT NULL,
     "showtime_id" INTEGER NOT NULL,
     "seat_id" INTEGER NOT NULL,
+    "theater_id" INTEGER NOT NULL,
     "purchase_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "promotion_id" INTEGER,
 
@@ -126,6 +129,8 @@ CREATE TABLE "User_Role" (
 
     CONSTRAINT "User_Role_pkey" PRIMARY KEY ("user_id","role_id")
 );
+
+
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Role_role_name_key" ON "Role"("role_name");
@@ -163,11 +168,15 @@ ALTER TABLE "Ticket" ADD CONSTRAINT "Ticket_seat_id_fkey" FOREIGN KEY ("seat_id"
 -- AddForeignKey
 ALTER TABLE "Ticket" ADD CONSTRAINT "Ticket_promotion_id_fkey" FOREIGN KEY ("promotion_id") REFERENCES "Promotion"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
+
+
 -- AddForeignKey
 ALTER TABLE "Ticket_Snack" ADD CONSTRAINT "Ticket_Snack_ticket_id_fkey" FOREIGN KEY ("ticket_id") REFERENCES "Ticket"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Ticket_Snack" ADD CONSTRAINT "Ticket_Snack_snack_id_fkey" FOREIGN KEY ("snack_id") REFERENCES "Snack"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+
 
 -- AddForeignKey
 ALTER TABLE "User_Role" ADD CONSTRAINT "User_Role_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
