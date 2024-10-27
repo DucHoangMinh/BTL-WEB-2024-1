@@ -19,10 +19,31 @@ div
             :class="{'film-filter-tab-item-current-select' : current_list_selected == 'phim-sap-chieu'}").film-filter-tab-item.text-center
             p.film-filter-title Phim sắp chiếu
           .film-filter-tab-item
-
+        v-row
+          v-col(cols="3" v-for="(movie, index) in current_list_selected == 'phim-dang-chieu' ? nowShowingMovies : upComingMovies"
+            :key="index").film-item(:movie="movie")
+            .film-wrapper.cursor-pointer
+              .movie-image-preview
+                img(:src="movie.thumbnail")
+              .movie-name.text-center.my-2
+                span {{movie.title}}
+              .d-flex.justify-space-around.my-2.align-center
+                .movie-release-date.d-flex.align-center
+                  v-icon.mr-2 mdi mdi-calendar
+                  span {{new Date(movie.release_date).toISOString().split('T')[0]}}
+                .movie-release-period.d-flex.align-center
+                  v-icon.mr-2 mdi mdi-clock-time-four-outline
+                  span {{movie.duration}} Phút
+      .promotion-list
+        v-row(v-for="(promotion, index) in promotionList" :key="index")
+          v-col(cols="4")
+            .promotion-item
+              img(:src="promotion.thumbnail")
 
 </template>
 <script setup>
+import axios from "axios";
+
 const current_banner_selected = ref(0)
 const banner_images = ref([
     '/img/home/banner/co_dau_hao_mon.png',
@@ -31,6 +52,27 @@ const banner_images = ref([
     '/img/home/banner/treu_roi_yeu.jpg'
 ])
 const current_list_selected = ref('phim-dang-chieu')
+const promotionList = ref([])
+const upComingMovies = ref([])
+const nowShowingMovies = ref([])
+const getUpComingMovies = async () => {
+    const {data} = await axios.get('https://api-btl-web-2024-1.vercel.app/movies/upcoming')
+    upComingMovies.value = data.movies
+}
+const getNowShowingMovies = async () => {
+    const {data} = await axios.get('https://api-btl-web-2024-1.vercel.app/movies/now-showing')
+    nowShowingMovies.value = data.movies
+}
+const getPromotionList = async () => {
+    const {data} = await axios.get('https://api-btl-web-2024-1.vercel.app/promotions/')
+    promotionList.value = data.promotions
+}
+const initData = async () => {
+  await getNowShowingMovies()
+  await getUpComingMovies()
+  await getPromotionList()
+}
+onMounted(initData)
 </script>
 <style scoped lang="sass">
 .banner-button
@@ -58,4 +100,27 @@ const current_list_selected = ref('phim-dang-chieu')
   font-size: 30px
   font-family: Oswald, sans-serif !important
   line-height: 1.5em
+.movie-image-preview
+  width: 100%
+  img
+    width: 100%
+    height: 100%
+.film-wrapper
+  border: 1px solid #ccc
+  border-radius: 4px
+.movie-name
+  font-size: 14px
+  line-height: 20px
+  white-space: nowrap
+  text-overflow: ellipsis
+  color: #231f20
+  font-weight: bold
+.movie-release-date,
+.movie-release-period
+  font-size: 13px
+  color: #777
+  line-height: 30px
+.film-wrapper:hover
+  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.3)
+  transition: 0.3s
 </style>
