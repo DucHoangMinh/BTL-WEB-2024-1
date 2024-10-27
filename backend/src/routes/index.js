@@ -1,12 +1,15 @@
 const express = require('express');
 const registerRouter = require('./register');
 const loginRouter = require('./login');
-
+const movieRouter = require('./movies');
+const promotionRouter = require('./promotions');
 const authenticateToken = require('../middleware/prismaAuthMiddleware');  
 
 function route(app) {
   app.use('/register', registerRouter);
   app.use('/login', loginRouter);
+  app.use('/movies',authenticateToken, movieRouter);  
+  app.use('/promotions', promotionRouter);
 
   app.get('/protected', authenticateToken, (req, res) => {
     res.json({
