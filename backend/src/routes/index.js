@@ -8,7 +8,7 @@ const authenticateToken = require('../middleware/prismaAuthMiddleware');
 function route(app) {
   app.use('/register', registerRouter);
   app.use('/login', loginRouter);
-  app.use('/movies',authenticateToken, movieRouter);  
+  app.use('/movies', movieRouter);  
   app.use('/promotions', promotionRouter);
 
   app.get('/protected', authenticateToken, (req, res) => {
