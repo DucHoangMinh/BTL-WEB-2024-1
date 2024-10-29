@@ -66,6 +66,7 @@ const getNowShowingMovies = async () => {
 const getPromotionList = async () => {
     const {data} = await axios.get('https://api-btl-web-2024-1.vercel.app/promotions/')
     promotionList.value = data.promotions
+    console.log(promotionList.value)
 }
 const initData = async () => {
   await getNowShowingMovies()

@@ -43,10 +43,12 @@ model Promotion {
   promotion_name      String
   description         String?
   discount_percentage Float?
-  start_date        DateTime
-  end_date          DateTime
-  Tickets           Ticket[]  // Thêm trường này để tạo quan hệ đối ứng với Ticket
-
+  start_date          DateTime
+  end_date            DateTime
+  preview_image       String?
+  thumbnail           String?
+  Tickets             Ticket[]  
+  location            String?
   @@map("Promotion")
 }
 
@@ -130,6 +132,7 @@ model Ticket {
   Seat          Seat           @relation(fields: [seat_id], references: [id])
   Promotion     Promotion?     @relation(fields: [promotion_id], references: [id]) // Quan hệ tùy chọn
   Ticket_Snack  Ticket_Snack[]
+  status  String @default("pending") // pending, paid, used
 
   @@unique([seat_id, showtime_id])
   @@map("Ticket")
