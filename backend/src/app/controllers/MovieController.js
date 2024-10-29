@@ -2,14 +2,19 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 class MovieController {
-   // Lấy toàn bộ danh sách phim
-   getAllMovies = async (req, res) => {
+  // Lấy toàn bộ danh sách phim
+  getAllMovies = async (req, res) => {
     try {
-      const allMovies = await prisma.movie.findMany(); 
-      
+      const allMovies = await prisma.movie.findMany({
+        include: {
+          Showtimes: true,
+          Feedbacks: true,
+        },
+      });
+
       return res.status(200).json({
         message: 'Danh sách tất cả phim',
-        movies: allMovies
+        movies: allMovies,
       });
     } catch (error) {
       console.error('Error while fetching all movies:', error);
@@ -24,14 +29,18 @@ class MovieController {
       const nowShowingMovies = await prisma.movie.findMany({
         where: {
           release_date: {
-            lte: currentDate 
-          }
-        }
+            lte: currentDate,
+          },
+        },
+        include: {
+          Showtimes: true,
+          Feedbacks: true,
+        },
       });
 
       return res.status(200).json({
         message: 'Danh sách phim đang chiếu',
-        movies: nowShowingMovies
+        movies: nowShowingMovies,
       });
     } catch (error) {
       console.error('Error while fetching now showing movies:', error);
@@ -46,14 +55,18 @@ class MovieController {
       const upcomingMovies = await prisma.movie.findMany({
         where: {
           release_date: {
-            gt: currentDate  
-          }
-        }
+            gt: currentDate,
+          },
+        },
+        include: {
+          Showtimes: true,
+          Feedbacks: true,
+        },
       });
 
       return res.status(200).json({
         message: 'Danh sách phim sắp chiếu',
-        movies: upcomingMovies
+        movies: upcomingMovies,
       });
     } catch (error) {
       console.error('Error while fetching upcoming movies:', error);
@@ -61,6 +74,7 @@ class MovieController {
     }
   };
 
+  // Lấy thông tin phim theo ID
   getMovieById = async (req, res) => {
     const { id } = req.params;
 
@@ -68,8 +82,9 @@ class MovieController {
       const movie = await prisma.movie.findUnique({
         where: { id: parseInt(id) },
         include: {
-          Showtimes: true  
-        }
+          Showtimes: true,
+          Feedbacks: true,
+        },
       });
 
       if (!movie) {
@@ -78,7 +93,7 @@ class MovieController {
 
       return res.status(200).json({
         message: 'Thông tin phim',
-        movie
+        movie,
       });
     } catch (error) {
       console.error('Error while fetching movie by ID:', error);
@@ -88,7 +103,19 @@ class MovieController {
 
   // Tạo một bộ phim mới
   createMovie = async (req, res) => {
-    const { title, genre, duration, rating, release_date, description, thumbnail, trailer } = req.body;
+    const {
+      title,
+      genre,
+      duration,
+      rating,
+      release_date,
+      description,
+      thumbnail,
+      trailer,
+      relatedThumbnail,
+      ranking,
+      basic_info,
+    } = req.body;
 
     try {
       const newMovie = await prisma.movie.create({
@@ -100,13 +127,16 @@ class MovieController {
           release_date: new Date(release_date),
           description,
           thumbnail,
-          trailer
-        }
+          trailer,
+          relatedThumbnail,
+          ranking,
+          basic_info,
+        },
       });
 
       return res.status(201).json({
         message: 'Tạo phim mới thành công',
-        movie: newMovie
+        movie: newMovie,
       });
     } catch (error) {
       console.error('Error while creating a new movie:', error);
@@ -117,7 +147,19 @@ class MovieController {
   // Cập nhật thông tin của một bộ phim
   updateMovie = async (req, res) => {
     const { id } = req.params;
-    const { title, genre, duration, rating, release_date, description, thumbnail, trailer } = req.body;
+    const {
+      title,
+      genre,
+      duration,
+      rating,
+      release_date,
+      description,
+      thumbnail,
+      trailer,
+      relatedThumbnail,
+      ranking,
+      basic_info,
+    } = req.body;
 
     try {
       const updatedMovie = await prisma.movie.update({
@@ -130,13 +172,16 @@ class MovieController {
           release_date: new Date(release_date),
           description,
           thumbnail,
-          trailer
-        }
+          trailer,
+          relatedThumbnail,
+          ranking,
+          basic_info,
+        },
       });
 
       return res.status(200).json({
         message: 'Cập nhật phim thành công',
-        movie: updatedMovie
+        movie: updatedMovie,
       });
     } catch (error) {
       console.error('Error while updating movie:', error);
@@ -150,41 +195,15 @@ class MovieController {
 
     try {
       const deletedMovie = await prisma.movie.delete({
-        where: { id: parseInt(id) }
+        where: { id: parseInt(id) },
       });
 
       return res.status(200).json({
         message: 'Xóa phim thành công',
-        movie: deletedMovie
+        movie: deletedMovie,
       });
     } catch (error) {
       console.error('Error while deleting movie:', error);
-      return res.status(500).json({ message: 'Internal Server Error' });
-    }
-  };
-
-  // Lấy thông tin chi tiết về một bộ phim dựa vào ID
-  getMovieById = async (req, res) => {
-    const { id } = req.params;
-
-    try {
-      const movie = await prisma.movie.findUnique({
-        where: { id: parseInt(id) },
-        include: {
-          Showtimes: true  
-        }
-      });
-
-      if (!movie) {
-        return res.status(404).json({ message: 'Phim không tồn tại' });
-      }
-
-      return res.status(200).json({
-        message: 'Thông tin phim',
-        movie
-      });
-    } catch (error) {
-      console.error('Error while fetching movie by ID:', error);
       return res.status(500).json({ message: 'Internal Server Error' });
     }
   };

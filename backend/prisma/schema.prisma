@@ -20,16 +20,21 @@ model Log {
 
 // Model Movie
 model Movie {
-  id           Int       @id @default(autoincrement())
-  title        String
-  genre        String?
-  duration     Int
-  rating       Float?
-  release_date DateTime?
-  description String?
-  Showtimes   Showtime[]  
-
-  @@map("Movie")
+  id              Int       @id @default(autoincrement())
+  title           String
+  genre           String?
+  duration        Int
+  rating          Float?
+  release_date    DateTime?
+  description     String?
+  Showtimes       Showtime[]
+  thumbnail       String?
+  relatedThumbnail String[]
+  Feedbacks       Feedback[]
+  trailer         String?
+  ranking         String?         //Xếp hạng (khác với rating)
+  basic_info      String?         //Thông tin cơ bản
+  @@map("Movie")  
 }
 
 // Model Promotion
