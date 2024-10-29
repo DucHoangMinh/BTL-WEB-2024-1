@@ -3,7 +3,7 @@ div
   .banner-slide
     .banner-image-wrapper.position-relative
       .banner-image
-        img(:src="banner_images[current_banner_selected]")
+        img(:src="banner_images[current_banner_selected]" style="width: 100%")
       .banner-button.d-flex.justify-space-between.position-absolute
         .prev-button.pa-4(@click="current_banner_selected = current_banner_selected > 0 ? current_banner_selected - 1 : banner_images.length - 1")
           v-icon.banner-button-icon mdi mdi-chevron-left
@@ -21,7 +21,7 @@ div
           .film-filter-tab-item
         v-row
           v-col(cols="3" v-for="(movie, index) in current_list_selected == 'phim-dang-chieu' ? nowShowingMovies : upComingMovies"
-            :key="index").film-item(:movie="movie")
+            :key="index" @click="router.push(`/movie/moviedetail?id=${movie.id}`)").film-item(:movie="movie")
             .film-wrapper.cursor-pointer
               .movie-image-preview
                 img(:src="movie.thumbnail")
@@ -44,6 +44,8 @@ div
 <script setup>
 import axios from "axios";
 
+const route = useRoute()
+const router = useRouter()
 const current_banner_selected = ref(0)
 const banner_images = ref([
     '/img/home/banner/co_dau_hao_mon.png',
