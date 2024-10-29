@@ -33,7 +33,7 @@ model Movie {
   Feedbacks       Feedback[]
   trailer         String?
   ranking         String?         //Xếp hạng (khác với rating)
-  Basic_Info      String?         //Thông tin cơ bản
+  basic_info      String?         //Thông tin cơ bản
   @@map("Movie")  
 }
 
