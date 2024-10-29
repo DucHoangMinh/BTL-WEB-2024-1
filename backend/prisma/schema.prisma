@@ -27,8 +27,10 @@ model Movie {
   rating       Float?
   release_date DateTime?
   description String?
-  Showtimes   Showtime[]  
-
+  Showtimes   Showtime[]
+  thumbnail   String?
+  relatedThumbnail String[]
+  Feedbacks        Feedback[]
   @@map("Movie")
 }
 
