@@ -2,15 +2,15 @@
   <div class="movie-detail">
     <!-- Poster và thông tin phim -->
     <div class="movie-header">
-      <img :src="movie.poster" alt="Movie Poster" class="movie-poster" />
+      <img :src="movie.thumbnail" alt="Movie Poster" class="movie-poster" />
       <div class="movie-info">
         <h1>{{ movie.title }}</h1>
-        <p><strong>Xem xếp hạng:</strong> {{ movie.rank}}</p>
-        <p><strong>Độ tuổi:</strong> {{ movie.age}}</p>
-        <p><strong>Thời lượng:</strong> {{ movie.duration }}</p>
-        <p><strong>Ngày phát hành:</strong> {{ movie.releaseDate }}</p>
-        <p><strong>Thông tin cơ bản:</strong> {{ movie.basicInfor }}</p>
-        <p><strong>Loại:</strong> {{ movie.type }}</p>
+        <p><strong>Xem xếp hạng:</strong> {{ movie.rating}}</p>
+        <p><strong>Độ tuổi:</strong> {{ movie.age || 'Không giới hạn'}}</p>
+        <p><strong>Thời lượng:</strong> {{ movie.duration }} phút</p>
+        <p><strong>Ngày phát hành:</strong> {{ formatDateToDDMMYYYY(movie.release_date) }}</p>
+        <p><strong>Thông tin cơ bản:</strong> {{ movie.description }}</p>
+        <p><strong>Loại:</strong> {{ movie.basic_info }}</p>
         <button class="booking-button">Đặt vé</button>
       </div>
     </div>
@@ -23,25 +23,37 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      movie: {
-        title: 'Robot Hoang Dã',
-        poster: 'https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202410/11482_103_100002.jpg',  // URL của ảnh poster
-        rank: '9.2',
-        age: 'Dành cho mọi lứa tuổi',
-        duration: '102 phút',
-        releaseDate: '11-10-2024',
-        basicInfor: 'Animation USA',
-        type: '2D | Normal | Normal sound | Lồng tiếng, Phụ đề',
-        description:
-          'Cuộc phiêu lưu hoành tráng theo chân hành trình của một robot — đơn vị ROZZUM 7134, gọi tắt là Roz. Roz vô tình dạt vào hoang đảo sau một sự cố và nơi đây trở thành địa điểm sống mới của cô. Tại đây, Roz kết thân và nhận nuôi một chú ngỗng con, đặt tên là Brightbill. Roz và Brightbill dần dần thân thiết với các bạn thú trên đảo, song sau đó phải chống chọi, bảo vệ “nhà mới” trước sự xâm lăng của nhà máy từng sản xuất ra Roz.',
-      },
-    };
-  },
-};
+<script setup>
+import axios from "axios";
+
+const route = useRoute()
+const router = useRouter()
+const movie = ref({})
+const getMovieDetail = async () => {
+  try{
+    const movieId = route.query.id
+    const { data } = await axios.get(`https://api-btl-web-2024-1.vercel.app/movies/${movieId}`)
+    movie.value = data.movie
+    console.log(movie.value)
+  } catch (e){
+    console.log(e)
+    alert("Có lỗi xảy ra, vui lòng liên hệ với nhà quản trị trang web!")
+    await router.push('/')
+  }
+}
+const formatDateToDDMMYYYY = (dateString) =>  {
+  const date = new Date(dateString);
+
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+  const year = date.getUTCFullYear();
+
+  return `${day}/${month}/${year}`;
+}
+const init = async () => {
+  await getMovieDetail()
+}
+onMounted(init)
 </script>
 
 <style scoped>
