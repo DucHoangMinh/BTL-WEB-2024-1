@@ -2,7 +2,8 @@
 div
   header
     .header-container
-      img(src="/img/main_logo.png", alt="Logo" class="logo")
+      a(href="/")
+        img(src="/img/main_logo.png", alt="Logo" class="logo")
       nav.navbar
         ul.nav-menu
           li.nav-item
