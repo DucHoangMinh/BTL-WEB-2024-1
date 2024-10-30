@@ -197,17 +197,17 @@ model Feedback {
 
 model MovieTheater {
   id              Int     @id @default(autoincrement())
-  name            String // Name of the theater, e.g., "The Grand Cinema"
-  location        String // Address or location details
-  total_rooms     Int // Total number of rooms in the theater
-  capacity        Int // Total capacity across all rooms
-  has_3d          Boolean @default(false) // Indicates if the theater has 3D capability
-  has_imax        Boolean @default(false) // Indicates if the theater has IMAX screens
-  has_dolby_atmos Boolean @default(false) // Indicates if Dolby Atmos is supported
-  contact_email   String? // Optional contact email for customer support
-  contact_phone   String? // Optional contact phone number for customer support
-  website_url     String? // Website for booking and other info
-
+  name            String 
+  location        String 
+  city            String
+  total_rooms     Int 
+  capacity        Int 
+  has_3d          Boolean @default(false) 
+  has_imax        Boolean @default(false) 
+  has_dolby_atmos Boolean @default(false) 
+  contact_email   String? 
+  contact_phone   String? 
+  website_url     String? 
   Rooms Room[] // Relation to the Room model
 
   @@map("MovieTheater")
