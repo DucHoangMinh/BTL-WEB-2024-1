@@ -64,28 +64,28 @@ model Role {
 
 // Model Room
 model Room {
-  id               Int          @id @default(autoincrement())
-  name             String
-  capacity         Int
-  movie_theater_id Int // Foreign key for MovieTheater
-  MovieTheater     MovieTheater @relation(fields: [movie_theater_id], references: [id])
+  id                Int          @id @default(autoincrement())
+  name              String
+  capacity          Int
+  movie_theater_id  Int // Foreign key for MovieTheater
+  MovieTheater      MovieTheater @relation(fields: [movie_theater_id], references: [id])
 
-  Seat     Seat[]
-  Showtime Showtime[]
+  Seat              Seat[]
+  Showtime          Showtime[]
 
   @@map("Room")
 }
 
 // Model Seat
 model Seat {
-  id          Int      @id @default(autoincrement())
-  room_id     Int
-  seat_number String
-  seat_type   String?
-  row         String
-  column      Int
-  Room        Room     @relation(fields: [room_id], references: [id])
-  Tickets     Ticket[] // Thêm trường này để tạo quan hệ đối ứng với Ticket
+  id                Int      @id @default(autoincrement())
+  room_id           Int
+  seat_number       String   // Định dạng ghế như A1, A2, B1, B2, ...
+  seat_type         String?  // (VIP, thường, ...)
+  row               String   // Hàng ghế ( A, B, C, ...)
+  column            Int      // Số ghế trong hàng (ví dụ: 1, 2, 3, ...)
+  Room              Room     @relation(fields: [room_id], references: [id])
+  Tickets           Ticket[] // Thêm trường này để tạo quan hệ đối ứng với Ticket
 
   @@map("Seat")
 }
@@ -188,7 +188,7 @@ model Feedback {
   rating     Int // Scale 1-5
   comment    String?
   created_at DateTime @default(now())
-
+  @@unique([user_id, movie_id])       // Đảm bảo mỗi người dùng chỉ đánh giá một phim một lần
   User  User  @relation(fields: [user_id], references: [id])
   Movie Movie @relation(fields: [movie_id], references: [id])
 
