@@ -14,7 +14,7 @@
             input(type="checkbox", v-model="rememberMe")
             span Remember me
           a.forgot-password(href="#", @click.prevent="forgotPassword") Forgot password?
-        button.login-button(type="submit") Log In
+        button.login-button(type="submit" @click="login") Log In
       .signup-link
         | Don't have an account?
         a(href="/auth/register") &nbsp; Sign up
@@ -25,24 +25,47 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router'; 
 import axios from 'axios'; 
 const router = useRouter();
-
+import {userInforStore} from "~/stores/userInfor.js";
 const email = ref('')
 const password = ref('')
 const rememberMe = ref(false)
+const userInforStoreRef = userInforStore()
+
+const validateLoginData = () => {
+  if (!email.value || !password.value) {
+    return { isValid: false, message: "Email và password không được để trống." };
+  }
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email.value)) {
+    return { isValid: false, message: "Email không hợp lệ." };
+  }
+  return { isValid: true, message: "Thông tin hợp lệ." };
+}
+
 const login = async () => {
   try {
-    // API dang nhap
-    const response = await axios.post('http://localhost:3000/api/login', {
+
+    const validateLoginDataResult = validateLoginData()
+    if (!validateLoginDataResult.isValid) {
+      alert(validateLoginDataResult.message);
+      return;
+    }
+
+
+    const response = await axios.post('https://api-btl-web-2024-1.vercel.app/login', {
       email: email.value,
       password: password.value
     });
-
     if (response.data.token) {
-      localStorage.setItem('token', response.data.token); 
-
-      router.push('/home');
+      userInforStoreRef.setUserInfor({
+        id: response.data.user.id,
+        fullName: response.data.user.fullName,
+        email: response.data.user.email,
+        token: response.data.token
+      })
+      await router.push('/');
     } else {
-      console.error('Đăng nhập thất bại, không nhận được token');
+      alert('Đăng nhập thất bại, không nhận được token');
     }
   } catch (error) {
     console.error('Error during login:', error);
