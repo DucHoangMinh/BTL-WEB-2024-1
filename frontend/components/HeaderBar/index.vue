@@ -17,9 +17,9 @@ div
           li.nav-item
             a(href="/uu-dai") Tin Mới và Ưu Đãi
           li.nav-item
-            a(href="/nhuong-quyen") Nhượng Quyền
+            a(href="/login") Đăng nhập
           li.nav-item
-            a(href="/thanh-vien") Thành Viên
+            a(href="/register") Đăng ký
 </template>
 <script setup>
 

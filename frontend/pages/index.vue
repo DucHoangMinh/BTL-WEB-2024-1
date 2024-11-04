@@ -10,7 +10,6 @@ onMounted(checkAuth)
 </script>
 
 <template lang="pug">
-p Hoang Minh Duc
 </template>
 
 <style scoped lang="sass">
