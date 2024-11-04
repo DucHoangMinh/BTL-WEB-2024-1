@@ -52,7 +52,16 @@ class PromotionController {
 
   // Tạo một chương trình khuyến mãi mới
   createPromotion = async (req, res) => {
-    const { promotion_name, description, discount_percentage, start_date, end_date, location, thumbnail } = req.body;
+    const { 
+      promotion_name, 
+      description, 
+      discount_percentage, 
+      start_date, 
+      end_date, 
+      preview_image, 
+      thumbnail, 
+      location 
+    } = req.body;
 
     try {
       const newPromotion = await prisma.promotion.create({
@@ -62,8 +71,9 @@ class PromotionController {
           discount_percentage,
           start_date: new Date(start_date),
           end_date: new Date(end_date),
-          location,
-          thumbnail
+          preview_image,
+          thumbnail,
+          location
         }
       });
 
@@ -80,7 +90,16 @@ class PromotionController {
   // Cập nhật thông tin của một chương trình khuyến mãi
   updatePromotion = async (req, res) => {
     const { id } = req.params;
-    const { promotion_name, description, discount_percentage, start_date, end_date, location, thumbnail } = req.body;
+    const { 
+      promotion_name, 
+      description, 
+      discount_percentage, 
+      start_date, 
+      end_date, 
+      preview_image, 
+      thumbnail, 
+      location 
+    } = req.body;
 
     if (!id || isNaN(parseInt(id))) {
       return res.status(400).json({ message: 'ID không hợp lệ' });
@@ -95,8 +114,9 @@ class PromotionController {
           discount_percentage,
           start_date: new Date(start_date),
           end_date: new Date(end_date),
-          location,
-          thumbnail
+          preview_image,
+          thumbnail,
+          location
         }
       });
 
