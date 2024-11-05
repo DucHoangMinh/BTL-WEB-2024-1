@@ -16,13 +16,22 @@ div
             a(href="/gia-ve") Giá Vé
           li.nav-item
             a(href="/uu-dai") Tin Mới và Ưu Đãi
-          li.nav-item
-            a(href="/login") Đăng nhập
-          li.nav-item
-            a(href="/register") Đăng ký
+          li.nav-item(v-if="userInfor.fullName === ''")
+            a(href="/auth/login") ÄÄƒng nháº­p
+          li.nav-item(v-if="userInfor.fullName === ''")
+            a(href="/auth/register") ÄÄƒng kĂ½
+          li(v-else)
+            span.font-weight-bold Xin chĂ o, {{userInfor.fullName}}
 </template>
 <script setup>
-
+import {userInforStore} from "~/stores/userInfor.js";
+const userInforStoreRef = userInforStore()
+const userInfor = ref({})
+const checkUserInforValue = () => {
+  userInfor.value = userInforStoreRef.getUserInfor
+  if(userInfor.value.token === "") console.log("Chua dang nhap")
+}
+onMounted(checkUserInforValue)
 </script>
 <style scoped lang="sass">
 /* Header styles */
