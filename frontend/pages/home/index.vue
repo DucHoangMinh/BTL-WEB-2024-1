@@ -33,7 +33,7 @@ div
                   span {{new Date(movie.release_date).toISOString().split('T')[0]}}
                 .movie-release-period.d-flex.align-center
                   v-icon.mr-2 mdi mdi-clock-time-four-outline
-                  span {{movie.duration}} Phút
+                  span {{movie.duration}} PhĂºt
       .promotion-list
         v-row(v-for="(promotion, index) in promotionList" :key="index")
           v-col(cols="4")
@@ -48,32 +48,39 @@ const route = useRoute()
 const router = useRouter()
 const current_banner_selected = ref(0)
 const banner_images = ref([
-    '/img/home/banner/co_dau_hao_mon.png',
-    '/img/home/banner/quy_an_tang_2.jpg',
-    '/img/home/banner/robot_hoang_da.jpg',
-    '/img/home/banner/treu_roi_yeu.jpg'
+  '/img/home/banner/co_dau_hao_mon.png',
+  '/img/home/banner/quy_an_tang_2.jpg',
+  '/img/home/banner/robot_hoang_da.jpg',
+  '/img/home/banner/treu_roi_yeu.jpg'
 ])
 const current_list_selected = ref('phim-dang-chieu')
 const promotionList = ref([])
 const upComingMovies = ref([])
 const nowShowingMovies = ref([])
+
+import {loadingStateStore} from "~/stores/loadingState.js";
+const loadingStateStoreRef = loadingStateStore()
+
+
 const getUpComingMovies = async () => {
-    const {data} = await axios.get('https://api-btl-web-2024-1.vercel.app/movies/upcoming')
-    upComingMovies.value = data.movies
+  const {data} = await axios.get('https://api-btl-web-2024-1.vercel.app/movies/upcoming')
+  upComingMovies.value = data.movies
 }
 const getNowShowingMovies = async () => {
-    const {data} = await axios.get('https://api-btl-web-2024-1.vercel.app/movies/now-showing')
-    nowShowingMovies.value = data.movies
+  const {data} = await axios.get('https://api-btl-web-2024-1.vercel.app/movies/now-showing')
+  nowShowingMovies.value = data.movies
 }
 const getPromotionList = async () => {
-    const {data} = await axios.get('https://api-btl-web-2024-1.vercel.app/promotions/')
-    promotionList.value = data.promotions
-    console.log(promotionList.value)
+  const {data} = await axios.get('https://api-btl-web-2024-1.vercel.app/promotions/')
+  promotionList.value = data.promotions
+  console.log(promotionList.value)
 }
 const initData = async () => {
+  loadingStateStoreRef.setLoadingState(true)
   await getNowShowingMovies()
   await getUpComingMovies()
   await getPromotionList()
+  loadingStateStoreRef.setLoadingState(false)
 }
 onMounted(initData)
 </script>

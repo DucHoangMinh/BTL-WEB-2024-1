@@ -5,6 +5,7 @@ const notDisplayHeaderAndFooterPage = ['/auth/login', '/auth/register']
 
 <template lang="pug">
 div
+  loading-over-lay
   header-bar(v-if="!notDisplayHeaderAndFooterPage.includes(route.path)")
   slot
   footer-bar(v-if="!notDisplayHeaderAndFooterPage.includes(route.path)")
