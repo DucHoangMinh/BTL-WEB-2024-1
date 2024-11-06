@@ -2,16 +2,19 @@ const express = require('express');
 const router = express.Router();
 const SeatController = require('../app/controllers/SeatController');
 
-// Lấy danh sách tất cả ghế trong phòng chiếu
-router.get('/:room_id/seats', SeatController.getSeatsByRoom);
+// Lấy danh sách tất cả ghế trong một phòng chiếu
+router.get('/', SeatController.getSeatsByRoom);
 
 // Thêm ghế vào phòng chiếu
-router.post('/:room_id/seats', SeatController.createSeats);
+router.post('/', SeatController.createSeats);
 
-// Xóa một ghế
-router.delete('/seats/:id', SeatController.deleteSeat);
+// Xóa một ghế (theo ID ghế trong phòng)
+router.delete('/:id', SeatController.deleteSeat);
 
-// Cập nhật thông tin một ghế
-router.put('/seats/:id', SeatController.updateSeat);
+// Cập nhật thông tin một ghế (theo ID ghế trong phòng)
+router.put('/:id', SeatController.updateSeat);
+
+// Lấy danh sách ghế với trạng thái cho một phòng chiếu và suất chiếu
+router.get('/showtime/:showtime_id', SeatController.getSeatsByShowtimeAndRoom);
 
 module.exports = router;

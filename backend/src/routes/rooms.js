@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const RoomController = require('../app/controllers/RoomController');
+const seatRouter = require('./seats');
 
 // lấy danh sách tất cả các phòng chiếu
 router.get('/', RoomController.getAllRooms);
@@ -17,4 +18,6 @@ router.put('/:id', RoomController.updateRoom);
 // xóa một phòng chiếu dựa trên ID
 router.delete('/:id', RoomController.deleteRoom);
 
+// Tích hợp route con cho seats dưới rooms
+router.use('/:room_id/seats', seatRouter);
 module.exports = router;

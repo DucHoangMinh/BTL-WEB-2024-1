@@ -5,7 +5,7 @@ const movieRouter = require('./movies');
 const promotionRouter = require('./promotions');
 const movieTheaterRouter = require('./movieTheater');
 const roomRouter = require('./rooms');
-const seatRouter = require('./seats');  
+// const seatRouter = require('./seats');  
 const showtimeRouter = require('./showtime'); 
 
 const authenticateToken = require('../middleware/prismaAuthMiddleware');  
@@ -17,7 +17,7 @@ function route(app) {
   app.use('/promotions', promotionRouter);
   app.use('/movie-theaters', movieTheaterRouter);
   app.use('/rooms', roomRouter);
-  app.use('/rooms', seatRouter);
+  // app.use('/rooms', seatRouter);
   app.use('/showtimes', showtimeRouter);
   app.get('/protected', authenticateToken, (req, res) => {
     res.json({
