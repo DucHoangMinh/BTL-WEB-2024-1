@@ -6,17 +6,19 @@ const promotionRouter = require('./promotions');
 const movieTheaterRouter = require('./movieTheater');
 const roomRouter = require('./rooms');
 const seatRouter = require('./seats');  
+const showtimeRouter = require('./showtime');  // Thêm route cho Showtime
 
 const authenticateToken = require('../middleware/prismaAuthMiddleware');  
 
 function route(app) {
   app.use('/register', registerRouter);
   app.use('/login', loginRouter);
-  app.use('/movies', movieRouter);  
+  app.use('/movies', movieRouter);
   app.use('/promotions', promotionRouter);
   app.use('/movie-theaters', movieTheaterRouter);
   app.use('/rooms', roomRouter);
-  app.use('/rooms', seatRouter);                  // Để thêm ghế
+  app.use('/rooms', seatRouter);
+  app.use('/showtimes', showtimeRouter);
   app.get('/protected', authenticateToken, (req, res) => {
     res.json({
       message: 'This is a protected route. You are authenticated.',

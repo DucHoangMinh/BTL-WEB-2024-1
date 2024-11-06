@@ -72,7 +72,7 @@ model Room {
 
   Seat              Seat[]
   Showtime          Showtime[]
-
+  status            String?
   @@map("Room")
 }
 
