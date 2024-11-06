@@ -82,14 +82,15 @@ http://localhost:3000/api/showtimes/available?movieId=<movieId>&theaterId=<theat
 http://localhost:3000/api/showtimes/available?movieId=3&theaterId=2  
 Trả về các suất chiếu của phim và rạp đã chọn  
 ```
-{
-  "movie_id": 3,
-  "room_id": 12,
-  "show_date": "2024-11-07T00:00:00.000Z",
-  "start_time": "2024-11-07T10:00:00.000Z",
-  "end_time": "2024-11-07T12:00:00.000Z",
-  "price": 10.5
-}
+[
+    {
+        "id": 4,
+        "show_date": "2024-11-07T00:00:00.000Z",
+        "start_time": "2024-11-07T10:00:00.000Z",
+        "end_time": "2024-11-07T12:00:00.000Z",
+        "price": 10.5
+    }
+]
 ```
 ## How to send token with request with POSTMAN
 Ở trình duyệt, nhấn ctrl+shifi+i<br>
