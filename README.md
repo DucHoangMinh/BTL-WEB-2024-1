@@ -46,6 +46,40 @@ POST: http://localhost:3000/api/movies
   ]
 }
 ```
+GET: http://localhost:3000/api/movies  
+Trả về danh sách tất cả các bộ phim kèm Showtimes và feedback ( tôi có thể chỉnh lại sau để chia nhỏ ra)  
+GET: http://localhost:3000/api/movies/:movieId  
+Trả về bộ phim với Id tương ứng kèm Showtimes và feedback ( tôi có thể chỉnh lại sau để chia nhỏ ra)  
+
+
+GET: http://localhost:3000/api/movies/3/cities  
+Trả về danh sách các thành phố có rạp chiếu bộ phim với movie_id được chọn
+```
+{
+    "cities": [
+        {
+            "city": "TP. Hồ Chí Minh"
+        }
+    ]
+}
+```
+http://localhost:3000/api/movie-theaters/available/theaters?city=<city>&movieId=<movieId>  
+http://localhost:3000/api/movie-theaters/available/theaters?city=TP.%20Hồ%20Chí%20Minh&movieId=3  
+Trả về danh sách các rạp có phim đã chọn, thuộc thành phố đã chọn  
+```
+[
+    {
+        "id": 1,
+        "name": "8Movies Nam Sài Gòn"
+    },
+    {
+        "id": 2,
+        "name": "8Movies Cộng Hoà"
+    }
+]
+```
+http://localhost:3000/showtimes/available?movieId=<movieId>&theaterId=<theaterId>  
+
 ## How to send token with request with POSTMAN
 Ở trình duyệt, nhấn ctrl+shifi+i<br>
 Chọn tab Application, ở sidebar bên trái, chọn local storage -> http://localhost:3000<br>

@@ -8,7 +8,7 @@ class MovieController {
       const allMovies = await prisma.movie.findMany({
         include: {
           Showtimes: true,
-          Feedbacks: true,
+          // Feedbacks: true,
         },
       });
 
@@ -207,6 +207,34 @@ class MovieController {
       return res.status(500).json({ message: 'Internal Server Error' });
     }
   };
+
+  //Lấy ra các thành phố có phim đã chọn 
+  async getCitiesByMovieId(req, res) {
+    const { movieId } = req.params;
+
+    try {
+      const cities = await prisma.movieTheater.findMany({
+        where: {
+          Rooms: {
+            some: {
+              Showtime: {
+                some: {
+                  movie_id: parseInt(movieId),
+                },
+              },
+            },
+          },
+        },
+        select: { city: true },
+        distinct: ['city'],
+      });
+
+      res.status(200).json({ cities });
+    } catch (error) {
+      console.error('Error fetching cities:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  }
 }
 
 module.exports = new MovieController();

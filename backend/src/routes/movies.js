@@ -24,4 +24,8 @@ router.put('/:id', movieController.updateMovie);
 // Xóa phim theo ID
 router.delete('/:id', movieController.deleteMovie);
 
+//Lấy thông tin thành phố có chiếu phim theo ID
+router.get('/:movieId/cities', movieController.getCitiesByMovieId);
+
+
 module.exports = router;

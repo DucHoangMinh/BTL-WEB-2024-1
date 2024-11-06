@@ -141,6 +141,34 @@ class MovieTheaterController {
       return res.status(500).json({ message: 'Internal Server Error' });
     }
   };
+
+  //Lấy danh sách rạp trong thành phố có chiếu phim
+  async getTheatersByCityAndMovie(req, res) {
+    const { city, movieId } = req.query;
+
+    try {
+      const theaters = await prisma.movieTheater.findMany({
+        where: {
+          city: city,
+          Rooms: {
+            some: {
+              Showtime: {
+                some: {
+                  movie_id: parseInt(movieId),
+                },
+              },
+            },
+          },
+        },
+        select: { id: true, name: true },
+      });
+
+      res.status(200).json(theaters);
+    } catch (error) {
+      console.error('Error fetching theaters:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  }
 }
 
 module.exports = new MovieTheaterController();
