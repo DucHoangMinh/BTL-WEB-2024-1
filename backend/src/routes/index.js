@@ -6,7 +6,7 @@ const promotionRouter = require('./promotions');
 const movieTheaterRouter = require('./movieTheater');
 const roomRouter = require('./rooms');
 const seatRouter = require('./seats');  
-const showtimeRouter = require('./showtime');  // Thêm route cho Showtime
+const showtimeRouter = require('./showtime'); 
 
 const authenticateToken = require('../middleware/prismaAuthMiddleware');  
 
