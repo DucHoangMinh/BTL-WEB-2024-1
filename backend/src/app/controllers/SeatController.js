@@ -137,6 +137,34 @@ createSeats = async (req, res) => {
       return res.status(500).json({ message: 'Internal Server Error' });
     }
   };
+
+  // Lấy danh sách ghế với trạng thái cho một phòng và suất chiếu
+  getSeatsByShowtimeAndRoom = async (req, res) => {
+    const { room_id, showtime_id } = req.params;
+
+    try {
+      const seats = await prisma.seat.findMany({
+        where: {
+          room_id: parseInt(room_id),
+          showtime_id: parseInt(showtime_id),
+        },
+        select: {
+          id: true,
+          seat_number: true,
+          seat_type: true,
+          row: true,
+          column: true,
+          status: true, 
+        },
+      });
+
+      return res.status(200).json(seats);
+    } catch (error) {
+      console.error('Error fetching seats with status for showtime:', error);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
+  
 }
 
 module.exports = new SeatsController();

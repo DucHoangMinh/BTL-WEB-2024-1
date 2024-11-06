@@ -72,7 +72,6 @@ model Room {
 
   Seat              Seat[]
   Showtime          Showtime[]
-  status            String?
   @@map("Room")
 }
 
@@ -84,9 +83,11 @@ model Seat {
   seat_type         String?  // (VIP, thường, ...)
   row               String   // Hàng ghế ( A, B, C, ...)
   column            Int      // Số ghế trong hàng (ví dụ: 1, 2, 3, ...)
+  status            String   @default("available")
   Room              Room     @relation(fields: [room_id], references: [id])
   Tickets           Ticket[] // Thêm trường này để tạo quan hệ đối ứng với Ticket
 
+  @@unique([seat_number, showtime_id]) // Đảm bảo một ghế chỉ có trạng thái duy nhất cho một suất chiếu
   @@map("Seat")
 }
 
@@ -132,7 +133,7 @@ model Ticket {
   Seat          Seat           @relation(fields: [seat_id], references: [id])
   Promotion     Promotion?     @relation(fields: [promotion_id], references: [id]) // Quan hệ tùy chọn
   Ticket_Snack  Ticket_Snack[]
-  status  String @default("pending") // pending, paid, used
+  status        String @default("pending") // pending, paid, used
 
   @@unique([seat_id, showtime_id])
   @@map("Ticket")

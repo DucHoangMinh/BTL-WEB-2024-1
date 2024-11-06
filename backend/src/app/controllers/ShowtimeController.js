@@ -62,6 +62,7 @@ class ShowtimeController {
           },
         },
         select: {
+          movie_theater_id:true,
           id: true,
           show_date: true,
           start_time: true,
