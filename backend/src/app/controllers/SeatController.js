@@ -117,20 +117,24 @@ createSeats = async (req, res) => {
 
   // Cập nhật thông tin ghế
   updateSeat = async (req, res) => {
-    const { id } = req.params;
-    const { seat_number, seat_type, row, column } = req.body;
-
+    const { room_id, id } = req.params; // Lấy room_id và id của ghế từ params
+    const { seat_number, seat_type, row, column, showtime_id } = req.body;
+  
     try {
       const updatedSeat = await prisma.seat.update({
-        where: { id: parseInt(id) },
+        where: { 
+          id: parseInt(id),
+          room_id: parseInt(room_id) // Đảm bảo ghế thuộc đúng phòng
+        },
         data: {
           seat_number,
           seat_type,
           row,
-          column
-        }
+          column,
+          showtime_id: showtime_id ? parseInt(showtime_id) : undefined, // Cập nhật showtime_id nếu có
+        },
       });
-
+  
       return res.status(200).json(updatedSeat);
     } catch (error) {
       console.error('Error updating seat:', error);
@@ -141,7 +145,12 @@ createSeats = async (req, res) => {
   // Lấy danh sách ghế với trạng thái cho một phòng và suất chiếu
   getSeatsByShowtimeAndRoom = async (req, res) => {
     const { room_id, showtime_id } = req.params;
-
+  
+    // Kiểm tra đầu vào
+    if (!room_id || isNaN(room_id) || !showtime_id || isNaN(showtime_id)) {
+      return res.status(400).json({ message: 'Invalid room_id or showtime_id' });
+    }
+  
     try {
       const seats = await prisma.seat.findMany({
         where: {
@@ -157,13 +166,19 @@ createSeats = async (req, res) => {
           status: true, 
         },
       });
-
+  
+      // Nếu không có ghế nào được tìm thấy
+      if (seats.length === 0) {
+        return res.status(404).json({ message: 'No seats found for the specified room and showtime' });
+      }
+  
       return res.status(200).json(seats);
     } catch (error) {
       console.error('Error fetching seats with status for showtime:', error);
       return res.status(500).json({ message: 'Internal Server Error' });
     }
   };
+  
   
 }
 
