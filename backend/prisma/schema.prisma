@@ -79,12 +79,14 @@ model Room {
 model Seat {
   id                Int      @id @default(autoincrement())
   room_id           Int
+  showtime_id       Int?
   seat_number       String   // Định dạng ghế như A1, A2, B1, B2, ...
   seat_type         String?  // (VIP, thường, ...)
   row               String   // Hàng ghế ( A, B, C, ...)
   column            Int      // Số ghế trong hàng (ví dụ: 1, 2, 3, ...)
   status            String   @default("available")
   Room              Room     @relation(fields: [room_id], references: [id])
+  Showtime          Showtime? @relation(fields: [showtime_id], references: [id]) // Liên kết với suất chiếu
   Tickets           Ticket[] // Thêm trường này để tạo quan hệ đối ứng với Ticket
 
   @@unique([seat_number, showtime_id]) // Đảm bảo một ghế chỉ có trạng thái duy nhất cho một suất chiếu
@@ -104,7 +106,7 @@ model Showtime {
   Movie  Movie    @relation(fields: [movie_id], references: [id])
   Room   Room     @relation(fields: [room_id], references: [id])
   Ticket Ticket[]
-
+  Seats  Seat[]
   @@map("Showtime")
 }
 

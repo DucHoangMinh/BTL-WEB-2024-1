@@ -1,5 +1,6 @@
 const express = require('express');
-const router = express.Router();
+// const router = express.Router();
+const router = express.Router({ mergeParams: true });
 const SeatController = require('../app/controllers/SeatController');
 
 // Lấy danh sách tất cả ghế trong một phòng chiếu

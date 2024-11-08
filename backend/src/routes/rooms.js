@@ -20,4 +20,5 @@ router.delete('/:id', RoomController.deleteRoom);
 
 // Tích hợp route con cho seats dưới rooms
 router.use('/:room_id/seats', seatRouter);
+
 module.exports = router;
