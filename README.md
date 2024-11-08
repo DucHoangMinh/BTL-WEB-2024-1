@@ -88,9 +88,52 @@ Trả về các suất chiếu của phim và rạp đã chọn
         "show_date": "2024-11-07T00:00:00.000Z",
         "start_time": "2024-11-07T10:00:00.000Z",
         "end_time": "2024-11-07T12:00:00.000Z",
-        "price": 10.5
+        "price": 10.5,
+        "Room": {
+            "id": 12,
+            "movie_theater_id": 2
+        }
     }
 ]
+```
+http://localhost:3000/api/rooms/:room_id/seats/showtime/:showtime_id
+http://localhost:3000/api/rooms/1/seats/showtime/1
+Trả về danh sách ghế của phòng chiếu với suất chiếu đã chọn
+```
+[
+    {
+        "id": 2,
+        "seat_number": "A2",
+        "seat_type": "Regular",
+        "row": "A",
+        "column": 2,
+        "status": "available"
+    },
+    {
+        "id": 3,
+        "seat_number": "A3",
+        "seat_type": "Regular",
+        "row": "A",
+        "column": 3,
+        "status": "available"
+    },
+    {
+        "id": 4,
+        "seat_number": "A4",
+        "seat_type": "Regular",
+        "row": "A",
+        "column": 4,
+        "status": "available"
+    },
+    {
+        "id": 5,
+        "seat_number": "A5",
+        "seat_type": "Regular",
+        "row": "A",
+        "column": 5,
+        "status": "available"
+    },
+  ]
 ```
 ## How to send token with request with POSTMAN
 Ở trình duyệt, nhấn ctrl+shifi+i<br>

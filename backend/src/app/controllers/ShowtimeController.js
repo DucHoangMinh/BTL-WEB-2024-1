@@ -62,12 +62,17 @@ class ShowtimeController {
           },
         },
         select: {
-          movie_theater_id:true,
           id: true,
           show_date: true,
           start_time: true,
           end_time: true,
           price: true,
+          Room: {   
+            select: {
+              id: true,
+              movie_theater_id: true,
+            },
+          },
         },
       });
   
@@ -77,8 +82,7 @@ class ShowtimeController {
       res.status(500).json({ message: 'Internal Server Error' });
     }
   }
-  
-  
+
 }
 
 module.exports = new ShowtimeController();
