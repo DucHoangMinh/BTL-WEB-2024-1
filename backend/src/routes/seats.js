@@ -15,10 +15,13 @@ router.delete('/:id', SeatController.deleteSeat);
 // Cập nhật thông tin một ghế (theo ID ghế trong phòng)
 router.put('/:id', SeatController.updateSeat);
 
-// Cập nhật thông tin nhiều ghế ( để sửa lại showtime id cho nhanh)
-// router.put('/updateShowtime', SeatController.updateSeatsShowtime);
-
 // Lấy danh sách ghế với trạng thái cho một phòng chiếu và suất chiếu
 router.get('/showtime/:showtime_id', SeatController.getSeatsByShowtimeAndRoom);
+
+// Đặt ghế
+router.post('/:seat_id/book', SeatController.bookSeat);
+
+// Xác nhận thanh toán cho ghế
+router.post('/:seat_id/confirm', SeatController.confirmPayment);
 
 module.exports = router;

@@ -85,6 +85,9 @@ model Seat {
   row               String   // Hàng ghế ( A, B, C, ...)
   column            Int      // Số ghế trong hàng (ví dụ: 1, 2, 3, ...)
   status            String   @default("available")
+  hold_until        DateTime? 
+  is_paid           Boolean  @default(false) 
+
   Room              Room     @relation(fields: [room_id], references: [id])
   Showtime          Showtime? @relation(fields: [showtime_id], references: [id]) // Liên kết với suất chiếu
   Tickets           Ticket[] // Thêm trường này để tạo quan hệ đối ứng với Ticket
