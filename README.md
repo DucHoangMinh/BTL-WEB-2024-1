@@ -135,6 +135,24 @@ Trả về danh sách ghế của phòng chiếu với suất chiếu đã chọ
     },
   ]
 ```
+## Đặt Ghế (Book Seat)
+- Endpoint: POST /api/rooms/:room_id/seats/:seat_id/book
+    - Mô tả: Đặt một ghế trong phòng chỉ định ở trạng thái "on-hold" để giữ chỗ trong 10 phút.
+- Tham số:
+    - room_id (URL param, bắt buộc): ID của phòng chứa ghế.
+    - seat_id (URL param, bắt buộc): ID của ghế muốn đặt.
+- Yêu cầu Body:
+    - user_id (integer, bắt buộc): ID của người dùng đặt ghế.
+## Xác Nhận Thanh Toán và Tạo Vé (Confirm Payment)
+- Endpoint: POST /api/rooms/:room_id/seats/:seat_id/confirm
+    - Mô tả: Xác nhận thanh toán cho ghế đã đặt trong phòng chỉ định và tạo vé (Ticket) cho người dùng.
+- Tham số:
+    - room_id (URL param, bắt buộc): ID của phòng chứa ghế.
+    - seat_id (URL param, bắt buộc): ID của ghế muốn xác nhận thanh toán.
+- Yêu cầu Body:
+    - user_id (integer, bắt buộc): ID của người dùng xác nhận thanh toán.
+    - showtime_id (integer, bắt buộc): ID của suất chiếu để liên kết vé.
+    - promotion_id (integer, tùy chọn): ID của khuyến mãi, nếu có.
 ## How to send token with request with POSTMAN
 Ở trình duyệt, nhấn ctrl+shifi+i<br>
 Chọn tab Application, ở sidebar bên trái, chọn local storage -> http://localhost:3000<br>

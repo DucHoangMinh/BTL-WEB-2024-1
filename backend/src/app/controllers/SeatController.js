@@ -164,6 +164,8 @@ createSeats = async (req, res) => {
           row: true,
           column: true,
           status: true, 
+          hold_until: true,
+          is_paid: true,
         },
       });
   
@@ -179,7 +181,98 @@ createSeats = async (req, res) => {
     }
   };
   
-  
+  // Đặt ghế cho người dùng
+  bookSeat = async (req, res) => {
+    const { room_id, seat_id } = req.params; // Lấy room_id và seat_id từ params
+    const { user_id } = req.body; // Lấy user_id từ body để xác định ai đang đặt ghế
+    const currentTime = new Date();
+    const holdTime = new Date(currentTime.getTime() + 10 * 60 * 1000); // 10 phút giữ chỗ
+
+    try {
+      // Kiểm tra trạng thái ghế trong phòng chỉ định
+      const seat = await prisma.seat.findUnique({
+        where: { id: parseInt(seat_id) },
+      });
+
+      if (!seat || seat.room_id !== parseInt(room_id)) {
+        return res.status(404).json({ message: 'Seat not found in this room' });
+      }
+
+      // Kiểm tra nếu ghế có sẵn
+      if (seat.status !== 'available' || seat.is_paid || (seat.hold_until && seat.hold_until > currentTime)) {
+        return res.status(400).json({ message: 'Seat is not available for booking.' });
+      }
+
+      // Cập nhật trạng thái giữ chỗ cho ghế
+      await prisma.seat.update({
+        where: { id: parseInt(seat_id) },
+        data: {
+          status: 'on-hold',
+          hold_until: holdTime,
+        },
+      });
+
+      return res.status(200).json({ message: 'Seat successfully put on hold for booking.' });
+    } catch (error) {
+      console.error('Error booking seat:', error);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
+
+
+  // Xác nhận thanh toán cho ghế và tạo vé
+  confirmPayment = async (req, res) => {
+    const { room_id, seat_id } = req.params;
+    const { user_id, showtime_id, promotion_id } = req.body;
+    const currentTime = new Date();
+
+    try {
+      // Lấy thông tin ghế và kiểm tra trạng thái trong phòng chỉ định
+      const seat = await prisma.seat.findUnique({
+        where: { id: parseInt(seat_id) },
+      });
+
+      if (!seat || seat.room_id !== parseInt(room_id)) {
+        return res.status(404).json({ message: 'Seat not found in this room' });
+      }
+
+      // Kiểm tra nếu ghế vẫn còn thời gian giữ chỗ và chưa thanh toán
+      if (seat.status !== 'on-hold' || seat.is_paid || seat.hold_until < currentTime) {
+        return res.status(400).json({ message: 'Seat cannot be confirmed for payment. Either it is already paid or hold time has expired.' });
+      }
+
+      // Cập nhật trạng thái đã thanh toán cho ghế
+      await prisma.seat.update({
+        where: { id: parseInt(seat_id) },
+        data: {
+          status: 'paid',
+          is_paid: true,
+          hold_until: null,
+        },
+      });
+
+      // Tạo vé cho ghế đã thanh toán
+      const newTicket = await prisma.ticket.create({
+        data: {
+          user_id: user_id,
+          showtime_id: showtime_id,
+          seat_id: seat_id,
+          promotion_id: promotion_id || null, // Nếu không có promotion, đặt null
+          status: 'paid',
+        },
+      });
+
+      return res.status(200).json({
+        message: 'Payment confirmed successfully, ticket created.',
+        ticket: newTicket,
+      });
+    } catch (error) {
+      console.error('Error confirming payment and creating ticket:', error);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
+
+ 
 }
 
 module.exports = new SeatsController();
