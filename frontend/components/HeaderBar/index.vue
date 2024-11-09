@@ -17,11 +17,11 @@ div
           li.nav-item
             a(href="/uu-dai") Tin Mới và Ưu Đãi
           li.nav-item(v-if="userInfor.fullName === ''")
-            a(href="/auth/login") ÄÄƒng nháº­p
+            a(href="/auth/login") Đăng Nhập
           li.nav-item(v-if="userInfor.fullName === ''")
-            a(href="/auth/register") ÄÄƒng kĂ½
+            a(href="/auth/register") Đăng Ký
           li(v-else)
-            span.font-weight-bold Xin chĂ o, {{userInfor.fullName}}
+            span.font-weight-bold Xin chào, {{userInfor.fullName}}
 </template>
 <script setup>
 import {userInforStore} from "~/stores/userInfor.js";
