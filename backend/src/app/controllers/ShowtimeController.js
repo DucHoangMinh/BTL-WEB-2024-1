@@ -48,16 +48,17 @@ class ShowtimeController {
 
   async getShowtimesByTheaterAndMovie(req, res) {
     const { theaterId, movieId } = req.query;
-  
+
     if (!theaterId || !movieId) {
       return res.status(400).json({ message: 'theaterId and movieId are required' });
     }
-  
+
     try {
+  
       const showtimes = await prisma.showtime.findMany({
         where: {
           movie_id: parseInt(movieId),
-          Room: {  
+          room: {
             movie_theater_id: parseInt(theaterId),
           },
         },
@@ -67,22 +68,30 @@ class ShowtimeController {
           start_time: true,
           end_time: true,
           price: true,
-          Room: {   
+          Room: {
             select: {
-              id: true,
-              movie_theater_id: true,
+              name: true,
             },
           },
         },
       });
-  
-      res.status(200).json(showtimes);
+
+   
+      if (showtimes.length === 0) {
+        return res.status(404).json({ message: 'No showtimes found for this movie at the selected theater' });
+      }
+
+      return res.status(200).json({
+        message: 'Danh sách suất chiếu',
+        showtimes,
+      });
     } catch (error) {
       console.error('Error fetching showtimes:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
+      return res.status(500).json({ message: 'Internal Server Error' });
     }
   }
-
 }
+
+
 
 module.exports = new ShowtimeController();

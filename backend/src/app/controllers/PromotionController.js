@@ -130,7 +130,7 @@ class PromotionController {
     }
   };
 
-  // Xóa một chương trình khuyến mãi
+
   deletePromotion = async (req, res) => {
     const { id } = req.params;
 
@@ -153,24 +153,24 @@ class PromotionController {
     }
   };
 
-   // Tìm kiếm chương trình khuyến mãi
+
    searchPromotions = async (req, res) => {
-    const { query } = req.query; // Lấy chuỗi tìm kiếm từ query parameter
+    const { query } = req.query; 
 
     if (!query || query.trim() === '') {
       return res.status(400).json({ message: 'Chuỗi tìm kiếm không hợp lệ' });
     }
 
     try {
-      const searchStr = query.trim(); // Bỏ khoảng trắng
+      const searchStr = query.trim(); 
 
       const promotions = await prisma.promotion.findMany({
         where: {
           OR: [
-            { promotion_name: { contains: searchStr, mode: 'insensitive' } }, // tên khuyến mãi
-            { description: { contains: searchStr, mode: 'insensitive' } },    // mô tả
-            { location: { contains: searchStr, mode: 'insensitive' } },       // địa điểm
-            // Nếu searchStr là một ngày hợp lệ, sẽ kiểm tra ngày bắt đầu và kết thúc
+            { promotion_name: { contains: searchStr, mode: 'insensitive' } }, 
+            { description: { contains: searchStr, mode: 'insensitive' } },   
+            { location: { contains: searchStr, mode: 'insensitive' } },       
+            
             {
               start_date: {
                 gte: isNaN(Date.parse(searchStr)) ? undefined : new Date(searchStr)

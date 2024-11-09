@@ -142,7 +142,6 @@ class MovieTheaterController {
     }
   };
 
-  //Lấy danh sách rạp trong thành phố có chiếu phim
   async getTheatersByCityAndMovie(req, res) {
     const { city, movieId } = req.query;
 
