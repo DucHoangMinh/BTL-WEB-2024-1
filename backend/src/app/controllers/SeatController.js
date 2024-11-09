@@ -2,7 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 class SeatsController {
-  // Lấy danh sách tất cả các ghế trong một phòng chiếu
+
   getSeatsByRoom = async (req, res) => {
     const { room_id } = req.params;
 
@@ -142,11 +142,11 @@ createSeats = async (req, res) => {
     }
   };
 
-  // Lấy danh sách ghế với trạng thái cho một phòng và suất chiếu
+
   getSeatsByShowtimeAndRoom = async (req, res) => {
     const { room_id, showtime_id } = req.params;
   
-    // Kiểm tra đầu vào
+  
     if (!room_id || isNaN(room_id) || !showtime_id || isNaN(showtime_id)) {
       return res.status(400).json({ message: 'Invalid room_id or showtime_id' });
     }
@@ -169,7 +169,7 @@ createSeats = async (req, res) => {
         },
       });
   
-      // Nếu không có ghế nào được tìm thấy
+    
       if (seats.length === 0) {
         return res.status(404).json({ message: 'No seats found for the specified room and showtime' });
       }
@@ -181,94 +181,93 @@ createSeats = async (req, res) => {
     }
   };
   
-  // Đặt ghế cho người dùng
+ 
   bookSeat = async (req, res) => {
-    const { room_id, seat_id } = req.params; // Lấy room_id và seat_id từ params
-    const { user_id } = req.body; // Lấy user_id từ body để xác định ai đang đặt ghế
+    const { room_id, seat_id } = req.params;
+    const { user_id } = req.body;
+
     const currentTime = new Date();
-    const holdTime = new Date(currentTime.getTime() + 10 * 60 * 1000); // 10 phút giữ chỗ
+    const holdTime = new Date(currentTime.getTime() + 10 * 60 * 1000); // Giữ chỗ trong 10 phút
 
     try {
-      // Kiểm tra trạng thái ghế trong phòng chỉ định
-      const seat = await prisma.seat.findUnique({
-        where: { id: parseInt(seat_id) },
-      });
+       
+        const seat = await prisma.seat.findUnique({
+            where: { id: parseInt(seat_id) },
+        });
 
-      if (!seat || seat.room_id !== parseInt(room_id)) {
-        return res.status(404).json({ message: 'Seat not found in this room' });
-      }
+        if (!seat || seat.room_id !== parseInt(room_id)) {
+            return res.status(404).json({ message: 'Seat not found in this room' });
+        }
 
-      // Kiểm tra nếu ghế có sẵn
-      if (seat.status !== 'available' || seat.is_paid || (seat.hold_until && seat.hold_until > currentTime)) {
-        return res.status(400).json({ message: 'Seat is not available for booking.' });
-      }
+      
+        if (seat.status !== 'available') {
+            return res.status(400).json({ message: 'Seat is not available for booking' });
+        }
 
-      // Cập nhật trạng thái giữ chỗ cho ghế
-      await prisma.seat.update({
-        where: { id: parseInt(seat_id) },
-        data: {
-          status: 'on-hold',
-          hold_until: holdTime,
-        },
-      });
+      
+        await prisma.seat.update({
+            where: { id: parseInt(seat_id) },
+            data: {
+                status: 'on-hold',
+                hold_until: holdTime,
+                is_paid: false 
+            },
+        });
 
-      return res.status(200).json({ message: 'Seat successfully put on hold for booking.' });
+        return res.status(200).json({ message: 'Seat successfully put on hold for booking.' });
     } catch (error) {
-      console.error('Error booking seat:', error);
-      return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error booking seat:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
-  };
+}
 
 
-  // Xác nhận thanh toán cho ghế và tạo vé
   confirmPayment = async (req, res) => {
     const { room_id, seat_id } = req.params;
     const { user_id, showtime_id, promotion_id } = req.body;
     const currentTime = new Date();
 
     try {
-      // Lấy thông tin ghế và kiểm tra trạng thái trong phòng chỉ định
-      const seat = await prisma.seat.findUnique({
-        where: { id: parseInt(seat_id) },
-      });
+        
+        const seat = await prisma.seat.findUnique({
+            where: { id: parseInt(seat_id) },
+        });
 
-      if (!seat || seat.room_id !== parseInt(room_id)) {
-        return res.status(404).json({ message: 'Seat not found in this room' });
-      }
+        if (!seat || seat.room_id !== parseInt(room_id)) {
+            return res.status(404).json({ message: 'Seat not found in this room' });
+        }
 
-      // Kiểm tra nếu ghế vẫn còn thời gian giữ chỗ và chưa thanh toán
-      if (seat.status !== 'on-hold' || seat.is_paid || seat.hold_until < currentTime) {
-        return res.status(400).json({ message: 'Seat cannot be confirmed for payment. Either it is already paid or hold time has expired.' });
-      }
+        if (seat.status !== 'on-hold' || seat.is_paid || seat.hold_until < currentTime) {
+            return res.status(400).json({ message: 'Seat cannot be confirmed for payment. Either it is already paid or hold time has expired.' });
+        }
 
-      // Cập nhật trạng thái đã thanh toán cho ghế
-      await prisma.seat.update({
-        where: { id: parseInt(seat_id) },
-        data: {
-          status: 'paid',
-          is_paid: true,
-          hold_until: null,
-        },
-      });
+       
+        await prisma.seat.update({
+            where: { id: parseInt(seat_id) },
+            data: {
+                status: 'paid',
+                is_paid: true,
+                hold_until: null 
+            },
+        });
 
-      // Tạo vé cho ghế đã thanh toán
-      const newTicket = await prisma.ticket.create({
-        data: {
-          user_id: user_id,
-          showtime_id: showtime_id,
-          seat_id: seat_id,
-          promotion_id: promotion_id || null, // Nếu không có promotion, đặt null
-          status: 'paid',
-        },
-      });
+        const newTicket = await prisma.ticket.create({
+            data: {
+                user_id: user_id,
+                showtime_id: showtime_id,
+                seat_id: seat_id,
+                promotion_id: promotion_id || null, 
+                status: 'paid',
+            },
+        });
 
-      return res.status(200).json({
-        message: 'Payment confirmed successfully, ticket created.',
-        ticket: newTicket,
-      });
+        return res.status(200).json({
+            message: 'Payment confirmed successfully, ticket created.',
+            ticket: newTicket,
+        });
     } catch (error) {
-      console.error('Error confirming payment and creating ticket:', error);
-      return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error confirming payment and creating ticket:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
   };
 

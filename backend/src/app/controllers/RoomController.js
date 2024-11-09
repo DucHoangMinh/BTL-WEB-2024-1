@@ -19,7 +19,7 @@ class RoomController {
     }
   };
 
-  // Lấy thông tin chi tiết của một phòng chiếu dựa trên ID
+
   getRoomById = async (req, res) => {
     const { id } = req.params;
     try {
@@ -69,13 +69,13 @@ class RoomController {
 
   //createRoom với mảng để tạo yêu cầu post cho nhanh
   createRoom = async (req, res) => {
-    const rooms = req.body.rooms; // Nhận một mảng phòng từ request body
+    const rooms = req.body.rooms; 
   
     if (!rooms || rooms.length === 0) {
       return res.status(400).json({ message: 'Array of rooms is required' });
     }
   
-    // Kiểm tra nếu mỗi phòng đều có các trường bắt buộc
+    
     for (let room of rooms) {
       const { name, capacity, movie_theater_id } = room;
       if (!name || !capacity || !movie_theater_id) {
@@ -99,7 +99,7 @@ class RoomController {
   };
   
 
-  // Cập nhật thông tin của một phòng chiếu
+
   updateRoom = async (req, res) => {
     const { id } = req.params;
     const { name, capacity, movie_theater_id } = req.body;
@@ -121,7 +121,7 @@ class RoomController {
     }
   };
 
-  // Xóa một phòng chiếu dựa trên ID
+  
   deleteRoom = async (req, res) => {
     const { id } = req.params;
 

@@ -7,7 +7,7 @@ class RegisterController {
       console.log('Received request body:', req.body); 
   
       const { firstName, lastName, email, password, confirmPassword, dateOfBirth } = req.body;
-      // Kiem tra cac truong
+    
       if (!firstName || !lastName || !email || !password || !confirmPassword || !dateOfBirth) {
         console.log("Missing required fields");
         return res.status(400).json({ message: 'All fields are required' });
