@@ -11,7 +11,7 @@
         <p><strong>Ngày phát hành:</strong> {{ formatDateToDDMMYYYY(movie.release_date) }}</p>
         <p><strong>Thông tin cơ bản:</strong> {{ movie.description }}</p>
         <p><strong>Loại:</strong> {{ movie.basic_info }}</p>
-        <button class="booking-button">Đặt vé</button>
+        <button class="booking-button" @click="openBookingPopup">Đặt vé</button>
       </div>
     </div>
 
@@ -20,6 +20,13 @@
       <h2>Tóm tắt</h2>
       <p>{{ movie.description }}</p>
     </div>
+
+    <!-- Thêm component BookingPopup -->
+    <BookingPopup 
+      :is-open="isBookingPopupOpen"
+      :movie-id="movieId"
+      @close="closeBookingPopup"
+    />
   </div>
 </template>
 
@@ -29,6 +36,9 @@ import axios from "axios";
 const route = useRoute()
 const router = useRouter()
 const movie = ref({})
+const isBookingPopupOpen = ref(false)
+const movieId = ref(null)
+
 const getMovieDetail = async () => {
   try{
     const movieId = route.query.id
@@ -54,6 +64,15 @@ const init = async () => {
   await getMovieDetail()
 }
 onMounted(init)
+
+const openBookingPopup = () => {
+  movieId.value = route.query.id
+  isBookingPopupOpen.value = true
+}
+
+const closeBookingPopup = () => {
+  isBookingPopupOpen.value = false
+}
 </script>
 
 <style scoped>
