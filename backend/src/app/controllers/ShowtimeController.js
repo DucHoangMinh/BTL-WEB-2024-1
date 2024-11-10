@@ -58,7 +58,7 @@ class ShowtimeController {
       const showtimes = await prisma.showtime.findMany({
         where: {
           movie_id: parseInt(movieId),
-          room: {
+          Room: {
             movie_theater_id: parseInt(theaterId),
           },
         },

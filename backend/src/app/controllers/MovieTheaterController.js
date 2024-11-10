@@ -142,6 +142,7 @@ class MovieTheaterController {
     }
   };
 
+  //Lấy danh sách rạp trong thành phố có chiếu phim
   async getTheatersByCityAndMovie(req, res) {
     const { city, movieId } = req.query;
 
@@ -168,6 +169,7 @@ class MovieTheaterController {
       res.status(500).json({ message: 'Internal Server Error' });
     }
   }
+
   getMovieTheatersByDate = async(req, res) => {
     const { movieId, date } = req.params;
 
