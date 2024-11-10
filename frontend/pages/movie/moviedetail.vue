@@ -32,6 +32,8 @@
 
 <script setup>
 import axios from "axios";
+import {previousPageStore} from "~/stores/previousPage.js";
+const previousPageStoreRef = previousPageStore()
 
 const route = useRoute()
 const router = useRouter()
@@ -65,7 +67,15 @@ const init = async () => {
 }
 onMounted(init)
 
-const openBookingPopup = () => {
+const openBookingPopup = async () => {
+  if(!checkUserLoggined()){
+    if(confirm("Bạn cần đăng nhập để thực hiện chức năng này. Bạn có muốn đăng nhập ngay?")){
+      await previousPageStoreRef.setPreviousPage(route.fullPath)
+      await router.push('/auth/login')
+    } else {
+      return
+    }
+  }
   movieId.value = route.query.id
   isBookingPopupOpen.value = true
 }
