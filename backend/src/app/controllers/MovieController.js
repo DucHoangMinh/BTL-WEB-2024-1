@@ -189,7 +189,7 @@ class MovieController {
     }
   };
 
-  // Xóa một bộ phim dựa vào ID
+
   deleteMovie = async (req, res) => {
     const { id } = req.params;
 
@@ -235,6 +235,42 @@ class MovieController {
       res.status(500).json({ message: 'Internal Server Error' });
     }
   }
+
+  getMoviesByDate = async(req, res) => {
+    const { date } = req.params;
+
+    try {
+   
+      const selectedDate = new Date(date);
+      selectedDate.setUTCHours(0, 0, 0, 0);
+      const nextDay = new Date(selectedDate);
+      nextDay.setDate(selectedDate.getDate() + 1);
+
+      const movies = await prisma.showtime.findMany({
+        where: {
+          show_date: {
+            gte: selectedDate,
+            lt: nextDay
+          }
+        },
+        include: {
+          Movie: true,
+        },
+      });
+
+
+      const uniqueMovies = [...new Map(movies.map(showtime => [showtime.Movie.id, showtime.Movie])).values()];
+
+      res.status(200).json({
+        message: `Danh sách phim vào ngày ${date}`,
+        movies: uniqueMovies,
+      });
+    } catch (error) {
+      console.error('Error fetching movies by date:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  }
+
 }
 
 module.exports = new MovieController();
