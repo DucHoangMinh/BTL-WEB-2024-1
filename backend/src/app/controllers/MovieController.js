@@ -208,7 +208,7 @@ class MovieController {
     }
   };
 
-  //Lấy ra các thành phố có phim đã chọn 
+
   async getCitiesByMovieId(req, res) {
     const { movieId } = req.params;
 
@@ -225,8 +225,8 @@ class MovieController {
             },
           },
         },
-        select: { city: true },
-        distinct: ['city'],
+        Theater: {select: { city: true }},
+        distinct: ['Theater.city'],
       });
 
       res.status(200).json({ cities });
