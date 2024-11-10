@@ -169,36 +169,44 @@ class MovieTheaterController {
     }
   }
   getMovieTheatersByDate = async(req, res) => {
-    const { date } = req.params;
+    const { movieId, date } = req.params;
 
     try {
-
+      // Chuyển đổi `date` về định dạng `yy-mm-dd`
       const selectedDate = new Date(date);
       selectedDate.setUTCHours(0, 0, 0, 0);
       const nextDay = new Date(selectedDate);
       nextDay.setDate(selectedDate.getDate() + 1);
 
-      const movies = await prisma.showtime.findMany({
+      // Truy vấn các suất chiếu của phim vào ngày đã chọn
+      const showtimes = await prisma.showtime.findMany({
         where: {
+          movie_id: parseInt(movieId),
           show_date: {
             gte: selectedDate,
             lt: nextDay
           }
         },
         include: {
-          Movie: true,
+          Room: {
+            include: {
+              MovieTheater: true,
+            }
+          },
         },
       });
 
-   
-      const uniqueMovies = [...new Map(movies.map(showtime => [showtime.Movie.id, showtime.Movie])).values()];
+      // Kiểm tra nếu không có suất chiếu nào
+      if (showtimes.length === 0) {
+        return res.status(404).json({ message: `No showtimes found for movie ID ${movieId} on date ${date}` });
+      }
 
       res.status(200).json({
-        message: `Danh sách phim vào ngày ${date}`,
-        movies: uniqueMovies,
+        message: `Danh sách suất chiếu của phim ID ${movieId} vào ngày ${date}`,
+        showtimes: showtimes,
       });
     } catch (error) {
-      console.error('Error fetching movies by date:', error);
+      console.error('Error fetching showtimes by movie and date:', error);
       res.status(500).json({ message: 'Internal Server Error' });
     }
   }
