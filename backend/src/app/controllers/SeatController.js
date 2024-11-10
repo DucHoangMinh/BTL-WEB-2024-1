@@ -59,11 +59,11 @@ class SeatsController {
 //   };
 
 createSeats = async (req, res) => {
-    const { room_id } = req.params;  // Lấy room_id từ URL
+    const { room_id } = req.params;  
   
-    const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-    const vipRows = ['F', 'H', 'J']; 
-    const totalColumns = 16;
+    const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+    const vipRows = ['C', 'D', 'E', 'F', 'G']; 
+    const totalColumns = 14;
   
     let seats = [];
   
