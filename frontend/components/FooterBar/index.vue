@@ -10,14 +10,6 @@ div
           li
             a(href="/gioi-thieu") Giới thiệu
           li
-            a(href="/lien-he") Liên hệ
-          li
-            a(href="/faq") F.A.Q
-          li
-            a(href="/hoat-dong-xa-hoi") Hoạt động xã hội
-          li
-            a(href="/dieu-khoan-su-dung") Điều khoản sử dụng
-          li
             a(href="/chinh-sach-thanh-toan") Chính sách thanh toán, đổi trả - hoàn vé
           li
             a(href="/lien-he-quang-cao") Liên hệ quảng cáo
@@ -31,8 +23,13 @@ div
           li
             a(href="/rap1") 8MOVIES Ung Văn Khiêm, TP Hồ Chí Minh - Hotline: 0969 874 873
           li
+            a(href="/rap2") 8MOVIES Hà Nội - Hotline: 0358 968 970
+          li
+            a(href="/rap2") 8MOVIES Thành phố Hải Dương - Hotline: 0358 968 970
+          li
+            a(href="/rap2") 8MOVIES Thành phố Điện Biên Phủ - Hotline: 0358 968 970
+          li
             a(href="/rap2") 8MOVIES Lào Cai - Hotline: 0358 968 970
-          // Add the rest of the theater locations similarly
       .footer-section
         h3 Kết Nối Với Chúng Tôi
         div.social-icons
@@ -43,11 +40,10 @@ div
       .footer-section
         h3 Liên Hệ
         p Công ty cổ phần 8MOVIES Media
-        p Giấy chứng nhận ĐKKD số: 0106633482 - Đăng ký lần đầu ngày 08/09/2014 tại Sở Kế hoạch và Đầu tư Thành phố Hà Nội
-        p Địa chỉ: Tầng 3, số 595, đường Giải Phóng, phường Giáp Bát, quận Hoàng Mai, TP Hà Nội
-        p Hotline: 1900 636807 / 0934 632682
+        p Địa chỉ: Số 1 Đại Cồ Việt, Hai Bà Trưng, Hà Nội
+        p Hotline: 1900 0091 / 0990090009
         p Email: mkt@8movies.vn
-        p Liên hệ hợp tác kinh doanh: bachtx@8moviesgroup.vn
+        p Liên hệ hợp tác kinh doanh: 8movies@8moviesgroup.vn
 </template>
 
 <script setup>
@@ -88,4 +84,6 @@ a
 img
   width: 150px
   margin-top: 10px
+li a, div a
+  color: #666666
 </style>
