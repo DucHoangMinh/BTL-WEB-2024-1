@@ -172,14 +172,13 @@ class MovieTheaterController {
     const { date } = req.params;
 
     try {
-    
+
       const selectedDate = new Date(date);
       selectedDate.setUTCHours(0, 0, 0, 0);
       const nextDay = new Date(selectedDate);
       nextDay.setDate(selectedDate.getDate() + 1);
 
- 
-      const theaters = await prisma.showtime.findMany({
+      const movies = await prisma.showtime.findMany({
         where: {
           show_date: {
             gte: selectedDate,
@@ -187,23 +186,19 @@ class MovieTheaterController {
           }
         },
         include: {
-          Room: {
-            include: {
-              MovieTheater: true,
-            }
-          },
+          Movie: true,
         },
       });
 
-  
-      const uniqueTheaters = [...new Map(theaters.map(showtime => [showtime.Room.MovieTheater.id, showtime.Room.MovieTheater])).values()];
+   
+      const uniqueMovies = [...new Map(movies.map(showtime => [showtime.Movie.id, showtime.Movie])).values()];
 
       res.status(200).json({
-        message: `Danh sách rạp chiếu có phim vào ngày ${date}`,
-        theaters: uniqueTheaters,
+        message: `Danh sách phim vào ngày ${date}`,
+        movies: uniqueMovies,
       });
     } catch (error) {
-      console.error('Error fetching theaters by date:', error);
+      console.error('Error fetching movies by date:', error);
       res.status(500).json({ message: 'Internal Server Error' });
     }
   }
