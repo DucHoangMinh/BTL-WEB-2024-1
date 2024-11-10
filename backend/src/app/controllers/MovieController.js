@@ -189,7 +189,7 @@ class MovieController {
     }
   };
 
-
+  // Xóa một bộ phim dựa vào ID
   deleteMovie = async (req, res) => {
     const { id } = req.params;
 
@@ -208,7 +208,7 @@ class MovieController {
     }
   };
 
-
+  //Lấy ra các thành phố có phim đã chọn 
   async getCitiesByMovieId(req, res) {
     const { movieId } = req.params;
 
@@ -225,8 +225,8 @@ class MovieController {
             },
           },
         },
-        Theater: {select: { city: true }},
-        distinct: ['Theater.city'],
+        select: { city: true },
+        distinct: ['city'],
       });
 
       res.status(200).json({ cities });
@@ -235,7 +235,6 @@ class MovieController {
       res.status(500).json({ message: 'Internal Server Error' });
     }
   }
-
   getMoviesByDate = async(req, res) => {
     const { date } = req.params;
 
