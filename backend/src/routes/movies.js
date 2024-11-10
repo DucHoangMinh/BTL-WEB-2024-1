@@ -27,7 +27,7 @@ router.delete('/:id', movieController.deleteMovie);
 //Lấy thông tin thành phố có chiếu phim theo ID
 router.get('/:movieId/cities', movieController.getCitiesByMovieId);
 
-router.get('/:id', movieController.getMoviesByDate)
+router.get('/:movieId/date', movieController.getMoviesByDate)
 
 
 module.exports = router;
