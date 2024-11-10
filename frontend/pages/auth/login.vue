@@ -26,10 +26,13 @@ import { useRouter } from 'vue-router';
 import axios from 'axios'; 
 const router = useRouter();
 import {userInforStore} from "~/stores/userInfor.js";
+import {previousPageStore} from "~/stores/previousPage.js";
+
 const email = ref('')
 const password = ref('')
 const rememberMe = ref(false)
 const userInforStoreRef = userInforStore()
+const previousPageStoreRef = previousPageStore()
 
 const validateLoginData = () => {
   if (!email.value || !password.value) {
@@ -63,7 +66,11 @@ const login = async () => {
         email: response.data.user.email,
         token: response.data.token
       })
-      await router.push('/');
+      if(previousPageStoreRef.getPreviousPage !== ""){
+        await router.push(previousPageStoreRef.getPreviousPage)
+      } else {
+        await router.push('/');
+      }
     } else {
       alert('Đăng nhập thất bại, không nhận được token');
     }

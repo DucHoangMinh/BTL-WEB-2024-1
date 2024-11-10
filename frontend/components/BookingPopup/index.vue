@@ -84,7 +84,7 @@ const dateList = computed(() => {
   const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
   const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 7; i++) {
     const currentDate = new Date()
     currentDate.setDate(today.getDate() + i)
     
@@ -158,7 +158,7 @@ const dateList = computed(() => {
       cursor: pointer
       border: 1px solid #ddd
       border-radius: 4px
-      min-width: 60px
+      min-width: 160px
       &.active
         background: #000
         color: white
