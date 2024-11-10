@@ -34,11 +34,12 @@ div
                 .movie-release-period.d-flex.align-center
                   v-icon.mr-2 mdi mdi-clock-time-four-outline
                   span {{movie.duration}} PhĂºt
-      .promotion-list
-        v-row(v-for="(promotion, index) in promotionList" :key="index")
-          v-col(cols="4")
-            .promotion-item
-              img(:src="promotion.thumbnail")
+      .promotion-list.text-center
+        p.film-filter-title.my-6 Danh sách sự kiện
+        div(v-for="(promotion, index) in promotionList" :key="index").text-center
+          div(v-if="index <3").text-center
+            .promotion-item.text-center
+              img(:src="promotion.preview_image")
 
 </template>
 <script setup>
