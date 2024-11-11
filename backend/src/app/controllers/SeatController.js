@@ -183,44 +183,48 @@ createSeats = async (req, res) => {
   
  
   bookSeat = async (req, res) => {
-    const { room_id, seat_id } = req.params;
+    const { room_id, seat_id, showtime_id } = req.params;
     const { user_id } = req.body;
 
     const currentTime = new Date();
     const holdTime = new Date(currentTime.getTime() + 10 * 60 * 1000); // Giữ chỗ trong 10 phút
 
     try {
-       
-        const seat = await prisma.seat.findUnique({
-            where: { id: parseInt(seat_id) },
+        // Kiểm tra ghế có tồn tại và thuộc phòng, suất chiếu đã chọn
+        const seat = await prisma.seat.findFirst({
+            where: {
+                id: parseInt(seat_id),
+                room_id: parseInt(room_id),
+                showtime_id: parseInt(showtime_id), // Kiểm tra suất chiếu
+            },
         });
 
-        if (!seat || seat.room_id !== parseInt(room_id)) {
-            return res.status(404).json({ message: 'Seat not found in this room' });
+        if (!seat) {
+            return res.status(404).json({ message: 'Seat not found in this room for the selected showtime' });
         }
 
-      
+        // Kiểm tra nếu ghế đã được đặt
         if (seat.status !== 'available') {
             return res.status(400).json({ message: 'Seat is not available for booking' });
         }
 
-      
+        // Đặt ghế trong trạng thái "on-hold" cho suất chiếu đã chọn
         await prisma.seat.update({
             where: { id: parseInt(seat_id) },
             data: {
                 status: 'on-hold',
                 hold_until: holdTime,
-                is_paid: false 
+                is_paid: false,
+                showtime_id: parseInt(showtime_id), // Gắn suất chiếu vào ghế đã đặt
             },
         });
 
-        return res.status(200).json({ message: 'Seat successfully put on hold for booking.' });
+        return res.status(200).json({ message: 'Seat successfully put on hold for booking for the selected showtime.' });
     } catch (error) {
         console.error('Error booking seat:', error);
         return res.status(500).json({ message: 'Internal Server Error' });
     }
-}
-
+  };
 
   confirmPayment = async (req, res) => {
     const { room_id, seat_id } = req.params;
@@ -228,35 +232,44 @@ createSeats = async (req, res) => {
     const currentTime = new Date();
 
     try {
-        
-        const seat = await prisma.seat.findUnique({
-            where: { id: parseInt(seat_id) },
+        // Tìm ghế với điều kiện room_id và showtime_id để chắc chắn suất chiếu đúng
+        const seat = await prisma.seat.findFirst({
+            where: {
+                id: parseInt(seat_id),
+                room_id: parseInt(room_id),
+                showtime_id: parseInt(showtime_id),
+            },
         });
 
-        if (!seat || seat.room_id !== parseInt(room_id)) {
-            return res.status(404).json({ message: 'Seat not found in this room' });
+        if (!seat) {
+            return res.status(404).json({ message: 'Seat not found in this room for the selected showtime' });
         }
 
-        if (seat.status !== 'on-hold' || seat.is_paid || seat.hold_until < currentTime) {
-            return res.status(400).json({ message: 'Seat cannot be confirmed for payment. Either it is already paid or hold time has expired.' });
+        if (seat.status !== 'on-hold' || seat.is_paid) {
+            return res.status(400).json({ message: 'Seat is not available for payment. It may already be paid or is no longer on hold.' });
         }
 
-       
+        if (seat.hold_until < currentTime) {
+            return res.status(400).json({ message: 'Hold time for the seat has expired' });
+        }
+
+        // Cập nhật ghế thành trạng thái "paid"
         await prisma.seat.update({
             where: { id: parseInt(seat_id) },
             data: {
                 status: 'paid',
                 is_paid: true,
-                hold_until: null 
+                hold_until: null,
             },
         });
 
+        // Tạo vé mới cho người dùng với thông tin suất chiếu và khuyến mãi
         const newTicket = await prisma.ticket.create({
             data: {
-                user_id: user_id,
-                showtime_id: showtime_id,
-                seat_id: seat_id,
-                promotion_id: promotion_id || null, 
+                user_id: parseInt(user_id),
+                showtime_id: parseInt(showtime_id),
+                seat_id: parseInt(seat_id),
+                promotion_id: promotion_id ? parseInt(promotion_id) : null,
                 status: 'paid',
             },
         });
@@ -271,7 +284,6 @@ createSeats = async (req, res) => {
     }
   };
 
- 
 }
 
 module.exports = new SeatsController();
