@@ -19,8 +19,8 @@
     
     .city-section
       .city-list
-        .city-item(v-for="city in cities" :key="city" :class="{ active: selectedCity === city }" @click="selectCity(city)")
-          span {{ city }}
+        .city-item(v-for="city in cities" :key="city" :class="{ active: selectedCity === city.city }" @click="selectCity(city.city)")
+          span {{ city.city }}
     
     .format-section
       .format-button.active 2D Phụ Đề Anh
@@ -31,9 +31,14 @@
         .showtime-list
           .showtime(v-for="time in theater.times" :key="time" @click="selectShowtime(theater, time)")
             span {{ time }}
+    div.text-center
+      v-btn(variant="outlined").text-right
+        | Xác nhận
 </template>
 
 <script setup>
+import axios from "axios";
+
 const props = defineProps({
   isOpen: Boolean,
   movieId: Number
@@ -44,28 +49,24 @@ const emit = defineEmits(['close'])
 const today = new Date()
 const selectedDate = ref(today.toISOString().split('T')[0])
 const selectedCity = ref('')
-const cities = ref(['Hồ Chí Minh', 'Hà Nội', 'Đà Nẵng', 'Cần Thơ', 'Đồng Nai'])
-const theaters = ref([
-  {
-    name: 'CGV Vincom Thủ Đức',
-    times: ['14:15 PM', '15:20 PM', '16:15 PM', '17:00 PM', '19:45 PM', '21:15 PM', '22:30 PM']
-  },
-  {
-    name: 'CGV Vincom Center Landmark 81',
-    times: ['13:30 PM', '15:45 PM', '18:00 PM', '20:15 PM', '22:45 PM']
-  }
-])
+const cities = ref([])
+const theaters = ref([])
 
 const closePopup = () => {
   emit('close')
 }
 
-const selectDate = (date) => {
+const selectDate = async (date) => {
   selectedDate.value = date
+  cities.value = []
+  theaters.value = []
+  selectedCity.value = ''
+  await getProvinceHaveMovieByDay()
 }
 
-const selectCity = (city) => {
+const selectCity = async (city) => {
   selectedCity.value = city
+  await getTheaterByCityAndDay()
 }
 
 const getWeekday = (date) => {
@@ -98,6 +99,26 @@ const dateList = computed(() => {
   
   return dates
 })
+const getProvinceHaveMovieByDay = async () => {
+  try {
+    const {data} = await axios.get(`https://api-btl-web-2024-1.vercel.app/movies/${props.movieId}/cities?date=${selectedDate.value}`)
+    cities.value = data.cities
+  } catch (e) {
+    console.log(e)
+  }
+}
+const getTheaterByCityAndDay = async () => {
+  try {
+    const {data} = await axios.get(`https://api-btl-web-2024-1.vercel.app/movie-theaters/available/theaters?city=${encodeURIComponent(selectedCity.value)}&movieId=${props.movieId}&date=${selectedDate.value}`)
+    theaters.value = data
+  } catch (e) {
+    console.log(e)
+  }
+}
+const initData = async () => {
+  await getProvinceHaveMovieByDay()
+}
+onMounted(initData)
 </script>
 
 <style scoped lang="sass">

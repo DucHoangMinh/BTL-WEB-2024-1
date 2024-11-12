@@ -47,18 +47,18 @@ class ShowtimeController {
   };
 
   async getShowtimesByTheaterAndMovie(req, res) {
-    const { theaterId, movieId } = req.query;
+    const { theaterId, movieId, date } = req.query;
 
-    if (!theaterId || !movieId) {
-      return res.status(400).json({ message: 'theaterId and movieId are required' });
+    if (!theaterId || !movieId || !date) {
+      return res.status(400).json({ message: 'theaterId, movieId, and date are required' });
     }
 
     try {
-  
       const showtimes = await prisma.showtime.findMany({
         where: {
           movie_id: parseInt(movieId),
-          room: {
+          show_date: new Date(date), // Thêm điều kiện ngày để lọc theo ngày được chọn
+          Room: {
             movie_theater_id: parseInt(theaterId),
           },
         },
@@ -76,9 +76,8 @@ class ShowtimeController {
         },
       });
 
-   
       if (showtimes.length === 0) {
-        return res.status(404).json({ message: 'No showtimes found for this movie at the selected theater' });
+        return res.status(404).json({ message: 'No showtimes found for this movie at the selected theater on the chosen date' });
       }
 
       return res.status(200).json({
@@ -90,6 +89,7 @@ class ShowtimeController {
       return res.status(500).json({ message: 'Internal Server Error' });
     }
   }
+
 }
 
 

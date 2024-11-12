@@ -189,7 +189,7 @@ class MovieController {
     }
   };
 
-
+  // Xóa một bộ phim dựa vào ID
   deleteMovie = async (req, res) => {
     const { id } = req.params;
 
@@ -208,11 +208,15 @@ class MovieController {
     }
   };
 
-
+  //Lấy ra các thành phố có phim đã chọn thuộc ngày đã chọn
   async getCitiesByMovieId(req, res) {
     const { movieId } = req.params;
-
+    const { date } = req.query; 
+  
     try {
+      const selectedDate = new Date(date);
+      selectedDate.setUTCHours(0, 0, 0, 0); // Đặt thời gian về 0h00 để chỉ so sánh phần ngày
+  
       const cities = await prisma.movieTheater.findMany({
         where: {
           Rooms: {
@@ -220,21 +224,23 @@ class MovieController {
               Showtime: {
                 some: {
                   movie_id: parseInt(movieId),
+                  show_date: selectedDate, // Chỉ so sánh phần ngày đã chọn
                 },
               },
             },
           },
         },
-        Theater: {select: { city: true }},
-        distinct: ['Theater.city'],
+        select: { city: true },
+        distinct: ['city'],
       });
-
+  
       res.status(200).json({ cities });
     } catch (error) {
       console.error('Error fetching cities:', error);
       res.status(500).json({ message: 'Internal Server Error' });
     }
   }
+  
 
   getMoviesByDate = async(req, res) => {
     const { date } = req.params;
@@ -255,8 +261,8 @@ class MovieController {
         },
         include: {
           Movie: true,
-        },
-      });
+      },
+    });
 
 
       const uniqueMovies = [...new Map(movies.map(showtime => [showtime.Movie.id, showtime.Movie])).values()];

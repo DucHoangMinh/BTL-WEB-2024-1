@@ -52,8 +52,8 @@ GET: http://localhost:3000/api/movies/:movieId
 Trả về bộ phim với Id tương ứng kèm Showtimes và feedback ( tôi có thể chỉnh lại sau để chia nhỏ ra)  
 
 
-GET: http://localhost:3000/api/movies/3/cities  
-Trả về danh sách các thành phố có rạp chiếu bộ phim với movie_id được chọn
+GET: http://localhost:3000/api/movies/3/cities?date=2024-11-07
+Trả về danh sách các thành phố có rạp chiếu bộ phim với movie_id được chọn, thuộc ngày đã chọn  
 ```
 {
     "cities": [
@@ -63,9 +63,9 @@ Trả về danh sách các thành phố có rạp chiếu bộ phim với movie_
     ]
 }
 ```
-http://localhost:3000/api/movie-theaters/available/theaters?city=<city>&movieId=<movieId>  
-http://localhost:3000/api/movie-theaters/available/theaters?city=TP.%20Hồ%20Chí%20Minh&movieId=3  
-Trả về danh sách các rạp có phim đã chọn, thuộc thành phố đã chọn  
+http://localhost:3000/api/movie-theaters/available/theaters?city=<city>&movieId=<movieId>&date=<yyy-mm-dd> 
+http://localhost:3000/api/movie-theaters/available/theaters?city=TP.%20Hồ%20Chí%20Minh&movieId=3&date=2024-11-07
+Trả về danh sách các rạp có phim đã chọn, thuộc thành phố và ngày đã chọn  
 ```
 [
     {
@@ -78,8 +78,8 @@ Trả về danh sách các rạp có phim đã chọn, thuộc thành phố đã
     }
 ]
 ```
-http://localhost:3000/api/showtimes/available?movieId=<movieId>&theaterId=<theaterId>  
-http://localhost:3000/api/showtimes/available?movieId=3&theaterId=2  
+http://localhost:3000/api/showtimes/available?movieId=<movieId>&theaterId=<theaterId>&date=<yyyy-mm-dd>  
+http://localhost:3000/api/showtimes/available?movieId=3&theaterId=2&date=2024-11-07  
 Trả về các suất chiếu của phim và rạp đã chọn  
 ```
 [
@@ -141,6 +141,7 @@ Trả về danh sách ghế của phòng chiếu với suất chiếu đã chọ
 - Tham số:
     - room_id (URL param, bắt buộc): ID của phòng chứa ghế.
     - seat_id (URL param, bắt buộc): ID của ghế muốn đặt.
+    - showtime_id (URL param, bắt buộc): ID của suất chiếu mà ghế thuộc về.
 - Yêu cầu Body:
     - user_id (integer, bắt buộc): ID của người dùng đặt ghế.
 ## Xác Nhận Thanh Toán và Tạo Vé (Confirm Payment)
