@@ -142,8 +142,13 @@ class MovieTheaterController {
     }
   };
 
+  //Lấy danh sách rạp trong thành phố có chiếu phim
   async getTheatersByCityAndMovie(req, res) {
-    const { city, movieId } = req.query;
+    const { city, movieId, date } = req.query;
+
+    if (!city || !movieId || !date) {
+      return res.status(400).json({ message: 'city, movieId, and date are required' });
+    }
 
     try {
       const theaters = await prisma.movieTheater.findMany({
@@ -154,6 +159,7 @@ class MovieTheaterController {
               Showtime: {
                 some: {
                   movie_id: parseInt(movieId),
+                  show_date: new Date(date), 
                 },
               },
             },
@@ -162,12 +168,18 @@ class MovieTheaterController {
         select: { id: true, name: true },
       });
 
+      if (theaters.length === 0) {
+        return res.status(404).json({ message: 'Không tìm thấy rạp nào có phim này trong thành phố và ngày đã chọn' });
+      }
+
       res.status(200).json(theaters);
     } catch (error) {
       console.error('Error fetching theaters:', error);
       res.status(500).json({ message: 'Internal Server Error' });
     }
   }
+
+
   getMovieTheatersByDate = async(req, res) => {
     const { movieId, date } = req.params;
 

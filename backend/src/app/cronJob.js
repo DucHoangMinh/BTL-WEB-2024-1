@@ -31,7 +31,7 @@ cron.schedule('* * * * *', async () => {
 
       console.log(`${seatIds.length} expired seats have been released.`);
     } else {
-      console.log("No expired seats to release.");
+      // console.log("No expired seats to release.");
     }
   } catch (error) {
     console.error('Error releasing expired seats:', error);
