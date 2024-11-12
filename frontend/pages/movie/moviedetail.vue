@@ -26,6 +26,7 @@
       :is-open="isBookingPopupOpen"
       :movie-id="movieId"
       @close="closeBookingPopup"
+      v-if="isBookingPopupOpen"
     />
   </div>
 </template>
