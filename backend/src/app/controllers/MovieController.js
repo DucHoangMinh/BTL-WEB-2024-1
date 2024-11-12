@@ -271,6 +271,28 @@ class MovieController {
     }
   }
 
+  getMovieByTheater = async(req, res) => {
+    const {theater} =req.params;
+    try {
+      const movie = await prisma.movieTheater.Movie.findMany({
+        where: {
+          Rooms: {
+            some: {
+              Showtime: {
+                some: {
+                  movie_id: parseInt(movieId),
+                },
+              },
+            },
+          },
+        },
+      }
+
+      )
+
+    }
+  }
+
 }
 
 module.exports = new MovieController();
