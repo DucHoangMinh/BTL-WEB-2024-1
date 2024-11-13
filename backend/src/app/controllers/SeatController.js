@@ -7,20 +7,25 @@ class SeatsController {
     const { room_id } = req.params;
 
     try {
-      const seats = await prisma.seat.findMany({
-        where: { room_id: parseInt(room_id) }
-      });
+        const seats = await prisma.seat.findMany({
+            where: { room_id: parseInt(room_id) },
+            orderBy: [
+                { row: 'asc' },     // Sắp xếp theo hàng (A, B, C, ...)
+                { column: 'asc' }   // Sắp xếp theo cột (1, 2, 3, ...)
+            ]
+        });
 
-      if (seats.length === 0) {
-        return res.status(404).json({ message: 'No seats found for this room' });
-      }
+        if (seats.length === 0) {
+            return res.status(404).json({ message: 'No seats found for this room' });
+        }
 
-      return res.status(200).json(seats);
+        return res.status(200).json(seats);
     } catch (error) {
-      console.error('Error fetching seats:', error);
-      return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error fetching seats:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
-  };
+};
+
 
   // Thêm một hoặc nhiều ghế vào phòng chiếu
 //   createSeats = async (req, res) => {
