@@ -21,6 +21,9 @@ router.delete('/:id', movieTheaterController.deleteMovieTheater);
 // Lấy danh sách các rạp chiếu trong một thành phố có chiếu phim
 router.get('/available/theaters', movieTheaterController.getTheatersByCityAndMovie);
 
+// Lấy danh sách các rạp chiếu và suất chiếu tương ứng trong một thành phố có chiếu phim
+router.get('/available/theaters/showtimes', movieTheaterController.getTheatersWithShowtimesByCityAndMovie);
+
 router.get('/theaters/date', movieTheaterController.getMovieTheatersByDate);
 
 module.exports = router;
