@@ -39,60 +39,59 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "PaymentPage",
-  props: {
-    movieName: {
-      type: String,
-      required: false,
-      default: "Tên phim chưa có",
-    },
-    showtime: {
-      type: String,
-      required: false,
-      default: "Suất chiếu chưa có",
-    },
-    selectedSeats: {
-      type: Array,
-      required: false,
-      default: () => [],
-    },
-    totalPrice: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
-    cinemaName: {
-      type: String,
-      required: false,
-      default: "Rạp chưa có",
-    },
-    screenNumber: {
-      type: String,
-      required: false,
-      default: "Screen chưa có",
-    },
-    showDate: {
-      type: String,
-      required: false,
-      default: "Ngày chiếu chưa có",
-    },
-    moviePoster: {
-      type: String,
-      required: false,
-      default: "https://via.placeholder.com/100", // Đường dẫn mặc định cho poster phim
-    },
+<script setup>
+import { defineProps } from 'vue';
+
+// Định nghĩa các props
+const props = defineProps({
+  movieName: {
+    type: String,
+    required: false,
+    default: 'Tên phim chưa có',
   },
-  methods: {
-    handlePayment() {
-      // Hiển thị hộp thoại xác nhận với nội dung "Bạn có chắc chắn muốn thanh toán không?"
-      if (window.confirm("Bạn có chắc chắn muốn thanh toán không?")) {
-        // Nếu người dùng chọn "OK", tiến hành thanh toán
-        //alert("Thanh toán thành công! Cảm ơn bạn đã đặt vé.");
-      } 
-    },
+  showtime: {
+    type: String,
+    required: false,
+    default: 'Suất chiếu chưa có',
   },
+  selectedSeats: {
+    type: Array,
+    required: false,
+    default: () => [],
+  },
+  totalPrice: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
+  cinemaName: {
+    type: String,
+    required: false,
+    default: 'Rạp chưa có',
+  },
+  screenNumber: {
+    type: String,
+    required: false,
+    default: 'Screen chưa có',
+  },
+  showDate: {
+    type: String,
+    required: false,
+    default: 'Ngày chiếu chưa có',
+  },
+  moviePoster: {
+    type: String,
+    required: false,
+    default: 'https://via.placeholder.com/100',
+  },
+});
+
+// Hàm xử lý thanh toán
+const handlePayment = () => {
+  if (window.confirm('Bạn có chắc chắn muốn thanh toán không?')) {
+    // Nếu người dùng chọn "OK", tiến hành thanh toán
+    // alert("Thanh toán thành công! Cảm ơn bạn đã đặt vé.");
+  }
 };
 </script>
 

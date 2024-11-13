@@ -27,6 +27,7 @@
       :movie-id="movieId"
       @close="closeBookingPopup"
       v-if="isBookingPopupOpen"
+      @finish_choose_place="finishChoosePlace"
     />
   </div>
 </template>
@@ -41,6 +42,12 @@ const router = useRouter()
 const movie = ref({})
 const isBookingPopupOpen = ref(false)
 const movieId = ref(null)
+
+const finishChoosePlace = () => {
+  // Validate data before go to sheet page
+
+  router.push(`/seat-select?room=1&showtime=1`)
+}
 
 const getMovieDetail = async () => {
   try{

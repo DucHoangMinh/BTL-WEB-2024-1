@@ -31,10 +31,29 @@
         .d-flex.mr-6
           v-icon(style="color: #e96106").mr-1 mdi mdi-sofa-single
           p Ghế đã bị mua
+    pre-payment
 </template>
 <script setup>
+import axios from "axios";
+
+const route = useRoute()
+
 const seatRowList = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 const seatColumnList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14]
+
+const getSeatStatusList = async () => {
+  try {
+    const { data } = await axios.get(`https://api-btl-web-2024-1.vercel.app/rooms/${route.query['room']}/seats/showtime/${route.query['showtime']}`)
+    console.log(data)
+  } catch (e) {
+    console.log(e)
+    alert("Có lỗi xảy ra, vui lòng liên hệ với nhà quản trị trang web!")
+  }
+}
+const init = async () => {
+  await getSeatStatusList()
+}
+onMounted(init)
 </script>
 <style scoped lang="sass">
 .screen
