@@ -5,36 +5,38 @@
       <img class="movie-poster" :src="moviePoster" alt="Poster phim" />
       <div class="movie-info">
         <h2 class="movie-title">{{ movieName }}</h2>
-        <p>
-          Ngày chiếu: <span>{{ showDate }}</span>
-        </p>
-        <p>
-          Suất chiếu: <span>{{ showtime }}</span>
-        </p>
-        <p>
-          Rạp chiếu: <span>{{ cinemaName }}</span>
-        </p>
-        <p>
-          Phòng chiếu: <span>{{ screenNumber }}</span>
-        </p>
-        <p>
-          Ghế ngồi: <span>{{ selectedSeats.join(", ") }}</span>
-        </p>
+        <div class="info-item">
+          <span class="info-label">Ngày chiếu:</span>
+          <span class="info-value">{{ showDate }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Suất chiếu:</span>
+          <span class="info-value">{{ showtime }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Rạp chiếu:</span>
+          <span class="info-value">{{ cinemaName }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Phòng chiếu:</span>
+          <span class="info-value">{{ screenNumber }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Ghế ngồi:</span>
+          <span class="info-value">{{ selectedSeats.join(", ") }}</span>
+        </div>
       </div>
-      <div class="ticket-price">{{ totalPrice }} ₫</div>
     </div>
 
     <!-- Tổng số tiền -->
     <div class="total-amount">
-      <span>Tổng số tiền đặt hàng</span>
-      <span class="total-price">{{ totalPrice }} ₫</span>
+      <span class="total-label">Tổng số tiền đặt hàng:</span>
+      <span class="total-price">{{ totalPrice.toLocaleString() }} ₫</span>
     </div>
 
     <!-- Nút Thanh Toán -->
     <div class="payment-section">
-      <button class="confirm-payment-button" @click="handlePayment">
-        Thanh Toán
-      </button>
+      <button class="confirm-payment-button" @click="handlePayment">Thanh Toán</button>
     </div>
   </div>
 </template>
@@ -90,37 +92,40 @@ const props = defineProps({
 const handlePayment = () => {
   if (window.confirm('Bạn có chắc chắn muốn thanh toán không?')) {
     // Nếu người dùng chọn "OK", tiến hành thanh toán
-    // alert("Thanh toán thành công! Cảm ơn bạn đã đặt vé.");
+    
   }
 };
 </script>
 
 <style scoped lang="scss">
 .payment-container {
+  display: flex;
+  justify-content: space-between;
+  //align-items: flex-start;
   background-color: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-  width: 80%;
-  max-width: 800px;
-  margin: 40px auto;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  width: 95%;
+ // max-width: 1200px;
+  margin: 50px auto;
 }
 
 .order-summary {
   display: flex;
   align-items: center;
-  background-color: #f9f9f9;
+  background-color: #fafafa;
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  width: 50%;
 }
 
 .movie-poster {
-  width: 100px;
+  width: 120px;
   height: auto;
-  border-radius: 8px;
-  margin-right: 20px;
+  border-radius: 12px;
+ margin-right: 20px;
 }
 
 .movie-info {
@@ -128,53 +133,75 @@ const handlePayment = () => {
 }
 
 .movie-title {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   color: #333;
 }
 
-.ticket-price {
-  font-size: 20px;
+.info-item {
+  margin-bottom: 10px;
+}
+
+.info-label {
+  font-weight: 500;
+  color: #555;
+}
+
+.info-value {
   font-weight: bold;
-  color: #e50914;
+  color: #222;
 }
 
 .total-amount {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  background-color: #f5f5f5;
-  padding: 15px;
-  font-size: 18px;
+  background-color: #f9f9f9;
+  padding: 20px;
+  font-size: 20px;
   font-weight: bold;
-  border-radius: 10px;
-  margin-bottom: 20px;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  width: 25%;
+  margin: 0 20px;
+}
+
+.total-label {
+  font-size: 18px;
+  color: #333;
 }
 
 .total-price {
-  color: #e50914;
+  color: #000000;
+  font-size: 22px;
+  margin-top: 10px;
 }
 
 .payment-section {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
+  align-items: flex-end;
+  width: 20%;
 }
 
 .confirm-payment-button {
-  padding: 15px 30px;
-  background-color: #e50914;
+  padding: 15px 35px;
+  background-color: #000000;
   color: #fff;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .confirm-payment-button:hover {
   background-color: #d40813;
-  transform: scale(1.05);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 </style>
