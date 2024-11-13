@@ -151,40 +151,45 @@ createSeats = async (req, res) => {
   getSeatsByShowtimeAndRoom = async (req, res) => {
     const { room_id, showtime_id } = req.params;
   
-  
+    // Kiểm tra tính hợp lệ của room_id và showtime_id
     if (!room_id || isNaN(room_id) || !showtime_id || isNaN(showtime_id)) {
-      return res.status(400).json({ message: 'Invalid room_id or showtime_id' });
+        return res.status(400).json({ message: 'Invalid room_id or showtime_id' });
     }
   
     try {
-      const seats = await prisma.seat.findMany({
-        where: {
-          room_id: parseInt(room_id),
-          showtime_id: parseInt(showtime_id),
-        },
-        select: {
-          id: true,
-          seat_number: true,
-          seat_type: true,
-          row: true,
-          column: true,
-          status: true, 
-          hold_until: true,
-          is_paid: true,
-        },
-      });
+        const seats = await prisma.seat.findMany({
+            where: {
+                room_id: parseInt(room_id),
+                showtime_id: parseInt(showtime_id),
+            },
+            select: {
+                id: true,
+                seat_number: true,
+                seat_type: true,
+                row: true,
+                column: true,
+                status: true, 
+                hold_until: true,
+                is_paid: true,
+            },
+            orderBy: [
+                { row: 'asc' },     // Sắp xếp theo hàng (A, B, C, ...)
+                { column: 'asc' }   // Sắp xếp theo cột (1, 2, 3, ...)
+            ]
+        });
   
-    
-      if (seats.length === 0) {
-        return res.status(404).json({ message: 'No seats found for the specified room and showtime' });
-      }
+        // Kiểm tra nếu không tìm thấy ghế
+        if (seats.length === 0) {
+            return res.status(404).json({ message: 'No seats found for the specified room and showtime' });
+        }
   
-      return res.status(200).json(seats);
+        return res.status(200).json(seats); // Trả về danh sách ghế đã sắp xếp
     } catch (error) {
-      console.error('Error fetching seats with status for showtime:', error);
-      return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error fetching seats with status for showtime:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
   };
+
   
  
   bookSeat = async (req, res) => {
