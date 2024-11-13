@@ -51,11 +51,11 @@ export default {
   name: "QrPaymentPage",
   data() {
     return {
-      totalPrice: 65000, // Giá trị đơn hàng
-      orderId: "54494896", // Mã đơn hàng
-      supplier: "CÔNG TY TNHH LOTTECINEMA VIỆT NAM", // Nhà cung cấp
-      qrCodeUrl: "https://via.placeholder.com/150", // Đường dẫn giả định cho QR Code (sẽ cần thay bằng URL thật)
-      countdown: 600, // 10 phút (600 giây)
+      totalPrice: 65000, 
+      orderId: "54494896", 
+      supplier: "CÔNG TY TNHH 8MOVIES VIỆT NAM", 
+      qrCodeUrl: "https://via.placeholder.com/150", 
+      countdown: 600, 
     };
   },
   computed: {
@@ -70,27 +70,26 @@ export default {
   },
   methods: {
     handleCancel() {
-      // Xử lý khi người dùng nhấn "Hủy thanh toán"
       if (window.confirm("Bạn có chắc chắn muốn hủy thanh toán không?")) {
         alert("Thanh toán đã được hủy.");
-        this.$router.push("/"); // Điều hướng về trang chủ sau khi hủy thanh toán
+        this.$router.push("/"); 
       }
     },
   },
   mounted() {
-    // Đếm ngược thời gian
+    
     this.timer = setInterval(() => {
       if (this.countdown > 0) {
         this.countdown--;
       } else {
         clearInterval(this.timer);
         alert("Giao dịch đã hết hạn! Vui lòng thực hiện lại thanh toán.");
-        this.$router.push("/"); // Điều hướng về trang chủ khi hết thời gian
+        this.$router.push("/"); 
       }
     }, 1000);
   },
   beforeDestroy() {
-    // Xóa bộ đếm giờ khi component bị hủy
+    
     clearInterval(this.timer);
   },
 };
@@ -172,16 +171,29 @@ export default {
 }
 
 .qr-code {
-  width: 150px;
-  height: 150px;
+  width: 250px;
+  height: 250px;
   margin: 20px 0;
 }
 
 .countdown {
-  font-size: 16px;
+  font-size: 24px;
   font-weight: bold;
   color: #e50914;
   margin-bottom: 20px;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .cancel-payment-button {
