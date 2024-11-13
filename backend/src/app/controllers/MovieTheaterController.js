@@ -179,6 +179,77 @@ class MovieTheaterController {
     }
   }
 
+  async getTheatersWithShowtimesByCityAndMovie(req, res) {
+    const { city, movieId, date } = req.query;
+  
+    // Kiểm tra đầu vào
+    if (!city || !movieId || !date) {
+      return res.status(400).json({ message: 'city, movieId, and date are required' });
+    }
+  
+    try {
+      const theaters = await prisma.movieTheater.findMany({
+        where: {
+          city: city,
+          Rooms: {
+            some: {
+              Showtime: {
+                some: {
+                  movie_id: parseInt(movieId),
+                  show_date: new Date(date),
+                },
+              },
+            },
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          Rooms: {
+            select: {
+              id: true,
+              name: true,
+              Showtime: {
+                where: {
+                  movie_id: parseInt(movieId),
+                  show_date: new Date(date),
+                },
+                select: {
+                  id: true,
+                  show_date: true,
+                  start_time: true,
+                  end_time: true,
+                  price: true,
+                },
+              },
+            },
+          },
+        },
+      });
+  
+      // Kiểm tra nếu không có rạp nào được tìm thấy
+      if (theaters.length === 0) {
+        return res.status(404).json({ message: 'Không tìm thấy rạp nào có phim này trong thành phố và ngày đã chọn' });
+      }
+  
+      // Lọc chỉ giữ lại các phòng có suất chiếu
+      const result = theaters.map(theater => ({
+        id: theater.id,
+        name: theater.name,
+        rooms: theater.Rooms.filter(room => room.Showtime.length > 0).map(room => ({
+          id: room.id,
+          name: room.name,
+          showtimes: room.Showtime,
+        })),
+      })).filter(theater => theater.rooms.length > 0);
+  
+      res.status(200).json(result);
+    } catch (error) {
+      console.error('Error fetching theaters and showtimes:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  }
+  
 
   getMovieTheatersByDate = async(req, res) => {
     const { movieId, date } = req.params;

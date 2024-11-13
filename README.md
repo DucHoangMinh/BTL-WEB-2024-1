@@ -78,6 +78,76 @@ Trả về danh sách các rạp có phim đã chọn, thuộc thành phố và 
     }
 ]
 ```
+http://localhost:3000/api/movie-theaters/available/theaters/showtimes?city=TP.%20H%E1%BB%93%20Ch%C3%AD%20Minh&movieId=3&date=2024-11-07  
+Trả về danh sách các rạp và suất chiếu tương ứng có phim đã chọn, thuộc thành phố và ngày đã chọn
+```
+[
+    {
+        "id": 1,
+        "name": "8Movies Nam Sài Gòn",
+        "rooms": [
+            {
+                "id": 1,
+                "name": "Rạp 1",
+                "showtimes": [
+                    {
+                        "id": 1,
+                        "show_date": "2024-11-07T00:00:00.000Z",
+                        "start_time": "2024-11-07T10:00:00.000Z",
+                        "end_time": "2024-11-07T12:00:00.000Z",
+                        "price": 10.5
+                    }
+                ]
+            },
+            {
+                "id": 2,
+                "name": "Rạp 2",
+                "showtimes": [
+                    {
+                        "id": 2,
+                        "show_date": "2024-11-07T00:00:00.000Z",
+                        "start_time": "2024-11-07T10:00:00.000Z",
+                        "end_time": "2024-11-07T12:00:00.000Z",
+                        "price": 10.5
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "name": "Rạp 3",
+                "showtimes": [
+                    {
+                        "id": 3,
+                        "show_date": "2024-11-07T00:00:00.000Z",
+                        "start_time": "2024-11-07T10:00:00.000Z",
+                        "end_time": "2024-11-07T12:00:00.000Z",
+                        "price": 10.5
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "name": "8Movies Cộng Hoà",
+        "rooms": [
+            {
+                "id": 12,
+                "name": "Rạp 2",
+                "showtimes": [
+                    {
+                        "id": 4,
+                        "show_date": "2024-11-07T00:00:00.000Z",
+                        "start_time": "2024-11-07T10:00:00.000Z",
+                        "end_time": "2024-11-07T12:00:00.000Z",
+                        "price": 10.5
+                    }
+                ]
+            }
+        ]
+    }
+]
+```
 http://localhost:3000/api/showtimes/available?movieId=<movieId>&theaterId=<theaterId>&date=<yyyy-mm-dd>  
 http://localhost:3000/api/showtimes/available?movieId=3&theaterId=2&date=2024-11-07  
 Trả về các suất chiếu của phim và rạp đã chọn  
