@@ -1,18 +1,28 @@
 <template>
   <div class="confirmation-container">
     <!-- Tiêu đề xác nhận -->
-    <h1 class="confirmation-title">Xác Nhận Đặt Ghế</h1>   
+    <h1 class="confirmation-title">Xác Nhận Đặt Ghế</h1>
 
     <!-- Thông tin phim -->
     <div class="order-summary">
       <img class="movie-poster" :src="moviePoster" alt="Poster phim" />
       <div class="movie-info">
         <h2 class="movie-title">{{ movieName }}</h2>
-        <p>Ngày chiếu: <span>{{ showDate }}</span></p>
-        <p>Suất Chiếu: <span>{{ showtime }}</span></p>
-        <p>Ghế Ngồi: <span>{{ selectedSeats.length > 0 ? selectedSeats.join(', ') : 'Không có ghế nào được chọn' }}</span></p>
+        <p>
+          Ngày chiếu: <span>{{ showDate }}</span>
+        </p>
+        <p>
+          Suất Chiếu: <span>{{ showtime }}</span>
+        </p>
+        <p>
+          Ghế Ngồi:
+          <span>{{
+            selectedSeats.length > 0
+              ? selectedSeats.join(", ")
+              : "Không có ghế nào được chọn"
+          }}</span>
+        </p>
       </div>
-      
     </div>
 
     <!-- Tổng số tiền -->
@@ -29,7 +39,6 @@
   </div>
 </template>
 
-
 <script>
 export default {
   name: "SeatConfirmation",
@@ -37,54 +46,61 @@ export default {
     movieName: {
       type: String,
       required: false,
-      default: "Chưa có tên phim"
+      default: "Chưa có tên phim",
     },
     showtime: {
       type: String,
       required: false,
-      default: "Chưa có suất chiếu"
+      default: "Chưa có suất chiếu",
     },
     selectedSeats: {
       type: Array,
       required: false,
-      default: () => []
+      default: () => [],
     },
     totalPrice: {
       type: Number,
       required: false,
-      default: 0
+      default: 0,
     },
     showDate: {
       type: String,
       required: false,
-      default: "Chưa có ngày chiếu"
+      default: "Chưa có ngày chiếu",
     },
     moviePoster: {
       type: String,
       required: false,
-      default: "https://via.placeholder.com/150" // Đường dẫn mặc định cho poster phim
-    }
+      default: "https://via.placeholder.com/150", // Đường dẫn mặc định cho poster phim
+    },
   },
   methods: {
     handleCancel() {
       // Điều hướng người dùng quay lại trang trước
       this.$router.go(-1);
     },
+    handleCancel() {
+      // Xác nhận hủy đặt vé trước khi quay lại trang trước
+      if (confirm("Bạn có chắc chắn muốn hủy đặt vé không?")) {
+        this.$router.go(-1);
+      }
+    },
+
     handleConfirm() {
       // Xác nhận đặt ghế, điều hướng tới trang thanh toán với thông tin cần thiết
       this.$router.push({
-        path: '/payment',
+        path: "/payment",
         query: {
           movieName: this.movieName,
           showtime: this.showtime,
-          selectedSeats: this.selectedSeats.join(','),
+          selectedSeats: this.selectedSeats.join(","),
           totalPrice: this.totalPrice,
           showDate: this.showDate,
-          moviePoster: this.moviePoster
-        }
+          moviePoster: this.moviePoster,
+        },
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -193,5 +209,3 @@ button {
   }
 }
 </style>
-
-
