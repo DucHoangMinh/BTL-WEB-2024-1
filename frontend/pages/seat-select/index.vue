@@ -36,7 +36,16 @@
       :total-price="tempPricePerSeat * currentUserSelected.length"
       :movie-name="movieDetail.title"
       :movie-poster="movieDetail.thumbnail"
+      @go_to_payment="gotoPayment"
     )
+confirmation(
+  v-if="openConfirmDialog"
+  @cancel="openConfirmDialog = false"
+  :selected-seats="currentUserSelected"
+  :total-price="tempPricePerSeat * currentUserSelected.length"
+  :movie-poster="movieDetail.thumbnail"
+  :movie-name="movieDetail.title"
+)
 </template>
 <script setup>
 import axios from "axios";
@@ -44,6 +53,7 @@ import {loadingStateStore} from "~/stores/loadingState.js";
 
 const loadingStateStoreRef = loadingStateStore()
 const route = useRoute()
+const router = useRouter()
 
 const seatRowList = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 const seatColumnList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14]
@@ -51,6 +61,7 @@ const seatColumnList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14]
 const tempPricePerSeat = 50000
 const currentUserSelected = ref([])
 const movieDetail = ref({})
+const openConfirmDialog = ref(false)
 
 const onChooseSeat = (row, column) => {
   if(currentUserSelected.value.includes(`${row}${column}`)){
@@ -86,6 +97,16 @@ const init = async () => {
   await getSeatStatusList()
   await getMovieDetailById()
   loadingStateStoreRef.setLoadingState(false)
+}
+const gotoPayment = async () => {
+  if (currentUserSelected.value.length === 0) {
+    alert("Bạn chưa chọn ghế nào!")
+    return
+  }
+  openConfirmDialog.value = true
+}
+const confirmGotoPayment = async () => {
+  router.push('/pay')
 }
 onMounted(init)
 </script>
