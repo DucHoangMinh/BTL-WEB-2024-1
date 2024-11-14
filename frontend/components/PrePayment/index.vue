@@ -10,19 +10,19 @@
           <span class="info-value">{{ showDate }}</span>
         </div>
         <div class="info-item">
-          <span class="info-label">Suất chiếu:</span>
+          <span class="info-label">Suất chiếu: </span>
           <span class="info-value">{{ showtime }}</span>
         </div>
         <div class="info-item">
-          <span class="info-label">Rạp chiếu:</span>
+          <span class="info-label">Rạp chiếu: </span>
           <span class="info-value">{{ cinemaName }}</span>
         </div>
         <div class="info-item">
-          <span class="info-label">Phòng chiếu:</span>
+          <span class="info-label">Phòng chiếu: </span>
           <span class="info-value">{{ screenNumber }}</span>
         </div>
         <div class="info-item">
-          <span class="info-label">Ghế ngồi:</span>
+          <span class="info-label">Ghế ngồi: </span>
           <span class="info-value">{{ selectedSeats.join(", ") }}</span>
         </div>
       </div>
