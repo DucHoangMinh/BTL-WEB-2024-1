@@ -46,7 +46,7 @@ const movieId = ref(null)
 const finishChoosePlace = () => {
   // Validate data before go to sheet page
 
-  router.push(`/seat-select?room=1&showtime=1`)
+  router.push(`/seat-select?room=1&showtime=1&movie_id=${route.query['id']}`)
 }
 
 const getMovieDetail = async () => {
