@@ -36,7 +36,7 @@
 
     <!-- Nút Thanh Toán -->
     <div class="payment-section">
-      <button class="confirm-payment-button" @click="handlePayment">Thanh Toán</button>
+      <button class="confirm-payment-button" @click="emit('go_to_payment')">Thanh Toán</button>
     </div>
   </div>
 </template>
@@ -44,6 +44,7 @@
 <script setup>
 import { defineProps } from 'vue';
 
+const emit = defineEmits(['go_to_payment'])
 // Định nghĩa các props
 const props = defineProps({
   movieName: {
