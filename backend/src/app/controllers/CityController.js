@@ -39,6 +39,8 @@ class CityController {
       res.status(500).json({ message: 'Internal Server Error' });
     }
   }
+
+  async getMovieBy
 }
 
 module.exports = new CityController();
