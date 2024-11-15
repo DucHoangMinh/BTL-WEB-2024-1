@@ -1,6 +1,9 @@
+const { PrismaClient } = require('@prisma/client');
+require('dotenv').config();
 
+const prisma = new PrismaClient();
 class QRPaymentController {
-    async create(req, res) {
+    create = async (req, res) => {
         // Create a QR code for the payment
         console.log(req.body)
         console.log(req)
