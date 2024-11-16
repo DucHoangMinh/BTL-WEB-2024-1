@@ -40,7 +40,7 @@ class CityController {
     }
   }
 
-  async getMovieBy
+ 
 }
 
 module.exports = new CityController();
