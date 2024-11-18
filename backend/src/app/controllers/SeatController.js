@@ -295,13 +295,13 @@ createSeats = async (req, res) => {
     }
   };
 
-  confirmQRPayment = async (req, res) => {
+  confirmPaymentByQRCode = async (req, res) => {
     const { room_id, seat_id } = req.params;
     const { user_id, showtime_id, promotion_id, amount } = req.body;
     const currentTime = new Date();
   
     try {
-    
+      // Kiểm tra trạng thái ghế
       const seat = await prisma.seat.findFirst({
         where: { id: parseInt(seat_id), room_id: parseInt(room_id), showtime_id: parseInt(showtime_id) },
       });
@@ -310,12 +310,13 @@ createSeats = async (req, res) => {
         return res.status(400).json({ message: 'Seat not available for payment.' });
       }
   
+      // Cập nhật trạng thái ghế thành "paid"
       await prisma.seat.update({
         where: { id: parseInt(seat_id) },
         data: { status: 'paid', is_paid: true, hold_until: null },
       });
   
-    
+      // Tạo vé mới
       const newTicket = await prisma.ticket.create({
         data: {
           user_id: parseInt(user_id),
@@ -326,34 +327,34 @@ createSeats = async (req, res) => {
         },
       });
   
-   
-      const vietQrUrl = 'https://api.vietqr.io/v2/generate';
-      const headers = {
-        'x-client-id': process.env.VIETQR_CLIENT_ID, 
-        'x-api-key': process.env.VIETQR_API_KEY, 
-        'Content-Type': 'application/json',
-      };
-      const qrPayload = {
-        accountNo: '113366668888',
-        accountName: 'Your Company Name', 
-        acqId: '970415', 
-        amount, 
-        addInfo: `Thanh toán vé ${newTicket.id}`, 
-        template: 'compact', 
-      };
+      // Gọi URL API VietQR để tạo mã QR
+      const bankCode = '970422'; // Mã ngân hàng (vietinbank là ví dụ)
+      const accountNumber = '9190163130063'; // Số tài khoản nhận
+      const template = 'Tp8VEQR'; // Loại template
+      const addInfo = `Thanh toan ve ${newTicket.id}`; // Nội dung giao dịch
   
-      const qrResponse = await axios.post(vietQrUrl, qrPayload, { headers });
+      // Tạo URL
+      const qrUrl = `https://img.vietqr.io/image/${bankCode}-${accountNumber}-${template}.jpg?`;
+      const params = new URLSearchParams({
+        amount: amount.toString(), // Số tiền
+        addInfo,
+        accountName: 'Your Company Name', // Tên tài khoản nhận
+      });
   
-      if (!qrResponse.data || !qrResponse.data.data.qrDataURL) {
+      // Lấy ảnh mã QR
+      const qrResponse = await axios.get(`${qrUrl}?${params.toString()}`, { responseType: 'arraybuffer' });
+  
+      if (!qrResponse || !qrResponse.data) {
         return res.status(500).json({ message: 'Failed to generate QR code from VietQR' });
       }
   
-      const qrCodeUrl = qrResponse.data.data.qrDataURL;
+      // Chuyển dữ liệu ảnh QR sang Base64
+      const qrCodeUrl = `data:image/jpeg;base64,${Buffer.from(qrResponse.data, 'binary').toString('base64')}`;
   
       return res.status(200).json({
         message: 'Payment confirmed, ticket created with QR code.',
         ticket: newTicket,
-        qrCodeUrl, 
+        qrCodeUrl, // Trả về URL ảnh QR code (Base64)
       });
     } catch (error) {
       console.error('Error during payment process:', error.response ? error.response.data : error.message);
