@@ -16,7 +16,7 @@
           v-col(cols="12" v-for="searRow in seatRowList").d-flex.align-center.justify-center
             span.mx-2 {{ searRow }}
             span(v-for="seatColumn in seatColumnList" :key="seatColumn")
-              span.single-seat-area.cursor-pointer
+              span.single-seat-area.cursor-pointer(@click="() => onChooseSeat(searRow, seatColumn)" :class="{ 'current-selected': currentUserSelected.includes(`${searRow}${seatColumn}`) }")
                 v-icon mdi mdi-sofa-single
     v-row.seat-color-guide.my-2
       v-col(cols="6")
@@ -31,10 +31,84 @@
         .d-flex.mr-6
           v-icon(style="color: #e96106").mr-1 mdi mdi-sofa-single
           p Ghế đã bị mua
+    pre-payment(
+      :selected-seats="currentUserSelected"
+      :total-price="tempPricePerSeat * currentUserSelected.length"
+      :movie-name="movieDetail.title"
+      :movie-poster="movieDetail.thumbnail"
+      @go_to_payment="gotoPayment"
+    )
+confirmation(
+  v-if="openConfirmDialog"
+  @cancel="openConfirmDialog = false"
+  :selected-seats="currentUserSelected"
+  :total-price="tempPricePerSeat * currentUserSelected.length"
+  :movie-poster="movieDetail.thumbnail"
+  :movie-name="movieDetail.title"
+)
 </template>
 <script setup>
+import axios from "axios";
+import {loadingStateStore} from "~/stores/loadingState.js";
+
+const loadingStateStoreRef = loadingStateStore()
+const route = useRoute()
+const router = useRouter()
+
 const seatRowList = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 const seatColumnList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14]
+
+const tempPricePerSeat = 50000
+const currentUserSelected = ref([])
+const movieDetail = ref({})
+const openConfirmDialog = ref(false)
+
+const onChooseSeat = (row, column) => {
+  if(currentUserSelected.value.includes(`${row}${column}`)){
+    currentUserSelected.value = currentUserSelected.value.filter(seat => seat !== `${row}${column}`)
+  } else {
+    if(currentUserSelected.value.length >= 10){
+      alert("Bạn chỉ có thể chọn tối đa 10 ghế!")
+      return
+    }
+    currentUserSelected.value.push(`${row}${column}`)
+  }
+}
+
+const getSeatStatusList = async () => {
+  try {
+    const { data } = await axios.get(`https://api-btl-web-2024-1.vercel.app/rooms/${route.query['room']}/seats/showtime/${route.query['showtime']}`)
+  } catch (e) {
+    console.log(e)
+    alert("Có lỗi xảy ra, vui lòng liên hệ với nhà quản trị trang web!")
+  }
+}
+const getMovieDetailById = async () => {
+  try {
+    const { data } = await axios.get(`https://api-btl-web-2024-1.vercel.app/movies/${route.query['movie_id']}`)
+    movieDetail.value = data.movie
+  } catch (e){
+    console.log(e)
+    alert("Có lỗi xảy ra, vui lòng liên hệ với nhà quản trị trang web!")
+  }
+}
+const init = async () => {
+  loadingStateStoreRef.setLoadingState(true)
+  await getSeatStatusList()
+  await getMovieDetailById()
+  loadingStateStoreRef.setLoadingState(false)
+}
+const gotoPayment = async () => {
+  if (currentUserSelected.value.length === 0) {
+    alert("Bạn chưa chọn ghế nào!")
+    return
+  }
+  openConfirmDialog.value = true
+}
+const confirmGotoPayment = async () => {
+  router.push('/pay')
+}
+onMounted(init)
 </script>
 <style scoped lang="sass">
 .screen
@@ -55,4 +129,6 @@ const seatColumnList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14]
   font-size: 12px
   color: #666
   line-height: 18px
+.current-selected
+  color: #000000 !important
 </style>

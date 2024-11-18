@@ -32,19 +32,20 @@
           .showtime(v-for="time in theater.times" :key="time" @click="selectShowtime(theater, time)")
             span {{ time }}
     div.text-center
-      v-btn(variant="outlined").text-right
+      v-btn(variant="outlined" @click="emit('finish_choose_place')").text-right
         | Xác nhận
 </template>
 
 <script setup>
 import axios from "axios";
 
+
 const props = defineProps({
   isOpen: Boolean,
   movieId: Number
 })
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'finish_choose_place'])
 
 const today = new Date()
 const selectedDate = ref(today.toISOString().split('T')[0])
