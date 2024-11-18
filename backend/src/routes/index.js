@@ -6,6 +6,7 @@ const promotionRouter = require('./promotions');
 const movieTheaterRouter = require('./movieTheater');
 const roomRouter = require('./rooms');
 // const seatRouter = require('./seats');  
+const seatRouter = require('./seats');
 const showtimeRouter = require('./showtime');
 
 const authenticateToken = require('../middleware/prismaAuthMiddleware');  
@@ -21,6 +22,7 @@ function route(app) {
   // app.use('/rooms', seatRouter);
   app.use('/showtimes', showtimeRouter);
   app.use("/city",cityRouter);
+  app.use("/seat", seatRouter)
   app.get('/protected', authenticateToken, (req, res) => {
     res.json({
       message: 'This is a protected route. You are authenticated.',

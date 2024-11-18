@@ -264,7 +264,7 @@ createSeats = async (req, res) => {
             return res.status(400).json({ message: 'Hold time for the seat has expired' });
         }
 
-        // Cập nhật ghế thành trạng thái "paid"
+        
         await prisma.seat.update({
             where: { id: parseInt(seat_id) },
             data: {
@@ -296,27 +296,68 @@ createSeats = async (req, res) => {
   };
 
   confirmPaymentByQRCode = async (req, res) => {
-    const { room_id, seat_id } = req.params;
-    const { user_id, showtime_id, promotion_id, amount } = req.body;
-    const currentTime = new Date();
-  
+    
     try {
-      // Kiểm tra trạng thái ghế
+      const { seat_id, room_id } = req.params; 
+      const { user_id, showtime_id, promotion_id } = req.body;
+      console.log('Request Params:', req.params);
+    console.log('seat_id:', seat_id);
+    console.log('room_id:', room_id);
+       
       const seat = await prisma.seat.findFirst({
         where: { id: parseInt(seat_id), room_id: parseInt(room_id), showtime_id: parseInt(showtime_id) },
+       
       });
+      console.log('Seat Data:', seat);
+      
   
-      if (!seat || seat.status !== 'on-hold' || seat.is_paid || seat.hold_until < currentTime) {
-        return res.status(400).json({ message: 'Seat not available for payment.' });
+      if (seat.status !== 'available') {
+        return res.status(400).json({ message: 'Seat is not in an on-hold state.' });
       }
   
-      // Cập nhật trạng thái ghế thành "paid"
+      if (seat.is_paid) {
+        return res.status(400).json({ message: 'Seat is already paid.' });
+      }
+  
+      // const currentTime = new Date();
+      // if (seat.hold_until < currentTime) {
+      //   return res.status(400).json({ message: 'Hold time for the seat has expired.' });
+      // }
+
+       const amountValue = seat.price;
+
+       const existingTicket = await prisma.ticket.findFirst({
+        where: {
+          seat_id: parseInt(seat_id),
+          showtime_id: parseInt(showtime_id),
+        },
+      });
+  
+      if (existingTicket) {
+        return res.status(400).json({
+          message: 'A ticket already exists for this seat and showtime.',
+          ticket: existingTicket,
+        });
+      }
+  
+
       await prisma.seat.update({
         where: { id: parseInt(seat_id) },
         data: { status: 'paid', is_paid: true, hold_until: null },
       });
   
-      // Tạo vé mới
+     
+      await prisma.seat.update({
+        where: { id: parseInt(seat_id) },
+        data: { status: 'paid', is_paid: true, hold_until: null },
+      });
+      console.log('Attempting to create ticket with the following data:', {
+        user_id: parseInt(user_id),
+        showtime_id: parseInt(showtime_id),
+        seat_id: parseInt(seat_id),
+        promotion_id: promotion_id ? parseInt(promotion_id) : null,
+        status: 'paid',
+      });
       const newTicket = await prisma.ticket.create({
         data: {
           user_id: parseInt(user_id),
@@ -326,39 +367,34 @@ createSeats = async (req, res) => {
           status: 'paid',
         },
       });
+
   
-      // Gọi URL API VietQR để tạo mã QR
-      const bankCode = '970422'; // Mã ngân hàng (vietinbank là ví dụ)
-      const accountNumber = '9190163130063'; // Số tài khoản nhận
-      const template = 'Tp8VEQR'; // Loại template
-      const addInfo = `Thanh toan ve ${newTicket.id}`; // Nội dung giao dịch
+   
+      const bankCode = '970422'; 
+      const accountNumber = '9190163130063'; 
+      const template = 'Tp8VEQR'; 
+      const addInfo = `Thanh toan ve ${newTicket.id}`; 
+      const accountName = 'Lotte Cinema';
+      const qrUrl = `https://img.vietqr.io/image/${bankCode}-${accountNumber}-${template}.jpg?amount=${amountValue}&addInfo=${encodeURIComponent(addInfo)}&accountName=${encodeURIComponent(accountName)}`;
   
-      // Tạo URL
-      const qrUrl = `https://img.vietqr.io/image/${bankCode}-${accountNumber}-${template}.jpg?`;
-      const params = new URLSearchParams({
-        amount: amount.toString(), // Số tiền
-        addInfo,
-        accountName: 'Your Company Name', // Tên tài khoản nhận
-      });
+     
+      
+      // if (!qrResponse || !qrResponse.data) {
+      //   return res.status(500).json({ message: 'Failed to generate QR code from VietQR' });
+      // }
   
-      // Lấy ảnh mã QR
-      const qrResponse = await axios.get(`${qrUrl}?${params.toString()}`, { responseType: 'arraybuffer' });
+      
+      // const qrCodeUrl = `data:image/jpeg;base64,${Buffer.from(qrResponse.data, 'binary').toString('base64')}`;
   
-      if (!qrResponse || !qrResponse.data) {
-        return res.status(500).json({ message: 'Failed to generate QR code from VietQR' });
-      }
-  
-      // Chuyển dữ liệu ảnh QR sang Base64
-      const qrCodeUrl = `data:image/jpeg;base64,${Buffer.from(qrResponse.data, 'binary').toString('base64')}`;
-  
+     
       return res.status(200).json({
         message: 'Payment confirmed, ticket created with QR code.',
         ticket: newTicket,
-        qrCodeUrl, // Trả về URL ảnh QR code (Base64)
+        qrUrl, 
       });
     } catch (error) {
-      console.error('Error during payment process:', error.response ? error.response.data : error.message);
-      return res.status(500).json({ message: 'Internal Server Error' });
+      console.error('Error during payment process:', error.message);
+      return res.status(500).json({ message: 'Internal Server Error', details: error.message });
     }
   };
   
