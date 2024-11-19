@@ -60,6 +60,7 @@ const upComingMovies = ref([])
 const nowShowingMovies = ref([])
 
 import {loadingStateStore} from "~/stores/loadingState.js";
+import showMessages from "~/utils/toast.js";
 const loadingStateStoreRef = loadingStateStore()
 
 
