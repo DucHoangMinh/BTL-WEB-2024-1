@@ -251,7 +251,7 @@ createSeats = async (req, res) => {
                 showtime_id: parseInt(showtime_id),
             },
         });
-
+        console.log("seat",seat)
         if (!seat) {
             return res.status(404).json({ message: 'Seat not found in this room for the selected showtime' });
         }
@@ -282,6 +282,7 @@ createSeats = async (req, res) => {
                 seat_id: parseInt(seat_id),
                 promotion_id: promotion_id ? parseInt(promotion_id) : null,
                 status: 'paid',
+                
             },
         });
 
@@ -298,12 +299,11 @@ createSeats = async (req, res) => {
   confirmPaymentByQRCode = async (req, res) => {
     
     try {
-      const { seat_id } = req.params; 
+      const { room_id, seat_id } = req.params; 
       const { user_id, showtime_id, promotion_id } = req.body;
 
       const seat = await prisma.seat.findFirst({
         where: { id: parseInt(seat_id), room_id: parseInt(room_id), showtime_id: parseInt(showtime_id) },
-       
       });
       console.log('Seat Data:', seat);
       
@@ -354,6 +354,7 @@ createSeats = async (req, res) => {
         seat_id: parseInt(seat_id),
         promotion_id: promotion_id ? parseInt(promotion_id) : null,
         status: 'paid',
+        price: parseInt(price)
       });
       const newTicket = await prisma.ticket.create({
         data: {
