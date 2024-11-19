@@ -6,41 +6,81 @@
     h1.title Create your account
     form(@submit.prevent="signUp")
       .input-group
-        input(type="text", v-model="firstName", placeholder="First Name", required)
+        input(type="text", v-model="registerData.firstName", placeholder="First Name", required)
       .input-group
-        input(type="text", v-model="lastName", placeholder="Last Name", required)
+        input(type="text", v-model="registerData.lastName", placeholder="Last Name", required)
       .input-group
-        input(type="email", v-model="email", placeholder="Email", required)
+        input(type="email", v-model="registerData.email", placeholder="Email", required)
       .input-group
-        input(type="password", v-model="password", placeholder="Password", required)
+        input(type="password", v-model="registerData.password", placeholder="Password", required)
       .input-group
-        input(type="password", v-model="confirmPassword", placeholder="Confirm Password", required)
+        input(type="password", v-model="registerData.confirmPassword", placeholder="Confirm Password", required)
       .input-group.mt-8
-        input(type="date", v-model="dateOfBirth", required)
+        input(type="date", v-model="registerData.dateOfBirth", required)
         label.date-label(for="dateOfBirth") Date of Birth
       .options
         label.agree-terms
           input(type="checkbox", v-model="agreeTerms", required)
           span I agree to the Terms and Conditions
-      button.signup-button(type="submit") Sign Up
+      button.signup-button(type="submit" @click="clickRegisterButton") Sign Up
     .login-link
       | Already have an account?
       a(href="/auth/login") &nbsp; Log in
 </template>
 <script setup>
-const signUp = () => {
+import showMessages from "~/utils/toast.js";
+import axios from "axios";
 
+const signUp = async () => {
+  try {
+    await axios.post("https://api-btl-web-2024-1.vercel.app/register", registerData.value)
+    showMessages.success('Đăng ký thành công, vui lòng kiểm tra email để xác nhận tài khoản')
+  } catch (error) {
+    showMessages.error(error.message)
+  }
 }
 const goToLogin = () => {
 
 }
 const agreeTerms = ref(false)
-const firstName = ref('')
-const lastName = ref('')
-const email = ref('')
-const password = ref('')
-const confirmPassword = ref('')
-const dateOfBirth = ref('')
+const registerData = ref({
+  firstName: '',
+  lastName: '',
+  email: '',
+  password: '',
+  confirmPassword: '',
+  dateOfBirth: ''
+})
+
+const validateEmail = (email) => {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+};
+
+const clickRegisterButton = async () => {
+  const errors = [];
+  for (const [key, value] of Object.entries(registerData.value)) {
+    if (!value) {
+      errors.push(`${key} không được để trống`);
+    }
+  }
+  if (!validateEmail(registerData.value.email)) {
+    errors.push('Email không hợp lệ');
+  }
+  if (registerData.value.password !== registerData.value.confirmPassword) {
+    errors.push('Mật khẩu và xác nhận mật khẩu không khớp');
+  }
+  if (!agreeTerms.value) {
+    errors.push('Bạn phải đồng ý với điều khoản và điều kiện');
+  }
+  if (errors.length) {
+    errors.forEach((error) => {
+      showMessages.error(error)
+    });
+    return
+  }
+  await signUp()
+}
 </script>
 <style scoped>
 .signup-container {

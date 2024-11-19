@@ -1,5 +1,6 @@
 <script setup>
 import {useRoute} from "#app";
+import 'vue-toast-notification/dist/theme-sugar.css';
 
 const route = useRoute()
 const router = useRouter()
