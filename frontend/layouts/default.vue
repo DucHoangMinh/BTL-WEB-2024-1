@@ -1,4 +1,5 @@
 <script setup>
+import 'vue-toast-notification/dist/theme-sugar.css';
 const route = useRoute()
 const notDisplayHeaderAndFooterPage = ['/auth/login', '/auth/register']
 </script>
