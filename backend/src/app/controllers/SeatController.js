@@ -298,12 +298,9 @@ createSeats = async (req, res) => {
   confirmPaymentByQRCode = async (req, res) => {
     
     try {
-      const { seat_id, room_id } = req.params; 
+      const { seat_id } = req.params; 
       const { user_id, showtime_id, promotion_id } = req.body;
-      console.log('Request Params:', req.params);
-    console.log('seat_id:', seat_id);
-    console.log('room_id:', room_id);
-       
+
       const seat = await prisma.seat.findFirst({
         where: { id: parseInt(seat_id), room_id: parseInt(room_id), showtime_id: parseInt(showtime_id) },
        
@@ -325,7 +322,7 @@ createSeats = async (req, res) => {
       // }
 
        const amountValue = seat.price;
-
+       console.log("amount", amountValue)
        const existingTicket = await prisma.ticket.findFirst({
         where: {
           seat_id: parseInt(seat_id),
