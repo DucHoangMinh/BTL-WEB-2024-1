@@ -8,7 +8,9 @@
         </div>
         <div class="promotion-content">
           <div class="promotion-description">
-            <p>{{ promotion.description }}</p>
+            <p v-html="formattedDescription"></p>
+            
+            <p class="highlight-description">Thể lệ: Khi mua combo có sản phẩm ly Thỏ 7 Màu hoặc Halloween sẽ được Miễn phí refill Pepsi / Pepsi Black</p>
           </div>
           <div class="promotion-info">
             <p><strong>Thời gian diễn ra:</strong> {{ formattedStartDate }} - {{ formattedEndDate }}</p>
@@ -29,7 +31,7 @@ const promotionData = {
   id: 3,
   promotionName: "MUA COMBO LY - REFILL MIỄN PHÍ",
   description:
-    "Tháng 10 - ngập tràn nước ún với chương trình châm thêm nước thỏa thích khi mua ly nước phiên bản đặc biệt tại LOTTE Cinema\nThể lệ: Khi mua combo có sản phẩm ly Thỏ 7 Màu hoặc Halloween sẽ được Miễn phí refill Pepsi / Pepsi Black",
+    "Tháng 10 - ngập tràn nước ún với chương trình châm thêm nước thỏa thích khi mua ly nước phiên bản đặc biệt tại LOTTE Cinema\n",
   discountPercentage: 30,
   startDate: "2024-09-20T00:00:00.000Z",
   endDate: "2025-01-05T23:59:59.000Z",
@@ -55,6 +57,9 @@ export default {
     formattedEndDate() {
       const endDate = new Date(this.promotion.endDate);
       return endDate.toLocaleDateString();
+    },
+    formattedDescription() {
+      return this.promotion.description.replace(/\n/g, '<br>');
     }
   }
 };
@@ -109,6 +114,14 @@ export default {
       margin-bottom: 20px;
       font-size: 16px;
       line-height: 1.5;
+    }
+
+    .highlight-description {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      line-height: 1.5;
+      font-weight: bold;
     }
 
     .promotion-info {
