@@ -354,7 +354,7 @@ createSeats = async (req, res) => {
         seat_id: parseInt(seat_id),
         promotion_id: promotion_id ? parseInt(promotion_id) : null,
         status: 'paid',
-        price: parseInt(price)
+      
       });
       const newTicket = await prisma.ticket.create({
         data: {
