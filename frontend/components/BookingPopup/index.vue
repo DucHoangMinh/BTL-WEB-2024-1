@@ -25,8 +25,8 @@
     .format-section
       .format-button.active 2D Phụ Đề Anh
     
-    .theaters-section(v-if="selectedCity")
-      .theater(v-for="theater in theaters" :key="theater.name")
+    .theaters-section(v-if="selectedCity").d-flex.pb-4
+      .theater(v-for="theater in theaters" :key="theater.name" @click="selectedTheaterId = theater.id" :class="{ active: selectedTheaterId === theater.id }").pa-2.mr-2
         .theater-name {{ theater.name }}
         .showtime-list
           .showtime(v-for="time in theater.times" :key="time" @click="selectShowtime(theater, time)")
@@ -50,6 +50,7 @@ const emit = defineEmits(['close', 'finish_choose_place'])
 const today = new Date()
 const selectedDate = ref(today.toISOString().split('T')[0])
 const selectedCity = ref('')
+const selectedTheaterId = ref(0)
 const cities = ref([])
 const theaters = ref([])
 
@@ -89,7 +90,7 @@ const dateList = computed(() => {
   for (let i = 0; i < 7; i++) {
     const currentDate = new Date()
     currentDate.setDate(today.getDate() + i)
-    
+
     dates.push({
       fullDate: currentDate.toISOString().split('T')[0],
       day: currentDate.getDate(),
@@ -97,7 +98,7 @@ const dateList = computed(() => {
       weekday: weekdays[currentDate.getDay()]
     })
   }
-  
+
   return dates
 })
 const getProvinceHaveMovieByDay = async () => {
@@ -225,10 +226,13 @@ onMounted(initData)
 
 .theaters-section
   .theater
-    margin-bottom: 20px
+    border: 1px solid #000
+    border-radius: 4px
+    &.active
+      background: #000
+      color: white
     .theater-name
       font-weight: bold
-      margin-bottom: 10px
     .showtime-list
       display: flex
       flex-wrap: wrap
@@ -240,4 +244,7 @@ onMounted(initData)
         cursor: pointer
         &:hover
           background: #f5f5f5
+  .theater:hover
+    background-color: #ccc
+    cursor: pointer
 </style> 

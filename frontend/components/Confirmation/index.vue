@@ -1,5 +1,5 @@
 <template>
-<v-dialog max-width="500" v-model="openDialog" persistent>
+<v-dialog max-width="800" v-model="openDialog" persistent>
   <template v-slot:default="{ isActive }">
     <div class="confirmation-container">
       <!-- Tiêu đề xác nhận -->
