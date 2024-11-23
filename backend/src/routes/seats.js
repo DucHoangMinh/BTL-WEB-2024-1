@@ -1,6 +1,8 @@
 const express = require('express');
 // const router = express.Router();
 const router = express.Router({ mergeParams: true });
+const authenticateToken = require('../middleware/prismaAuthMiddleware');  
+
 const SeatController = require('../app/controllers/SeatController');
 
 // Lấy danh sách tất cả ghế trong một phòng chiếu
@@ -19,7 +21,7 @@ router.put('/:id', SeatController.updateSeat);
 router.get('/showtime/:showtime_id', SeatController.getSeatsByShowtimeAndRoom);
 
 // Đặt ghế
-router.post('/:seat_id/book', SeatController.bookSeat);
+router.post('/:seat_id/book',authenticateToken, SeatController.bookSeat);
 
 // Xác nhận thanh toán cho ghế
 router.post('/:seat_id/confirm', SeatController.confirmPayment);

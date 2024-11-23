@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const RoomController = require('../app/controllers/RoomController');
 const seatRouter = require('./seats');
+const authenticateToken = require('../middleware/prismaAuthMiddleware');  
 
 // lấy danh sách tất cả các phòng chiếu
 router.get('/', RoomController.getAllRooms);
