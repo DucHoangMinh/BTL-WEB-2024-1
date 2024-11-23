@@ -27,6 +27,7 @@ class LoginController {
       }
 
       const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '1d' });
+      console.log('Generated Token:', token); 
 
       return res.status(200).json({
         message: 'Login successful',
