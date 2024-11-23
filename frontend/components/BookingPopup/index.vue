@@ -26,13 +26,13 @@
       .format-button.active 2D Phụ Đề Anh
     
     .theaters-section(v-if="selectedCity").d-flex.pb-4
-      .theater(v-for="theater in theaters" :key="theater.name" @click="selectedTheaterId = theater.id" :class="{ active: selectedTheaterId === theater.id }").pa-2.mr-2
+      .theater(v-for="theater in theaters" :key="theater.name" @click="selectTheater(theater.id)" :class="{ active: selectedTheaterId === theater.id }").pa-2.mr-2
         .theater-name {{ theater.name }}
         .showtime-list
           .showtime(v-for="time in theater.times" :key="time" @click="selectShowtime(theater, time)")
             span {{ time }}
     div.text-center
-      v-btn(variant="outlined" @click="emit('finish_choose_place')").text-right
+      v-btn(variant="outlined" @click="emit('finish_choose_place', {selectedDate: selectedDate.toString(), selectedShowTimeId: selectedShowTimeId, selectedTheaterId: selectedTheaterId})").text-right
         | Xác nhận
 </template>
 
@@ -51,8 +51,10 @@ const today = new Date()
 const selectedDate = ref(today.toISOString().split('T')[0])
 const selectedCity = ref('')
 const selectedTheaterId = ref(0)
+const selectedShowTimeId = ref(1)
 const cities = ref([])
 const theaters = ref([])
+const showTimes = ref([])
 
 const closePopup = () => {
   emit('close')
@@ -69,6 +71,11 @@ const selectDate = async (date) => {
 const selectCity = async (city) => {
   selectedCity.value = city
   await getTheaterByCityAndDay()
+}
+
+const selectTheater = async (theaterId) => {
+  selectedTheaterId.value = theaterId
+  await getShowTimeByTheater()
 }
 
 const getWeekday = (date) => {
@@ -113,6 +120,14 @@ const getTheaterByCityAndDay = async () => {
   try {
     const {data} = await axios.get(`https://api-btl-web-2024-1.vercel.app/movie-theaters/available/theaters?city=${encodeURIComponent(selectedCity.value)}&movieId=${props.movieId}&date=${selectedDate.value}`)
     theaters.value = data
+  } catch (e) {
+    console.log(e)
+  }
+}
+const getShowTimeByTheater = async () => {
+  try {
+    const {data} = await axios.get(`https://api-btl-web-2024-1.vercel.app/movie-theaters/available/theaters/showtimes?city=${encodeURIComponent(selectedCity.value)}&movieId=${props.movieId}&date=${selectedDate.value}`)
+    console.log(data)
   } catch (e) {
     console.log(e)
   }

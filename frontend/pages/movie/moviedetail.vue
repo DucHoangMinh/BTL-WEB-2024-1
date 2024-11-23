@@ -16,9 +16,15 @@
     </div>
 
     <!-- Mô tả phim -->
-    <div class="movie-description">
+    <div class="movie-description mb-6">
       <h2>Tóm tắt</h2>
       <p>{{ movie.description }}</p>
+    </div>
+
+    <div class="movie-trailer">
+      <h2>Xem trailer</h2>
+      <video width="100%" controls :src="movie.trailer">
+      </video>
     </div>
 
     <!-- Thêm component BookingPopup -->
@@ -43,10 +49,11 @@ const movie = ref({})
 const isBookingPopupOpen = ref(false)
 const movieId = ref(null)
 
-const finishChoosePlace = () => {
+const finishChoosePlace = (data) => {
+  console.log(data.selectedDate + " " + data.selectedShowTimeId + " " + data.selectedTheaterId)
   // Validate data before go to sheet page
 
-  router.push(`/seat-select?room=1&showtime=1&movie_id=${route.query['id']}&theater_id=1`)
+  router.push(`/seat-select?room=1&showtime=${data.selectedShowTimeId}&movie_id=${route.query['id']}&theater_id=${data.selectedTheaterId}`)
 }
 
 const getMovieDetail = async () => {
@@ -126,6 +133,19 @@ const closeBookingPopup = () => {
   font-size: 16px;
   border-radius: 5px;
   margin-top: 20px;
+}
+.trailer-button{
+  background-color: #6c757d;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+.trailer-button:hover{
+  background-color: #495057;
 }
 
 .booking-button:hover {
