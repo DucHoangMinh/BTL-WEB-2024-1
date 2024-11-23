@@ -41,6 +41,7 @@
 confirmation(
   v-if="openConfirmDialog"
   @cancel="openConfirmDialog = false"
+  @confirm="confirmOrderSeat"
   :selected-seats="currentUserSelected"
   :total-price="tempPricePerSeat * currentUserSelected.length"
   :movie-poster="movieDetail.thumbnail"
@@ -50,6 +51,7 @@ confirmation(
 <script setup>
 import axios from "axios";
 import {loadingStateStore} from "~/stores/loadingState.js";
+import showMessages from "~/utils/toast.js";
 
 const loadingStateStoreRef = loadingStateStore()
 const route = useRoute()
@@ -62,13 +64,24 @@ const tempPricePerSeat = 50000
 const currentUserSelected = ref([])
 const movieDetail = ref({})
 const openConfirmDialog = ref(false)
+const seatStatusList = ref([])
+
+const confirmOrderSeat = async () => {
+  let selectedSeatId = ref([])
+  seatStatusList.value.forEach(seat => {
+    if(currentUserSelected.value.includes(seat.seat_number)){
+      selectedSeatId.value.push(seat.id)
+    }
+  })
+  console.log(selectedSeatId.value)
+}
 
 const onChooseSeat = (row, column) => {
   if(currentUserSelected.value.includes(`${row}${column}`)){
     currentUserSelected.value = currentUserSelected.value.filter(seat => seat !== `${row}${column}`)
   } else {
     if(currentUserSelected.value.length >= 10){
-      alert("Bạn chỉ có thể chọn tối đa 10 ghế!")
+      showMessages.warning("Bạn chỉ có thể chọn tối đa 10 ghế!")
       return
     }
     currentUserSelected.value.push(`${row}${column}`)
@@ -78,6 +91,7 @@ const onChooseSeat = (row, column) => {
 const getSeatStatusList = async () => {
   try {
     const { data } = await axios.get(`https://api-btl-web-2024-1.vercel.app/rooms/${route.query['room']}/seats/showtime/${route.query['showtime']}`)
+    seatStatusList.value = data
   } catch (e) {
     console.log(e)
     alert("Có lỗi xảy ra, vui lòng liên hệ với nhà quản trị trang web!")
@@ -100,7 +114,7 @@ const init = async () => {
 }
 const gotoPayment = async () => {
   if (currentUserSelected.value.length === 0) {
-    alert("Bạn chưa chọn ghế nào!")
+    showMessages.error("Bạn chưa chọn ghế nào!")
     return
   }
   openConfirmDialog.value = true
