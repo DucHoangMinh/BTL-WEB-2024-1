@@ -3,7 +3,7 @@
   <template v-slot:default="{ isActive }">
     <div class="confirmation-container">
       <!-- Tiêu đề xác nhận -->
-      <h1 class="confirmation-title">Xác Nhận Đặt Ghế</h1>
+      <h1 class="confirmation-title">Xác Nhận Thanh Toán</h1>
 
       <!-- Thông tin phim -->
       <div class="order-summary">
