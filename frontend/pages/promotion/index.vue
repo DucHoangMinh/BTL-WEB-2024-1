@@ -3,8 +3,8 @@
     <div class="promotion-background">
       <div class="promotion-box">
         <div class="promotion-header">
-          <h1 class="promotion-title">{{ promotion.promotionName }}</h1>
-          <img :src="promotion.previewImage" alt="Promotion Preview" class="promotion-image" />
+          <h1 class="promotion-title">{{ promotion.promotion_name }}</h1>
+          <img :src="promotion.preview_image" alt="Promotion Preview" class="promotion-image" />
         </div>
         <div class="promotion-content">
           <div class="promotion-description">
@@ -14,7 +14,7 @@
           </div>
           <div class="promotion-info">
             <p><strong>Thời gian diễn ra:</strong> {{ formattedStartDate }} - {{ formattedEndDate }}</p>
-            <p v-if="promotion.discountPercentage"><strong>Giảm giá:</strong> {{ promotion.discountPercentage }}%</p>
+            <p v-if="promotion.discount_percentage"><strong>Giảm giá:</strong> {{ promotion.discount_percentage }}%</p>
             <p><strong>Địa điểm áp dụng:</strong> {{ promotion.location }}</p>
           </div>
         </div>
@@ -26,43 +26,28 @@
   </div>
 </template>
 
-<script>
-const promotionData = {
-  id: 3,
-  promotionName: "MUA COMBO LY - REFILL MIỄN PHÍ",
-  description:
-    "Tháng 10 - ngập tràn nước ún với chương trình châm thêm nước thỏa thích khi mua ly nước phiên bản đặc biệt tại LOTTE Cinema\n",
-  discountPercentage: 30,
-  startDate: "2024-09-20T00:00:00.000Z",
-  endDate: "2025-01-05T23:59:59.000Z",
-  previewImage:
-    "https://media.lottecinemavn.com/Media/Event/860c3ce5df034602b1f2f9737e3084a4.jpg",
-  thumbnail:
-    "https://media.lottecinemavn.com/Media/Event/9b46a9d0a616439dafc094a39c46d14d.jpg",
-  location: "Tất cả cụm rạp LOTTE Cinema",
-  tickets: []
-};
+<script setup>
+import axios from "axios";
 
-export default {
-  data() {
-    return {
-      promotion: promotionData
-    };
-  },
-  computed: {
-    formattedStartDate() {
-      const startDate = new Date(this.promotion.startDate);
-      return startDate.toLocaleDateString();
-    },
-    formattedEndDate() {
-      const endDate = new Date(this.promotion.endDate);
-      return endDate.toLocaleDateString();
-    },
-    formattedDescription() {
-      return this.promotion.description.replace(/\n/g, '<br>');
-    }
-  }
-};
+const route = useRoute()
+
+const promotion = ref({});
+
+// Computed properties
+const formattedStartDate = ref('');
+const formattedEndDate = ref('');
+const formattedDescription = ref('');
+const getPromotionDetail = async () => {
+  const { data } = await axios.get(`https://api-btl-web-2024-1.vercel.app/promotions/${route.query.id}`)
+  promotion.value = data.promotion
+  formattedStartDate.value = new Date(promotion.value?.start_date)?.toLocaleDateString()
+  formattedEndDate.value = new Date(promotion.value?.end_date)?.toLocaleDateString()
+  formattedDescription.value = promotion.value?.description?.replace(/\n/g, '<br>')
+}
+const init = async () => {
+  await getPromotionDetail()
+}
+onMounted(init)
 </script>
 
 <style lang="scss" scoped>
