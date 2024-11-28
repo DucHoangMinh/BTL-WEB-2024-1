@@ -70,6 +70,7 @@ class ShowtimeController {
           price: true,
           Room: {
             select: {
+              id: true,
               name: true,
             },
           },
