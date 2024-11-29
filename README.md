@@ -234,6 +234,20 @@ Trả về danh sách ghế của phòng chiếu với suất chiếu đã chọ
     - user_id (integer, bắt buộc): ID của người dùng xác nhận thanh toán.
     - showtime_id (integer, bắt buộc): ID của suất chiếu để liên kết vé.
     - promotion_id (integer, tùy chọn): ID của khuyến mãi, nếu có.
+
+## Luồng đặt phim theo rạp muốn xem
+  Lấy rạp theo thành phố:
+  -Endpoint : GET /api/:cityName/theaters-and-movies
+  -yêu cầu body: không
+  Lấy phim:
+  -Endpoint: Get'api/now-showing'
+  -yêu cầu body: không
+  Lấy thời gian theo phim:
+   -Endpoint : GET './:movieId/movie-showtime',
+   -yêu cầu body: không
+
+  
+
 ## How to send token with request with POSTMAN
 Ở trình duyệt, nhấn ctrl+shifi+i<br>
 Chọn tab Application, ở sidebar bên trái, chọn local storage -> http://localhost:3000<br>
