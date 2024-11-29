@@ -1,13 +1,12 @@
-datasource db {
-  provider = "postgresql"
-  url      = env("POSTGRES_PRISMA_URL") // uses connection pooling
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
-// Model Log
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
+}
+
 model Log {
   id        Int      @id @default(autoincrement())
   user_id   Int
@@ -18,26 +17,25 @@ model Log {
   @@map("Log")
 }
 
-// Model Movie
 model Movie {
-  id              Int       @id @default(autoincrement())
-  title           String
-  genre           String?
-  duration        Int
-  rating          Float?
-  release_date    DateTime?
-  description     String?
-  Showtimes       Showtime[]
-  thumbnail       String?
+  id               Int        @id @default(autoincrement())
+  title            String
+  genre            String?
+  duration         Int
+  rating           Float?
+  release_date     DateTime?
+  description      String?
   relatedThumbnail String[]
-  Feedbacks       Feedback[]
-  trailer         String?
-  ranking         String?         //Xếp hạng (khác với rating)
-  basic_info      String?         //Thông tin cơ bản
-  @@map("Movie")  
+  thumbnail        String?
+  trailer          String?
+  ranking          String?
+  basic_info       String?
+  Feedbacks        Feedback[]
+  Showtimes        Showtime[]
+
+  @@map("Movie")
 }
 
-// Model Promotion
 model Promotion {
   id                  Int      @id @default(autoincrement())
   promotion_name      String
@@ -46,56 +44,52 @@ model Promotion {
   start_date          DateTime
   end_date            DateTime
   preview_image       String?
-  thumbnail           String?
-  Tickets             Ticket[]  
   location            String?
+  thumbnail           String?
+  Tickets             Ticket[]
+
   @@map("Promotion")
 }
 
-// Model Role
 model Role {
-  id        Int    @id @default(autoincrement())
-  role_name String @unique
-
+  id        Int         @id @default(autoincrement())
+  role_name String      @unique
   User_Role User_Role[]
 
   @@map("Role")
 }
 
-// Model Room
 model Room {
-  id                Int          @id @default(autoincrement())
-  name              String
-  capacity          Int
-  movie_theater_id  Int // Foreign key for MovieTheater
-  MovieTheater      MovieTheater @relation(fields: [movie_theater_id], references: [id])
+  id               Int          @id @default(autoincrement())
+  name             String
+  capacity         Int
+  movie_theater_id Int
+  MovieTheater     MovieTheater @relation(fields: [movie_theater_id], references: [id])
+  Seat             Seat[]
+  Showtime         Showtime[]
 
-  Seat              Seat[]
-  Showtime          Showtime[]
   @@map("Room")
 }
 
-// Model Seat
 model Seat {
-  id                Int      @id @default(autoincrement())
-  room_id           Int
-  showtime_id       Int?
-  seat_number       String   // Định dạng ghế như A1, A2, B1, B2, ...
-  seat_type         String?  // (VIP, thường, ...)
-  row               String   // Hàng ghế ( A, B, C, ...)
-  column            Int      // Số ghế trong hàng (ví dụ: 1, 2, 3, ...)
-  status            String   @default("available")
-  hold_until        DateTime? 
-  is_paid           Boolean  @default(false) 
-  price             Int?
-  Room              Room     @relation(fields: [room_id], references: [id])
-  Showtime          Showtime? @relation(fields: [showtime_id], references: [id]) // Liên kết với suất chiếu
-  Tickets           Ticket[] // Thêm trường này để tạo quan hệ đối ứng với Ticket
+  id          Int       @id @default(autoincrement())
+  room_id     Int
+  seat_number String
+  seat_type   String?
+  row         String
+  column      Int
+  status      String    @default("available")
+  showtime_id Int?
+  hold_until  DateTime?
+  is_paid     Boolean   @default(false)
+  price       Int?
+  Room        Room      @relation(fields: [room_id], references: [id])
+  Showtime    Showtime? @relation(fields: [showtime_id], references: [id])
+  Tickets     Ticket[]
 
   @@map("Seat")
 }
 
-// Model Showtime
 model Showtime {
   id         Int      @id @default(autoincrement())
   movie_id   Int
@@ -104,83 +98,74 @@ model Showtime {
   start_time DateTime
   end_time   DateTime
   price      Float
+  Seats      Seat[]
+  Movie      Movie    @relation(fields: [movie_id], references: [id])
+  Room       Room     @relation(fields: [room_id], references: [id])
+  Ticket     Ticket[]
 
-  Movie  Movie    @relation(fields: [movie_id], references: [id])
-  Room   Room     @relation(fields: [room_id], references: [id])
-  Ticket Ticket[]
-  Seats  Seat[]
   @@map("Showtime")
 }
 
-// Model Snack
 model Snack {
-  id          Int     @id @default(autoincrement())
-  name        String
-  description String?
-  price       Float
-
+  id           Int            @id @default(autoincrement())
+  name         String
+  description  String?
+  price        Float
   Ticket_Snack Ticket_Snack[]
 
   @@map("Snack")
 }
 
-// Model Ticket
 model Ticket {
   id            Int            @id @default(autoincrement())
   user_id       Int
   showtime_id   Int
   seat_id       Int
   purchase_date DateTime       @default(now())
-  promotion_id  Int? // Quan hệ tùy chọn
-  User          User           @relation(fields: [user_id], references: [id])
-  Showtime      Showtime       @relation(fields: [showtime_id], references: [id])
+  promotion_id  Int?
+  status        String         @default("pending")
+  Promotion     Promotion?     @relation(fields: [promotion_id], references: [id])
   Seat          Seat           @relation(fields: [seat_id], references: [id])
-  Promotion     Promotion?     @relation(fields: [promotion_id], references: [id]) // Quan hệ tùy chọn
+  Showtime      Showtime       @relation(fields: [showtime_id], references: [id])
+  User          User           @relation(fields: [user_id], references: [id])
   Ticket_Snack  Ticket_Snack[]
-  status        String @default("pending") // pending, paid, used
 
   @@unique([seat_id, showtime_id])
   @@map("Ticket")
 }
 
-// Model Ticket_Snack
 model Ticket_Snack {
   ticket_id Int
   snack_id  Int
   quantity  Int
-
-  Ticket Ticket @relation(fields: [ticket_id], references: [id])
-  Snack  Snack  @relation(fields: [snack_id], references: [id])
+  Snack     Snack  @relation(fields: [snack_id], references: [id])
+  Ticket    Ticket @relation(fields: [ticket_id], references: [id])
 
   @@id([ticket_id, snack_id])
   @@map("Ticket_Snack")
 }
 
-// Model User
 model User {
-  id            Int       @id @default(autoincrement())
-  email         String?   @unique
-  phone_number  String?   @unique
+  id            Int         @id @default(autoincrement())
+  email         String?     @unique
+  phone_number  String?     @unique
   password      String
   full_name     String
   date_of_birth DateTime?
-  created_at    DateTime  @default(now())
-
-  Log       Log[]
-  Ticket    Ticket[]
-  User_Role User_Role[]
-  Feedback  Feedback[] // Add this to connect to Feedback model
+  created_at    DateTime    @default(now())
+  Feedback      Feedback[]
+  Log           Log[]
+  Ticket        Ticket[]
+  User_Role     User_Role[]
 
   @@map("User")
 }
 
-// Model User_Role
 model User_Role {
   user_id Int
   role_id Int
-
-  User User @relation(fields: [user_id], references: [id])
-  Role Role @relation(fields: [role_id], references: [id])
+  Role    Role @relation(fields: [role_id], references: [id])
+  User    User @relation(fields: [user_id], references: [id])
 
   @@id([user_id, role_id])
   @@map("User_Role")
@@ -190,30 +175,31 @@ model Feedback {
   id         Int      @id @default(autoincrement())
   user_id    Int
   movie_id   Int
-  rating     Int // Scale 1-5
+  rating     Int
   comment    String?
   created_at DateTime @default(now())
-  @@unique([user_id, movie_id])       // Đảm bảo mỗi người dùng chỉ đánh giá một phim một lần
-  User  User  @relation(fields: [user_id], references: [id])
-  Movie Movie @relation(fields: [movie_id], references: [id])
+  Movie      Movie    @relation(fields: [movie_id], references: [id])
+  User       User     @relation(fields: [user_id], references: [id])
 
+  @@unique([user_id, movie_id])
   @@map("Feedback")
 }
 
 model MovieTheater {
   id              Int     @id @default(autoincrement())
-  name            String 
-  location        String 
+  name            String
+  location        String
+  total_rooms     Int
+  capacity        Int
+  has_3d          Boolean @default(false)
+  has_imax        Boolean @default(false)
+  has_dolby_atmos Boolean @default(false)
+  contact_email   String?
+  contact_phone   String?
+  website_url     String?
   city            String
-  total_rooms     Int 
-  capacity        Int 
-  has_3d          Boolean @default(false) 
-  has_imax        Boolean @default(false) 
-  has_dolby_atmos Boolean @default(false) 
-  contact_email   String? 
-  contact_phone   String? 
-  website_url     String? 
-  Rooms Room[] // Relation to the Room model
+  movie_id        Int
+  Rooms           Room[]
 
   @@map("MovieTheater")
 }
