@@ -6,6 +6,7 @@
     :disabled="disabled || loading"
     @click="handleClick"
     class="btn"
+    :style="'height: ' + height + 'px'"
     :class="[
       { 'btn-round': round },
       { 'btn-block': block },
@@ -45,6 +46,7 @@ export default {
     block: Boolean,
     loading: Boolean,
     wide: Boolean,
+    height: Number,
     disabled: Boolean,
     type: {
       type: String,

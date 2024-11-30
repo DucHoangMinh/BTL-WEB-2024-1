@@ -24,6 +24,14 @@
         >
         </sidebar-item>
         <sidebar-item
+            :link="{
+            name: $t('sidebar.films'),
+            icon: 'tim-icons icon-align-center',
+            path: '/films'
+          }"
+        >
+        </sidebar-item>
+        <sidebar-item
           :link="{
             name: $t('sidebar.maps'),
             icon: 'tim-icons icon-pin',
