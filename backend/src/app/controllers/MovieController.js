@@ -1,6 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-<<<<<<< HEAD
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -22,8 +21,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage }).single('thumbnail');  // Đảm bảo trường 'thumbnail'
-=======
->>>>>>> bfb206a484070a340ee77f4fdc3643b09bbe5f67
 
 class MovieController {
   // Lấy toàn bộ danh sách phim
