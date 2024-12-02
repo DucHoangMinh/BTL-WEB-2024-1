@@ -7,19 +7,55 @@ div
       :type="'secondary'"
       :simple="true"
       :height="35"
+      @click="showAddModel = true"
     ).mr-6 Thêm phim
   base-table(
     :columns="columns",
     :data="films"
   )
+  modal(
+    :show="showAddModel"
+  )
+    h2.text-center.mb-0 Thêm phim vào danh sách
+    form(@submit.prevent='')
+      .row
+        .col-md-12
+          base-input(type='text' label='Tên phim' placeholder='Em là bà nội của anh' v-model="fileDetail.title" )
+        .col-md-12
+          v-select(v-model='fileDetail.genre' :items='film_genre' label='Phân loại' chips='' multiple='')
+        .col-md-4
+          base-input(type='number' label='Thời lượng phim' placeholder='120' v-model="fileDetail.duration" )
+        .col-md-3
+          base-input(type='number' label='Điểm IMdB' placeholder='0' v-model="fileDetail.ranikng" )
+        .col-md-5
+          base-input(type='date' label='Ngày ra mắt' placeholder='' v-model="fileDetail.release_date" )
+      .row
+        .col-md-12
+          textarea.form-control(placeholder='Mô tả phim' v-model="fileDetail.description")
+        .col-md-12
+          v-select(v-model='fileDetail.basic_info' :items='film_basic_info' label='Thể loại' chips='' multiple='')
+      .row
+        .col-md-4
+          base-input(type='file' label='City' placeholder='City')
+        .col-md-4
+          base-input(type='text' label='Country' placeholder='Country')
+        .col-md-4
+          base-input(label='Postal Code' placeholder='ZIP Code')
+      .row
+        .col-md-12
+          base-input(label='About Me')
+            textarea.form-control(placeholder='ZIP Code')
+      base-button.btn-fill(native-type='submit' type='primary')
+        | Save
 </template>
 
 <script>
 import axios from 'axios';
 import BaseTable from "~/components/BaseTable.vue";
+import Modal from "~/components/Modal.vue";
 export default {
   name: 'films',
-  components: {BaseTable},
+  components: {Modal, BaseTable},
   data() {
     return {
       films: [],
@@ -41,7 +77,23 @@ export default {
       }, {
         name: "Thể loại",
         value: 'genre'
-      }]
+      }],
+      showAddModel: false,
+      film_genre: ['2D', '3D', 'IMAX','ScreenX','4DX','Dolby Atmos','Phụ đề','Lồng tiếng'],
+      film_basic_info: ['Hành động', 'Kinh dị', 'Tình cảm','Hoạt hình','Hài','Tâm lý','Viễn tưởng','Phiêu lưu','Thần thoại','Cổ trang','Chiến tranh','Khoa học viễn tưởng','Hình sự','Thể thao','Âm nhạc','Gia đình','Tài liệu','Chính kịch','Tội phạm','Hồi hộp','Bí ẩn','Lịch sử','Tài liệu','Thể thao','Âm nhạc','Gia đình','Tâm lý','Hành động','Kinh dị','Hài','Tình cảm','Hoạ'],
+      fileDetail: {
+        title: "",
+        genre: [],
+        duration: 0,
+        rating: 0,
+        release_date: "",
+        description: "",
+        ranikng:"",
+        basic_info: [],
+        thumbnail: "",
+        trailer: "",
+        relatedThumbnail: []
+      }
     };
   },
   methods: {
