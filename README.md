@@ -246,7 +246,6 @@ Trả về danh sách ghế của phòng chiếu với suất chiếu đã chọ
    -Endpoint : GET './:movieId/movie-showtime',
    -yêu cầu body: không
 
-  
 
 ## How to send token with request with POSTMAN
 Ở trình duyệt, nhấn ctrl+shifi+i<br>
@@ -256,3 +255,18 @@ Copy giá trị của token<br>
 Trong POSTMAN, tạo 1 req GET http://localhost:3000/api/movies<br>
 Chọn tab Authorization, ở Auth Type chọn Bearer token -> nhập token vừa copy<br>
 Send request<br>
+## Tạo phim
+- Endpoint: POST /api/movies/add
+    - Mô tả: Thêm phim mới vào danh sách phim đã có, cho phép upload thumbnail, chưa update thêm phần related_thumbnail và trailer
+    - Lưu ý: Gửi dưới dạng form-data
+- Body:
+    - title: Movie Title
+    - genre: Action
+    - duration: 120
+    - rating: 8.5
+    - release_date: 2024-12-02
+    - description: A thrilling action movie
+    - basic_info: Basic info about the movie
+    - thumbnail: upload file
+    - ranking: Trong nước
+    - trailer: 
