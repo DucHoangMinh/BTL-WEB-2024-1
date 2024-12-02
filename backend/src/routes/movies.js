@@ -29,5 +29,6 @@ router.get('/:movieId/cities', movieController.getCitiesByMovieId);
 
 router.get('/:movieId/date', movieController.getMoviesByDate)
 
+router.post('/add', movieController.createMovie2);
 
 module.exports = router;
