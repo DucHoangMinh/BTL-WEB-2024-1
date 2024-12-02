@@ -1,7 +1,10 @@
 const express = require('express');
 const movieController = require('../app/controllers/MovieController');
+const upload = require('../middleware/uploadMiddleware');
 
 const router = express.Router();
+
+router.post('/add',upload, movieController.createMovie2);
 
 // Lấy toàn bộ danh sách phim
 router.get('/', movieController.getAllMovies); 
@@ -29,6 +32,5 @@ router.get('/:movieId/cities', movieController.getCitiesByMovieId);
 
 router.get('/:movieId/date', movieController.getMoviesByDate)
 
-router.post('/add', movieController.createMovie2);
 
 module.exports = router;

@@ -1,26 +1,9 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { bucket } = require('../../../firebaseConfig');
+const {db, bucket } = require('../../../firebaseConfig');
 
-const uploadDir = path.join(__dirname, '../../../uploads'); 
-
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });  // Tạo thư mục nếu không tồn tại
-}
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);  // Sử dụng đường dẫn thư mục đã xác định
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));  // Đặt tên file là timestamp
-  },
-});
-
-const upload = multer({ storage: storage }).single('thumbnail');  // Đảm bảo trường 'thumbnail'
 
 class MovieController {
   // Lấy toàn bộ danh sách phim
@@ -154,6 +137,7 @@ class MovieController {
           basic_info,
         },
       });
+      console.log(newMovie);
 
       return res.status(201).json({
         message: 'Tạo phim mới thành công',
@@ -299,6 +283,7 @@ class MovieController {
   }
 
   createMovie2 = async (req, res) => {
+    console.log(req.body);
     const {
       title,
       genre,
@@ -311,64 +296,49 @@ class MovieController {
       ranking,
       basic_info,
     } = req.body;
-    console.log(req.body);  // Kiểm tra xem title có trong đây không
+    let validDuration = parseInt(duration, 10);
+    let validRating = parseFloat(rating);
+    if (!req.file) {
+      return res.status(400).json({ message: 'No thumbnail uploaded' });
+    }
 
-    // Xử lý upload thumbnail
-    upload(req, res, async (err) => {
-      if (err) {
-        console.error('Error uploading file:', err);
-        return res.status(500).json({ message: 'Error uploading thumbnail' });
-      }
-  
-      // Kiểm tra xem file đã được upload chưa
-      if (!req.file) {
-        return res.status(400).json({ message: 'No thumbnail uploaded' });
-      }
-  
-      try {
-        // Đọc file thumbnail từ thư mục uploads
-        const thumbnailPath = path.join(__dirname, '../../../uploads', req.file.filename);
-        const storageRef = bucket.file(`thumbnails/${req.file.filename}`);  // Đường dẫn đến Firebase Storage
-  
-        // Upload thumbnail lên Firebase Storage
-        await storageRef.save(fs.readFileSync(thumbnailPath), {
-          contentType: req.file.mimetype,  // Đặt kiểu nội dung cho file
-        });
-  
-        // Lấy URL của file thumbnail đã upload
-        const thumbnailUrl = `https://storage.googleapis.com/${bucket.name}/thumbnails/${req.file.filename}`;
-  
-        // Tạo mới bộ phim trong cơ sở dữ liệu
-        const newMovie = await prisma.movie.create({
-          data: {
-            title,
-            genre,
-            duration,
-            rating,
-            // release_date: releaseDate,  // Sử dụng đối tượng Date đã kiểm tra
-            description,
-            thumbnail: thumbnailUrl,  // Lưu URL của thumbnail vào cơ sở dữ liệu
-            trailer,
-            relatedThumbnail,
-            ranking,
-            basic_info,
-          },
-        });
-  
-        // Xóa file thumbnail tạm thời sau khi upload thành công
-        fs.unlinkSync(thumbnailPath);
-  
-        return res.status(201).json({
-          message: 'Tạo phim mới thành công',
-          movie: newMovie,
-        });
-      } catch (error) {
-        console.error('Error while creating a new movie:', error);
-        return res.status(500).json({ message: 'Internal Server Error' });
-      }
-    });
-  };  
+    try {
+      const thumbnailPath = path.join(__dirname, '../../../uploads', req.file.filename);
 
+      const storageRef = bucket.file(`thumbnails/${req.file.filename}`);
+
+      await storageRef.save(fs.readFileSync(thumbnailPath), {
+        contentType: req.file.mimetype,  
+      });
+
+      const thumbnailUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/thumbnails%2F${req.file.filename}?alt=media`;
+
+      const newMovie = await prisma.movie.create({
+        data: {
+          title,
+          genre,
+          duration: validDuration,
+          rating: validRating,
+          release_date: new Date(release_date),  
+          description,
+          thumbnail: thumbnailUrl,  
+          trailer,
+          relatedThumbnail,
+          ranking,
+          basic_info,
+        },
+      });
+      fs.unlinkSync(thumbnailPath);
+
+      return res.status(201).json({
+        message: 'Tạo phim mới thành công',
+        movie: newMovie,
+      });
+    } catch (error) {
+      console.error('Error while creating a new movie:', error);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
 }
 
 module.exports = new MovieController();

@@ -1,13 +1,11 @@
 const admin = require('firebase-admin');
-const serviceAccount = require('./serviceAccountKey.json');  // Đường dẫn tới file key tải về
-
-// Khởi tạo Firebase Admin SDK với Service Account Key
+const serviceAccount = require('./serviceAccountKey.json');  
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),  // Đảm bảo rằng bạn sử dụng đúng file JSON
-  storageBucket: 'soakls.appspot.com',  // Thay 'YOUR_PROJECT_ID' bằng ID dự án của bạn
+  credential: admin.credential.cert(serviceAccount),  
+  storageBucket: 'soakls.appspot.com',  
 });
 
-const db = admin.firestore();  // Khởi tạo Firestore
-const bucket = admin.storage().bucket();  // Khởi tạo Firebase Storage
+const db = admin.firestore();  
+const bucket = admin.storage().bucket();  
 
 module.exports = { db, bucket };
