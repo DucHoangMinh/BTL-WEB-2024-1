@@ -4,7 +4,7 @@
     .logo
       img(src="/img/main_logo.png", alt="Logo")
     h1.title Create your account
-    form(@submit.prevent="signUp")
+    form(@submit.prevent="null")
       .input-group
         input(type="text", v-model="registerData.firstName", placeholder="First Name", required)
       .input-group
@@ -30,11 +30,19 @@
 <script setup>
 import showMessages from "~/utils/toast.js";
 import axios from "axios";
+import {loadingStateStore} from "~/stores/loadingState.js";
+const loadingStateStoreRef = loadingStateStore()
+const router = useRouter()
 
 const signUp = async () => {
   try {
+    loadingStateStoreRef.setLoadingState(true)
     await axios.post("https://api-btl-web-2024-1.vercel.app/register", registerData.value)
+    loadingStateStoreRef.setLoadingState(false)
     showMessages.success('Đăng ký thành công, vui lòng kiểm tra email để xác nhận tài khoản')
+    setTimeout(async () => {
+      await router.push('/auth/login')
+    }, 5000)
   } catch (error) {
     showMessages.error(error.message)
   }

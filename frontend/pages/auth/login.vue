@@ -33,6 +33,9 @@ const password = ref('')
 const rememberMe = ref(false)
 const userInforStoreRef = userInforStore()
 const previousPageStoreRef = previousPageStore()
+import {loadingStateStore} from "~/stores/loadingState.js";
+import showMessages from "~/utils/toast.js";
+const loadingStateStoreRef = loadingStateStore()
 
 const validateLoginData = () => {
   if (!email.value || !password.value) {
@@ -47,14 +50,13 @@ const validateLoginData = () => {
 
 const login = async () => {
   try {
-
     const validateLoginDataResult = validateLoginData()
     if (!validateLoginDataResult.isValid) {
       alert(validateLoginDataResult.message);
       return;
     }
 
-
+    loadingStateStoreRef.setLoadingState(true)
     const response = await axios.post('https://api-btl-web-2024-1.vercel.app/login', {
       email: email.value,
       password: password.value
@@ -75,8 +77,11 @@ const login = async () => {
       alert('Đăng nhập thất bại, không nhận được token');
     }
   } catch (error) {
+    loadingStateStoreRef.setLoadingState(false)
     console.error('Error during login:', error);
-    alert('Đăng nhập không thành công. Vui lòng kiểm tra lại thông tin.');
+    showMessages.error('Đăng nhập không thành công. Vui lòng kiểm tra lại thông tin.');
+  } finally {
+    loadingStateStoreRef.setLoadingState(false)
   }
 };
 

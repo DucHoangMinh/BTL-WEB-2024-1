@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@mdi/font": "^7.4.47",
     "@nuxtjs/pwa": "^3.3.5",
     "axios": "^1.7.8",
     "bootstrap": "4.3.1",
@@ -30,9 +31,11 @@
     "tween.js": "16.6.0",
     "vue-chartjs": "3.5.1",
     "vue-i18n": "8.0.0",
-    "vue2-transitions": "0.3.0"
+    "vue2-transitions": "0.3.0",
+    "vuetify": "^2.7.2"
   },
   "devDependencies": {
+    "@nuxtjs/vuetify": "^1.12.3",
     "babel-plugin-component": "^1.1.1",
     "sass": "1.56.2",
     "sass-loader": "10.1.1"

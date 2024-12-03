@@ -1,4 +1,5 @@
 <template>
+  <v-app>
   <div class="wrapper" :class="{ 'nav-open': $sidebar.showSidebar }">
     <notifications></notifications>
     <side-bar
@@ -106,6 +107,7 @@
       <content-footer v-if="!isFullScreenRoute"></content-footer>
     </div>
   </div>
+  </v-app>
 </template>
 <script>
   /* eslint-disable no-new */

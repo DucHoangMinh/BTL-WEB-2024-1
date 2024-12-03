@@ -72,7 +72,7 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: ["@nuxtjs/pwa", "nuxt-i18n"],
+  modules: ["@nuxtjs/pwa", "nuxt-i18n", "@nuxtjs/vuetify"],
   i18n: {
     locales: [
       {
