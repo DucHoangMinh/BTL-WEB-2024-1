@@ -46,14 +46,16 @@ POST: http://localhost:3000/api/movies
   ]
 }
 ```
+## Lấy ra danh sách phim
+## Trả về danh sách tất cả các bộ phim kèm Showtimes và feedback 
 GET: http://localhost:3000/api/movies  
-Trả về danh sách tất cả các bộ phim kèm Showtimes và feedback ( tôi có thể chỉnh lại sau để chia nhỏ ra)  
-GET: http://localhost:3000/api/movies/:movieId  
-Trả về bộ phim với Id tương ứng kèm Showtimes và feedback ( tôi có thể chỉnh lại sau để chia nhỏ ra)  
 
+## Trả về bộ phim với Id tương ứng kèm Showtimes và feedback 
+GET: http://localhost:3000/api/movies/:movieId  
+
+## Trả về danh sách các thành phố có rạp chiếu bộ phim với movie_id được chọn, thuộc ngày đã chọn  
 
 GET: http://localhost:3000/api/movies/3/cities?date=2024-11-07
-Trả về danh sách các thành phố có rạp chiếu bộ phim với movie_id được chọn, thuộc ngày đã chọn  
 ```
 {
     "cities": [
@@ -63,9 +65,9 @@ Trả về danh sách các thành phố có rạp chiếu bộ phim với movie_
     ]
 }
 ```
+## Trả về danh sách các rạp có phim đã chọn, thuộc thành phố và ngày đã chọn  
 http://localhost:3000/api/movie-theaters/available/theaters?city=<city>&movieId=<movieId>&date=<yyy-mm-dd> 
 http://localhost:3000/api/movie-theaters/available/theaters?city=TP.%20Hồ%20Chí%20Minh&movieId=3&date=2024-11-07
-Trả về danh sách các rạp có phim đã chọn, thuộc thành phố và ngày đã chọn  
 ```
 [
     {
@@ -78,8 +80,8 @@ Trả về danh sách các rạp có phim đã chọn, thuộc thành phố và 
     }
 ]
 ```
+## Trả về danh sách các rạp và suất chiếu tương ứng có phim đã chọn, thuộc thành phố và ngày đã chọn
 http://localhost:3000/api/movie-theaters/available/theaters/showtimes?city=TP.%20H%E1%BB%93%20Ch%C3%AD%20Minh&movieId=3&date=2024-11-07  
-Trả về danh sách các rạp và suất chiếu tương ứng có phim đã chọn, thuộc thành phố và ngày đã chọn
 ```
 [
     {
@@ -148,9 +150,9 @@ Trả về danh sách các rạp và suất chiếu tương ứng có phim đã 
     }
 ]
 ```
+## Trả về các suất chiếu của phim và rạp đã chọn  
 http://localhost:3000/api/showtimes/available?movieId=<movieId>&theaterId=<theaterId>&date=<yyyy-mm-dd>  
 http://localhost:3000/api/showtimes/available?movieId=3&theaterId=2&date=2024-11-07  
-Trả về các suất chiếu của phim và rạp đã chọn  
 ```
 [
     {
@@ -166,9 +168,38 @@ Trả về các suất chiếu của phim và rạp đã chọn
     }
 ]
 ```
+## Trả về các bộ phim với thành phố đã chọn, rạp đã chọn và ngày đã chọn  
+http://localhost:3000/api/movies/avaiblebycity?city=<city>&theaterId=<theaterId>&selectedDate=<yyyy-mm-dd>  
+http://localhost:3000/api/movies/avaiblebycity?city=TPHCM&theaterId=1&selectedDate=2024-12-16
+```
+[
+    {
+        "id": 1,
+        "title": "CƯỜI XUYÊN BIÊN GIỚI",
+        "genre": "2D | Normal | Normal sound | Lồng tiếng,Phụ đề",
+        "duration": 113,
+        "rating": 6.1,
+        "release_date": "2024-11-15T00:00:00.000Z",
+        "description": "Cười Xuyên Biên Giới kể về hành trình của Jin-bong (Ryu Seung-ryong) - cựu vô địch bắn cung quốc gia, sau khi nghỉ hưu, anh đã trở thành một nhân viên văn phòng bình thường. Đứng trước nguy cơ bị sa thải, Jin-bong phải nhận một nhiệm vụ bất khả thi là bay đến nửa kia của trái đất trong nỗ lực tuyệt vọng để sinh tồn. Sống sót sau một sự cố đe doạ tính mạng, Jin-bong đã “hạ cánh” xuống khu rừng Amazon, nơi anh gặp bộ ba thổ dân bản địa có kỹ năng bắn cung thượng thừa: Sika, Eeba và Walbu. Tin rằng đã tìm ra cách để tự cứu mình, Jin-bong hợp tác với phiên dịch ngáo ngơ Bbang-sik (Jin Sun-kyu) và đưa ba chiến thần cung thủ đến Hàn Quốc cho một nhiệm vụ táo bạo.",
+        "thumbnail": "https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202411/11623_103_100003.jpg",
+        "ranking": "[Trong nước] (T13) Trên 13 tuổi"
+    },
+    {
+        "id": 2,
+        "title": "WICKED",
+        "genre": "2D | Normal | Normal sound | Phụ đề",
+        "duration": 160,
+        "rating": 9.6,
+        "release_date": "2024-11-22T00:00:00.000Z",
+        "description": "Wicked, câu chuyện chưa kể về các phù thủy xứ Oz, có sự tham gia của nữ viên viên Cynthia Erivo người từng đoạt giải Emmy, Grammy và Tony trong vai Elphaba, một phù thủy trẻ với làn da xanh đặc biệt, người vẫn chưa khám phá ra sức mạnh tiềm ẩn bên trong mình và “công chúa nhạc pop” Ariana Grande trong vai Glinda, một phù thủy trẻ nổi tiếng, được tô điểm bởi đặc quyền và tham vọng, người vẫn chưa khám phá ra trái tim thực sự của mình.",
+        "thumbnail": "https://media.lottecinemavn.com/Media/MovieFile/MovieImg/202411/11555_103_100003.jpg",
+        "ranking": "[Trong nước] (K) Dưới 13t cần xem cùng cha/mẹ"
+    }
+]
+```
+## Trả về danh sách ghế của phòng chiếu với suất chiếu đã chọn
 http://localhost:3000/api/rooms/:room_id/seats/showtime/:showtime_id
 http://localhost:3000/api/rooms/1/seats/showtime/1
-Trả về danh sách ghế của phòng chiếu với suất chiếu đã chọn
 ```
 [
     {
@@ -205,6 +236,7 @@ Trả về danh sách ghế của phòng chiếu với suất chiếu đã chọ
     },
   ]
 ```
+
 ## Đặt Ghế (Book Seat)
 - Endpoint: POST /api/rooms/:room_id/seats/:seat_id/book
     - Mô tả: Đặt một ghế trong phòng chỉ định ở trạng thái "on-hold" để giữ chỗ trong 10 phút.

@@ -12,6 +12,9 @@ router.get('/', movieController.getAllMovies);
 // Lấy danh sách phim đang chiếu
 router.get('/now-showing', movieController.getNowShowingMovies);
 
+// Lấy danh sách phim đang chiếu theo thành phố và rạp
+router.get('/avaiblebycity', movieController.getMoviesByCityAndMovieTheater);
+
 // Lấy danh sách phim sắp chiếu
 router.get('/upcoming', movieController.getUpcomingMovies);
 
