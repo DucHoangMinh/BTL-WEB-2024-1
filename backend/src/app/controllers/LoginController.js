@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 class LoginController {
   postLogin = async (req, res) => {
     const { email, password } = req.body;
-
+    // console.log('JWT_SECRET:', process.env.JWT_SECRET);
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
     }

@@ -1,5 +1,9 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const path = require('path');
+const fs = require('fs');
+const {db, bucket } = require('../../../firebaseConfig');
+
 
 class MovieController {
   // Lấy toàn bộ danh sách phim
@@ -133,6 +137,7 @@ class MovieController {
           basic_info,
         },
       });
+      console.log(newMovie);
 
       return res.status(201).json({
         message: 'Tạo phim mới thành công',
@@ -277,8 +282,63 @@ class MovieController {
     }
   }
 
- 
+  createMovie2 = async (req, res) => {
+    console.log(req.body);
+    const {
+      title,
+      genre,
+      duration,
+      rating,
+      release_date,
+      description,
+      trailer,
+      relatedThumbnail,
+      ranking,
+      basic_info,
+    } = req.body;
+    let validDuration = parseInt(duration, 10);
+    let validRating = parseFloat(rating);
+    if (!req.file) {
+      return res.status(400).json({ message: 'No thumbnail uploaded' });
+    }
 
+    try {
+      const thumbnailPath = path.join(__dirname, '../../../uploads', req.file.filename);
+
+      const storageRef = bucket.file(`thumbnails/${req.file.filename}`);
+
+      await storageRef.save(fs.readFileSync(thumbnailPath), {
+        contentType: req.file.mimetype,  
+      });
+
+      const thumbnailUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/thumbnails%2F${req.file.filename}?alt=media`;
+
+      const newMovie = await prisma.movie.create({
+        data: {
+          title,
+          genre,
+          duration: validDuration,
+          rating: validRating,
+          release_date: new Date(release_date),  
+          description,
+          thumbnail: thumbnailUrl,  
+          trailer,
+          relatedThumbnail,
+          ranking,
+          basic_info,
+        },
+      });
+      fs.unlinkSync(thumbnailPath);
+
+      return res.status(201).json({
+        message: 'Tạo phim mới thành công',
+        movie: newMovie,
+      });
+    } catch (error) {
+      console.error('Error while creating a new movie:', error);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
 }
 
 module.exports = new MovieController();

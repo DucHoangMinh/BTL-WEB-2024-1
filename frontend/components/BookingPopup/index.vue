@@ -4,7 +4,7 @@
   .popup-content
     .close-button(@click="closePopup")
       v-icon mdi-close
-    
+
     .calendar-section
       .date-list
         .date-item(
@@ -16,23 +16,23 @@
           .month {{ date.month }}
           .day {{ date.day }}
           .weekday {{ date.weekday }}
-    
+
     .city-section
       .city-list
         .city-item(v-for="city in cities" :key="city" :class="{ active: selectedCity === city.city }" @click="selectCity(city.city)")
           span {{ city.city }}
-    
+
     .format-section
       .format-button.active 2D Phụ Đề Anh
     
     .theaters-section(v-if="selectedCity").d-flex.pb-4
       .theater(v-for="theater in theaters" :key="theater.name" @click="selectTheater(theater.id)" :class="{ active: selectedTheaterId === theater.id }").pa-2.mr-2
         .theater-name {{ theater.name }}
-        .showtime-list
-          .showtime(v-for="time in theater.times" :key="time" @click="selectShowtime(theater, time)")
-            span {{ time }}
+    .showtime-list.d-flex.flex-wrap
+      .showtime(v-for="time in showTimes" :key="id" @click="selectShowtime(time)").mb-2.cursor-pointer
+        .showtime-button(v-if="time.id % 13 === 0"  :class="{ active: selectedShowTimeId === time.id }").pa-2.mr-2 {{ time.Room.name }}, {{time.start_time.substring(11, 16)}} - {{time.end_time.substring(11, 16)}}
     div.text-center
-      v-btn(variant="outlined" @click="emit('finish_choose_place', {selectedDate: selectedDate.toString(), selectedShowTimeId: selectedShowTimeId, selectedTheaterId: selectedTheaterId})").text-right
+      v-btn(variant="outlined" @click="emit('finish_choose_place', {selectedDate: selectedDate.toString(), selectedShowTimeId: selectedShowTimeId, selectedTheaterId: selectedTheaterId, selectedRoomId: selectedRoomId})").text-right
         | Xác nhận
 </template>
 
@@ -50,8 +50,9 @@ const emit = defineEmits(['close', 'finish_choose_place'])
 const today = new Date()
 const selectedDate = ref(today.toISOString().split('T')[0])
 const selectedCity = ref('')
-const selectedTheaterId = ref(0)
-const selectedShowTimeId = ref(1)
+const selectedTheaterId = ref(null)
+const selectedShowTimeId = ref(null)
+const selectedRoomId = ref(null)
 const cities = ref([])
 const theaters = ref([])
 const showTimes = ref([])
@@ -84,9 +85,9 @@ const getWeekday = (date) => {
   return weekdays[d.getDay()]
 }
 
-const selectShowtime = (theater, time) => {
-  // Xử lý logic chọn suất chiếu
-  console.log(`Selected ${time} at ${theater.name}`)
+const selectShowtime = (time) => {
+  selectedRoomId.value = time.Room.id
+  selectedShowTimeId.value = time.id
 }
 
 const dateList = computed(() => {
@@ -126,8 +127,8 @@ const getTheaterByCityAndDay = async () => {
 }
 const getShowTimeByTheater = async () => {
   try {
-    const {data} = await axios.get(`https://api-btl-web-2024-1.vercel.app/movie-theaters/available/theaters/showtimes?city=${encodeURIComponent(selectedCity.value)}&movieId=${props.movieId}&date=${selectedDate.value}`)
-    console.log(data)
+    const {data} = await axios.get(`https://api-btl-web-2024-1.vercel.app/showtimes/available?movieId=${props.movieId}&theaterId=${selectedTheaterId.value}&date=${selectedDate.value}`)
+    showTimes.value = data.showtimes
   } catch (e) {
     console.log(e)
   }
@@ -262,4 +263,10 @@ onMounted(initData)
   .theater:hover
     background-color: #ccc
     cursor: pointer
+.showtime-button
+  border: 1px solid black
+  border-radius: 4px
+.active
+  background: #000
+  color: white
 </style> 
