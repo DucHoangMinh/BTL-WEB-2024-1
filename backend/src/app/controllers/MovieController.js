@@ -78,6 +78,85 @@ class MovieController {
     }
   };
 
+  async getMoviesByCityAndMovieTheater(req, res) {
+    try {
+      const { city, theaterId, selectedDate } = req.query;
+  
+      // Kiểm tra đầu vào
+      if (!city || !theaterId || !selectedDate) {
+        return res.status(400).json({ message: 'City, theaterId, and selectedDate are required' });
+      }
+  
+      // Chuyển selectedDate thành đối tượng Date
+      const date = new Date(selectedDate);
+      if (isNaN(date)) {
+        return res.status(400).json({ message: 'Invalid date format' });
+      }
+  
+      // Truy vấn phim đang chiếu tại rạp và thành phố cụ thể vào ngày được chọn
+      const movies = await prisma.movie.findMany({
+        where: {
+          Showtimes: {
+            some: {
+              Room: {
+                MovieTheater: {
+                  city: city, // Kiểm tra thành phố của rạp chiếu
+                  id: parseInt(theaterId), // Kiểm tra ID của rạp chiếu
+                },
+              },
+              // So sánh chỉ ngày (không quan tâm giờ, phút, giây)
+              start_time: {
+                gte: new Date(date.setHours(0, 0, 0, 0)), // Ngày bắt đầu
+                lt: new Date(date.setHours(23, 59, 59, 999)), // Ngày kết thúc
+              },
+            },
+          },
+        },
+        include: {
+          Showtimes: {
+            where: {
+              Room: {
+                movie_theater_id: parseInt(theaterId),
+              },
+              // So sánh ngày với start_time của Showtimes
+              start_time: {
+                gte: new Date(date.setHours(0, 0, 0, 0)),
+                lt: new Date(date.setHours(23, 59, 59, 999)),
+              },
+            },
+            select: {
+              id: true,  // Chỉ lấy ID của showtime để tránh trả về quá nhiều dữ liệu
+            },
+          },
+        },
+      });
+  
+      if (movies.length === 0) {
+        return res.status(404).json({ message: 'No movies found for the selected date and theater' });
+      }
+  
+      // Chỉ trả về thông tin phim mà không phải showtime
+      const result = movies.map(movie => ({
+        id: movie.id,
+        title: movie.title,
+        genre: movie.genre,
+        duration: movie.duration,
+        rating: movie.rating,
+        release_date: movie.release_date,
+        description: movie.description,
+        thumbnail: movie.thumbnail,
+        ranking: movie.ranking,
+      }));
+  
+      // Trả về danh sách phim
+      return res.json(result);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+  
+
   // Lấy thông tin phim theo ID
   getMovieById = async (req, res) => {
     const { id } = req.params;

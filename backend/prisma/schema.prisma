@@ -198,7 +198,6 @@ model MovieTheater {
   contact_phone   String?
   website_url     String?
   city            String
-  movie_id        Int
   Rooms           Room[]
 
   @@map("MovieTheater")
