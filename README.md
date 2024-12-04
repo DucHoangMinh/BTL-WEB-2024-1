@@ -236,14 +236,17 @@ Trả về danh sách ghế của phòng chiếu với suất chiếu đã chọ
     - promotion_id (integer, tùy chọn): ID của khuyến mãi, nếu có.
 
 ## Luồng đặt phim theo rạp muốn xem
+  Lấy danh sách thành phố:
+  -Endpoint : GET /api/city/cities
+  -yêu cầu body: không
   Lấy rạp theo thành phố:
-  -Endpoint : GET /api/:cityName/theaters-and-movies
+  -Endpoint : GET /api/city/:cityName/theaters-and-movies
   -yêu cầu body: không
   Lấy phim:
-  -Endpoint: Get'api/now-showing'
+  -Endpoint: Get '/api/city/movieId/:theaterName'
   -yêu cầu body: không
   Lấy thời gian theo phim:
-   -Endpoint : GET './:movieId/movie-showtime',
+   -Endpoint : GET http://localhost:3000/api/showtimes/available?movieId=3&theaterId=2&date=2024-11-07  
    -yêu cầu body: không
 
 
