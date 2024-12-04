@@ -3,7 +3,29 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 class CityController {
- 
+  
+  async getCityList(req, res) {
+    try {
+    
+      const cities = await prisma.movieTheater.findMany({
+        select: { city: true },
+        distinct: ['city'], 
+      });
+
+      if (cities.length === 0) {
+        return res.status(404).json({ message: 'No cities found.' });
+      }
+
+    
+      const cityList = cities.map(city => city.city);
+
+      return res.status(200).json({ cities: cityList });
+    } catch (error) {
+      console.error('Error fetching city list:', error);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+  } 
+
   async getTheatersAndMoviesByCity(req, res) {
     const { cityName } = req.params; 
     try {

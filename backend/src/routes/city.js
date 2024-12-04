@@ -4,6 +4,7 @@ const CityController = require('../app/controllers/CityController');
 
 const router = express.Router();
 
+router.get('/cities', CityController.getCityList);
 router.get('/:cityName/theaters-and-movies', CityController.getTheatersAndMoviesByCity);
 router.get('./:movieId/movie-showtime', CityController.getShowtimesByMovie)
 module.exports = router;
