@@ -27,39 +27,25 @@ class CityController {
   } 
 
   async getTheatersAndMoviesByCity(req, res) {
-    const { cityName } = req.params; 
+    const { cityName } = req.params;
+
     try {
-    
+     
       const theaters = await prisma.movieTheater.findMany({
-        where: { city: cityName, select: { name: true } },
-        // include: {
-        //   Showtimes: {
-        //     include: {
-        //       Movie: true
-        //     }
-        //   }
-        // }
+        where: { city: cityName },
+        select: { name: true }, 
       });
 
-      // const movies = [];
-      // const movieSet = new Set();
+      if (theaters.length === 0) {
+        return res.status(404).json({ message: 'No movie theaters found in the specified city.' });
+      }
 
-      // theaters.forEach(theater => {
-      //   theater.Showtimes.forEach(showtime => {
-      //     if (!movieSet.has(showtime.Movie.id)) {
-      //       movieSet.add(showtime.Movie.id);
-      //       movies.push(showtime.Movie);
-      //     }
-      //   });
-      // });
-
-      
       const theaterNames = theaters.map(theater => theater.name);
 
       return res.status(200).json({ theaterNames });
     } catch (error) {
-      console.error('Error fetching theaters and movies by city:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
+      console.error('Error fetching movie theaters by city:', error);
+      return res.status(500).json({ message: 'Internal Server Error' });
     }
   }
 
@@ -77,52 +63,64 @@ class CityController {
       }
   }
 
-  async getShowtimesByMovie(req, res) {
-    const { movieId } = req.params;
-    const { date } = req.query;
-
-    if ( !movieId || !date) {
-      return res.status(400).json({ message: 'theaterId, movieId, and date are required' });
-    }
+  async getMovieIdsByTheaterName(req, res) {
+    const { theaterName } = req.params;
 
     try {
+    
+      const theater = await prisma.movieTheater.findFirst({
+        where: { name: theaterName },
+        select: { id: true }, 
+      });
+
+      if (!theater) {
+        return res.status(404).json({ message: 'Theater not found.' });
+      }
+
+      const theaterId = theater.id;
+
+      
+      const rooms = await prisma.room.findMany({
+        where: { movie_theater_id: theaterId },
+        select: { id: true }, 
+      });
+
+      if (rooms.length === 0) {
+        return res.status(404).json({ message: 'No rooms found for this theater.' });
+      }
+
+      const roomIds = rooms.map(room => room.id);
+
       const showtimes = await prisma.showtime.findMany({
-        where: {
-          movie_id: parseInt(movieId),
-          show_date: new Date(date), // Thêm điều kiện ngày để lọc theo ngày được chọn
-          
-        },
-        select: {
-          id: true,
-          show_date: true,
-          start_time: true,
-          end_time: true,
-          price: true,
-          Room: {
-            select: {
-              name: true,
-            },
-          },
-        },
+        where: { room_id: { in: roomIds } },
+        select: { movie_id: true }, 
       });
 
       if (showtimes.length === 0) {
-        return res.status(404).json({ message: 'No showtimes found for this movie at the selected theater on the chosen date' });
+        return res.status(404).json({ message: 'No showtimes found for this theater.' });
+      }
+
+      const movieIds = [...new Set(showtimes.map(showtime => showtime.movie_id))]; // Loại bỏ trùng lặp movie_id
+
+     
+      const movies = await prisma.movie.findMany({
+        where: { id: { in: movieIds } },
+        select: { id: true, title: true }, 
+      });
+
+      if (movies.length === 0) {
+        return res.status(404).json({ message: 'No movies found for this theater.' });
       }
 
       return res.status(200).json({
-        message: 'Danh sách suất chiếu',
-        showtimes,
+        message: 'Danh sách phim theo rạp',
+        movies,
       });
     } catch (error) {
-      console.error('Error fetching showtimes:', error);
+      console.error('Error fetching movies by theater name:', error);
       return res.status(500).json({ message: 'Internal Server Error' });
     }
   }
-  
-
-  async 
-
 
 }
 
