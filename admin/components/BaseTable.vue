@@ -3,7 +3,7 @@
     <thead :class="theadClasses">
       <tr>
         <slot name="columns" :columns="columns">
-          <th v-for="column in columns" :key="column">{{ column }}</th>
+          <th v-for="column in columns" :key="column.value">{{ column.name }}</th>
         </slot>
       </tr>
     </thead>
@@ -13,9 +13,9 @@
           <td
             v-for="(column, index) in columns"
             :key="index"
-            v-if="hasValue(item, column)"
+            v-if="hasValue(item, column.value)"
           >
-            {{ itemValue(item, column) }}
+            {{ itemValue(item, column.value) }}
           </td>
         </slot>
       </tr>
