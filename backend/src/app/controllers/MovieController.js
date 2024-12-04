@@ -82,32 +82,28 @@ class MovieController {
     try {
       const { city, theaterId, selectedDate } = req.query;
   
-      // Kiểm tra đầu vào
       if (!city || !theaterId || !selectedDate) {
         return res.status(400).json({ message: 'City, theaterId, and selectedDate are required' });
       }
   
-      // Chuyển selectedDate thành đối tượng Date
       const date = new Date(selectedDate);
       if (isNaN(date)) {
         return res.status(400).json({ message: 'Invalid date format' });
       }
   
-      // Truy vấn phim đang chiếu tại rạp và thành phố cụ thể vào ngày được chọn
       const movies = await prisma.movie.findMany({
         where: {
           Showtimes: {
             some: {
               Room: {
                 MovieTheater: {
-                  city: city, // Kiểm tra thành phố của rạp chiếu
+                  city: city, 
                   id: parseInt(theaterId), // Kiểm tra ID của rạp chiếu
                 },
               },
-              // So sánh chỉ ngày (không quan tâm giờ, phút, giây)
               start_time: {
-                gte: new Date(date.setHours(0, 0, 0, 0)), // Ngày bắt đầu
-                lt: new Date(date.setHours(23, 59, 59, 999)), // Ngày kết thúc
+                gte: new Date(date.setHours(0, 0, 0, 0)), 
+                lt: new Date(date.setHours(23, 59, 59, 999)), 
               },
             },
           },
@@ -118,14 +114,13 @@ class MovieController {
               Room: {
                 movie_theater_id: parseInt(theaterId),
               },
-              // So sánh ngày với start_time của Showtimes
               start_time: {
                 gte: new Date(date.setHours(0, 0, 0, 0)),
                 lt: new Date(date.setHours(23, 59, 59, 999)),
               },
             },
             select: {
-              id: true,  // Chỉ lấy ID của showtime để tránh trả về quá nhiều dữ liệu
+              id: true,  
             },
           },
         },
@@ -135,7 +130,6 @@ class MovieController {
         return res.status(404).json({ message: 'No movies found for the selected date and theater' });
       }
   
-      // Chỉ trả về thông tin phim mà không phải showtime
       const result = movies.map(movie => ({
         id: movie.id,
         title: movie.title,
@@ -148,7 +142,6 @@ class MovieController {
         ranking: movie.ranking,
       }));
   
-      // Trả về danh sách phim
       return res.json(result);
     } catch (error) {
       console.error(error);
