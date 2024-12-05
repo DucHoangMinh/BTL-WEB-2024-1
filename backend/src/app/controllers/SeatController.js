@@ -398,6 +398,67 @@ createSeats = async (req, res) => {
       return res.status(500).json({ message: 'Internal Server Error', details: error.message });
     }
   };
+  checkPaymentStatus = async(req, res) => {
+    const { seat_id, transactionId } = req.body; // Lấy thông tin từ người dùng
+
+    if (!seat_id || !transactionId) {
+      return res.status(400).json({ message: 'Seat ID and Transaction ID are required.' });
+    }
+
+    try {
+      // Bước 1: Tìm thông tin ghế từ database
+      const seat = await prisma.seat.findUnique({
+        where: { id: parseInt(seat_id) },
+      });
+
+      if (!seat) {
+        return res.status(404).json({ message: 'Seat not found.' });
+      }
+
+      if (seat.is_paid) {
+        return res.status(400).json({ message: 'Seat is already paid.' });
+      }
+
+    
+      const verifyUrl = 'https://api.vietqr.io/v2/verify-transaction'; // API xác minh giao dịch
+      const response = await axios.post(verifyUrl, { transactionId }, {
+        headers: {
+          'x-client-id': process.env.VIETQR_CLIENT_ID, // ID khách hàng
+          'x-api-key': process.env.VIETQR_API_KEY,     // API Key
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const transaction = response.data;
+
+      // Kiểm tra trạng thái giao dịch
+      if (transaction.status !== 'success') {
+        return res.status(400).json({ message: 'Payment not completed or invalid transaction.' });
+      }
+
+      // Bước 3: Đối chiếu số tiền giao dịch
+      if (transaction.amount !== seat.price) {
+        return res.status(400).json({ message: 'Incorrect payment amount.' });
+      }
+
+      // Bước 4: Cập nhật trạng thái ghế
+      await prisma.seat.update({
+        where: { id: seat.id },
+        data: { status: 'paid', is_paid: true, hold_until: null },
+      });
+
+      return res.status(200).json({
+        message: 'Payment verified successfully.',
+        seat,
+      });
+    } catch (error) {
+      console.error('Error verifying payment:', error.response?.data || error.message);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
+
+
+  
   
 
 }
