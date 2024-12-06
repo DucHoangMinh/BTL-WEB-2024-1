@@ -40,9 +40,9 @@ class CityController {
         return res.status(404).json({ message: 'No movie theaters found in the specified city.' });
       }
 
-      const theaterNames = theaters.map(theater => theater.name);
+      const theaterIds = theaters.map(theater => theater.id);
 
-      return res.status(200).json({ theaterNames });
+      return res.status(200).json({ theaterIds });
     } catch (error) {
       console.error('Error fetching movie theaters by city:', error);
       return res.status(500).json({ message: 'Internal Server Error' });
@@ -115,6 +115,7 @@ class CityController {
       return res.status(200).json({
         message: 'Danh sách phim theo rạp',
         movies,
+        movieIds
       });
     } catch (error) {
       console.error('Error fetching movies by theater name:', error);
