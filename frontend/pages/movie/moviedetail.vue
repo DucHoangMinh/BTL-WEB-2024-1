@@ -16,7 +16,7 @@
     </div>
 
     <div class="movie-description mb-6">
-      <h2>TĂ³m táº¯t</h2>
+      <h2>Tóm tắt</h2>
       <p>{{ movie.description }}</p>
     </div>
 

@@ -7,13 +7,9 @@ div
       nav.navbar
         ul.nav-menu
           li.nav-item
-            a(href="/lich-chieu") Lịch Chiếu
-          li.nav-item
             a(href="/phim") Phim
           li.nav-item
-            a(href="/rap") Rạp
-          li.nav-item
-            a(href="/gia-ve") Giá Vé
+            a(href="/theaters") Rạp chiếu
           li.nav-item
             a(href="/uu-dai") Tin Mới và Ưu Đãi
           li.nav-item(v-if="userInfor.fullName === ''")

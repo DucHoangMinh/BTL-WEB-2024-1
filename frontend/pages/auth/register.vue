@@ -3,7 +3,7 @@
   .signup-box
     .logo
       img(src="/img/main_logo.png", alt="Logo")
-    h1.title Create your account
+    h1.title Tạo tài khoản mới
     form(@submit.prevent="null")
       .input-group
         input(type="text", v-model="registerData.firstName", placeholder="First Name", required)
@@ -17,15 +17,15 @@
         input(type="password", v-model="registerData.confirmPassword", placeholder="Confirm Password", required)
       .input-group.mt-8
         input(type="date", v-model="registerData.dateOfBirth", required)
-        label.date-label(for="dateOfBirth") Date of Birth
+        label.date-label(for="dateOfBirth") Ngày sinh
       .options
         label.agree-terms
           input(type="checkbox", v-model="agreeTerms", required)
-          span I agree to the Terms and Conditions
-      button.signup-button(type="submit" @click="clickRegisterButton") Sign Up
+          span Tôi đồng ý với điều khoản và điều kiện
+      button.signup-button(type="submit" @click="clickRegisterButton") Đăng ký
     .login-link
-      | Already have an account?
-      a(href="/auth/login") &nbsp; Log in
+      | Bạn đã có tài khoản?
+      a(href="/auth/login") &nbsp; Đăng nhập
 </template>
 <script setup>
 import showMessages from "~/utils/toast.js";
@@ -39,7 +39,7 @@ const signUp = async () => {
     loadingStateStoreRef.setLoadingState(true)
     await axios.post("https://api-btl-web-2024-1.vercel.app/register", registerData.value)
     loadingStateStoreRef.setLoadingState(false)
-    showMessages.success('Đăng ký thành công, vui lòng kiểm tra email để xác nhận tài khoản')
+    showMessages.success('Đăng ký thành công, bạn sẽ được chuyển hướng về trang đăng nhập')
     setTimeout(async () => {
       await router.push('/auth/login')
     }, 5000)

@@ -3,7 +3,7 @@
     .login-box
       .logo
         img(src="/img/main_logo.png", alt="Logo")
-      h1.title Log into your account
+      h1.title Đăng nhập vào tài khoản của bạn
       form(@submit.prevent="login")
         .input-group
           input(type="email", v-model="email", placeholder="Email", required)
@@ -12,12 +12,12 @@
         .options
           label.remember-me
             input(type="checkbox", v-model="rememberMe")
-            span Remember me
-          a.forgot-password(href="#", @click.prevent="forgotPassword") Forgot password?
-        button.login-button(type="submit" @click="login") Log In
+            span Ghi nhớ đăng nhập
+          a.forgot-password(href="#", @click.prevent="forgotPassword") Quên mật khẩu?
+        button.login-button(type="submit" @click="login") Đăng nhập
       .signup-link
-        | Don't have an account?
-        a(href="/auth/register") &nbsp; Sign up
+        | Bạn chưa có tài khoản?
+        a(href="/auth/register") &nbsp; Đăng ký
 
 </template>
 <script setup>
