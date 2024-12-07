@@ -90,4 +90,7 @@ export default {
     display: none;
   }
 }
+.sidebar-wrapper{
+  background-color: black !important;
+}
 </style>

@@ -4,7 +4,7 @@
     <side-bar
       :background-color="sidebarBackground"
       short-title="CT"
-      title="Creative Tim"
+      title="8Movies"
     >
       <template slot-scope="props" slot="links">
         <sidebar-item

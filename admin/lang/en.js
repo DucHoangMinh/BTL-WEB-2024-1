@@ -1,8 +1,8 @@
 module.exports = {
   "sidebar": {
-    "title": "Creative Tim",
+    "title": "8Movies",
     "shortTitle": "CT",
-    "dashboard": "Dashboard",
+    "dashboard": "Quản lý chung",
     "pages": "Pages",
     "pricing": "Pricing",
     "rtl": "RTL Support",
@@ -31,6 +31,9 @@ module.exports = {
     "extendedTables": "Extended Tables",
     "paginatedTables": "Paginated Tables",
     "maps": "Maps",
+    "finance" : "Quản lý doanh thu",
+    "users": "Danh sách người dùng",
+    "schedule": "Quản lý suất chiếu",
     "googleMaps": "Google Maps",
     "fullScreenMaps": "Full Screen Map",
     "vectorMaps": "Vector Maps",

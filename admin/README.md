@@ -71,7 +71,7 @@ We are very excited to share this dashboard with you and we look forward to hear
 
 ## Download and Installation
 
-- [Download from Creative Tim](https://www.creative-tim.com/product/nuxt-black-dashboard).
+- [Download from 8Movies](https://www.creative-tim.com/product/nuxt-black-dashboard).
 - [Download from Github](https://github.com/creativetimofficial/nuxt-black-dashboard).
 
 ## Documentation
@@ -232,8 +232,8 @@ If you have questions or need help integrating the product please [contact us](h
 
 ## Licensing
 
-- Copyright 2023 Creative Tim (https://www.creative-tim.com)
-- Creative Tim [License](https://www.creative-tim.com/license)
+- Copyright 2023 8Movies (https://www.creative-tim.com)
+- 8Movies [License](https://www.creative-tim.com/license)
 
 ## Useful Links
 

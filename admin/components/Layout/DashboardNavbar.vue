@@ -3,6 +3,7 @@
     v-model="showMenu"
     class="navbar-absolute top-navbar"
     type="white"
+    v-if="!dontHaveNavBarPage.includes(this.$route.path)"
     :transparent="true"
   >
     <div slot="brand" class="navbar-wrapper">
@@ -138,7 +139,8 @@ export default {
       activeNotifications: false,
       showMenu: false,
       searchModalVisible: false,
-      searchQuery: ''
+      searchQuery: '',
+      dontHaveNavBarPage: ['/login']
     };
   },
   methods: {

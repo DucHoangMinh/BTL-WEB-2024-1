@@ -3,6 +3,7 @@
   <div class="wrapper" :class="{ 'nav-open': $sidebar.showSidebar }">
     <notifications></notifications>
     <side-bar
+      v-if="!dontHaveScrollBarPage.includes(this.$route.path)"
       :background-color="sidebarBackground"
       :short-title="$t('sidebar.shortTitle')"
       :title="$t('sidebar.title')"
@@ -34,13 +35,26 @@
         </sidebar-item>
         <sidebar-item
           :link="{
-            name: $t('sidebar.maps'),
-            icon: 'tim-icons icon-pin',
-            path: '/google'
+            name: $t('sidebar.finance'),
+            icon: 'tim-icons icon-bank',
+            path: '/finance'
           }"
         >
         </sidebar-item>
-
+        <sidebar-item
+            :link="{
+            name: $t('sidebar.users'),
+            icon: 'tim-icons icon-single-02',
+            path: '/users-management'
+          }"
+        ></sidebar-item>
+        <sidebar-item
+            :link="{
+            name: $t('sidebar.schedule'),
+            icon: 'tim-icons icon-laptop',
+            path: '/icon-management'
+          }"
+        ></sidebar-item>
         <sidebar-item
           :link="{
             name: $t('sidebar.notifications'),
@@ -68,29 +82,14 @@
 
         <sidebar-item
           :link="{
-            name: $t('sidebar.typography'),
-            icon: 'tim-icons icon-align-center',
-            path: '/typography'
-          }"
-        ></sidebar-item>
-
-        <sidebar-item
-          :link="{
             name: $t('sidebar.rtl'),
             icon: 'tim-icons icon-world',
             path: localePath('/rtl', 'ar') }"
         ></sidebar-item>
-
-        <li class="active-pro">
-          <a href="https://www.creative-tim.com/product/nuxt-black-dashboard-pro" target="_blank">
-            <i class="tim-icons icon-spaceship"></i>
-            <p>Upgrade to PRO</p>
-          </a>
-        </li>
       </template>
     </side-bar>
     <!--Share plugin (for demo purposes). You can remove it if don't plan on using it-->
-    <sidebar-share :background-color.sync="sidebarBackground"> </sidebar-share>
+<!--    <sidebar-share :background-color.sync="sidebarBackground"> </sidebar-share>-->
     <div class="main-panel" :data="sidebarBackground">
       <dashboard-navbar></dashboard-navbar>
       <router-view name="header"></router-view>
@@ -114,6 +113,7 @@
   import PerfectScrollbar from 'perfect-scrollbar';
   import 'perfect-scrollbar/css/perfect-scrollbar.css';
   import SidebarShare from '@/components/Layout/SidebarSharePlugin';
+  import { mapMutations } from 'vuex';
   function hasElement(className) {
     return document.getElementsByClassName(className).length > 0;
   }
@@ -145,7 +145,8 @@
     },
     data() {
       return {
-        sidebarBackground: 'vue' //vue|blue|orange|green|red|primary
+        sidebarBackground: 'vue', //vue|blue|orange|green|red|primary,
+        dontHaveScrollBarPage: ['/login']
       };
     },
     computed: {
@@ -172,10 +173,17 @@
         } else {
           docClasses.add('perfect-scrollbar-off');
         }
+      },
+      checkUserLogined() {
+        if (!this.$store.state.userInfor.userInfor) {
+          this.$router.push('/login');
+        }
       }
     },
     mounted() {
       this.initScrollbar();
+      document.body.classList.add('white-content');
+      this.checkUserLogined()
     }
   };
 </script>
