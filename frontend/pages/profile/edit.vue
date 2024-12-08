@@ -52,7 +52,7 @@ const saveChanges = () => {
 
 <template>
   <div class="edit-profile">
-    <h2 class="title">Chỉnh Sửa Thông Tin</h2>
+    <h2 class="title"> Thông Tin Cá Nhân</h2>
     <form @submit.prevent="saveChanges">
       <div class="form-group">
         <label>Họ</label>
@@ -75,7 +75,7 @@ const saveChanges = () => {
         <input type="email" v-model="userData.email" :disabled="!isEditable" />
       </div>
       <div class="form-group">
-        <label>Ngày sinh</label>
+        <label>Ngày Sinh</label>
         <input
           type="date"
           v-model="userData.dateOfBirth"
@@ -83,7 +83,7 @@ const saveChanges = () => {
         />
       </div>
       <div class="form-group">
-        <label>Mật khẩu hiện tại</label>
+        <label>Mật Khẩu Hiện Tại</label>
         <input
           type="password"
           v-model="userData.currentPassword"
@@ -109,7 +109,7 @@ const saveChanges = () => {
 
       <!-- Hiển thị trường nhập mật khẩu mới nếu chọn đổi mật khẩu -->
       <div v-if="isChangingPassword" class="form-group">
-        <label>Mật khẩu mới</label>
+        <label>Mật Khẩu Mới</label>
         <input
           type="password"
           v-model="userData.newPassword"
@@ -117,7 +117,7 @@ const saveChanges = () => {
         />
       </div>
       <div v-if="isChangingPassword" class="form-group">
-        <label>Nhập lại mật khẩu mới</label>
+        <label>Nhập Lại Mật Khẩu Mới</label>
         <input
           type="password"
           v-model="userData.confirmNewPassword"
@@ -126,7 +126,7 @@ const saveChanges = () => {
       </div>
 
       <button type="button" @click="toggleEdit" class="btn">
-        {{ isEditable ? "Gửi" : "Sửa" }}
+        {{ isEditable ? "Xác nhận" : "Sửa" }}
       </button>
     </form>
   </div>
