@@ -40,7 +40,8 @@
 import axios from "axios";
 import {previousPageStore} from "~/stores/previousPage.js";
 import showMessages from "~/utils/toast.js";
-
+import {loadingStateStore} from "~/stores/loadingState.js";
+const loadingStateStoreRef = loadingStateStore()
 const previousPageStoreRef = previousPageStore()
 
 const route = useRoute()
@@ -83,7 +84,9 @@ const formatDateToDDMMYYYY = (dateString) => {
   return `${day}/${month}/${year}`;
 }
 const init = async () => {
+  loadingStateStoreRef.setLoadingState(true)
   await getMovieDetail()
+  loadingStateStoreRef.setLoadingState(false)
 }
 onMounted(init)
 
