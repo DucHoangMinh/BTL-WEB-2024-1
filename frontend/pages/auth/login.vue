@@ -62,6 +62,8 @@ const login = async () => {
       password: password.value
     });
     if (response.data.token) {
+      localStorage.setItem('userToken', response.data.token);
+
       userInforStoreRef.setUserInfor({
         id: response.data.user.id,
         fullName: response.data.user.fullName,
