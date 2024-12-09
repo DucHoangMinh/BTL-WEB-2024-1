@@ -6,10 +6,9 @@ class UserController {
 
   // GET thông tin người dùng
   async getUser(req, res) {
-    const userId = req.user.userId;  // Lấy userId từ token (đã được gắn vào req.user)
+    const userId = req.user.userId;  
 
     try {
-      // Tìm người dùng với toàn bộ thông tin
       const user = await prisma.user.findUnique({
         where: { id: userId },
       });
@@ -27,10 +26,9 @@ class UserController {
 
   // PUT cập nhật thông tin người dùng
   async updateUser(req, res) {
-    const userId = req.user.userId;  // Lấy userId từ token (đã được gắn vào req.user)
+    const userId = req.user.userId;  
     const { full_name, email, date_of_birth, phone_number } = req.body;
 
-    // Xây dựng đối tượng data để cập nhật
     const updateData = {};
 
     if (full_name) updateData.full_name = full_name;
