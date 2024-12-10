@@ -11,6 +11,7 @@ const showtimeRouter = require('./showtime');
 const userRouter = require('./user');
 const authenticateToken = require('../middleware/prismaAuthMiddleware');  
 const cityRouter = require('./city');
+const ticketRouter = require('./ticket')
 
 function route(app) {
   app.use('/register', registerRouter);
@@ -24,6 +25,7 @@ function route(app) {
   app.use("/city",cityRouter);
   app.use("/seat", seatRouter)
   app.use('/user', userRouter);
+  app.use('/ticket',ticketRouter);
   app.get('/protected', authenticateToken, (req, res) => {
     res.json({
       message: 'This is a protected route. You are authenticated.',

@@ -324,7 +324,6 @@ http://localhost:3000/api/rooms/1/seats/showtime/1
 -  Endpoint: POST /api/seat/:seat_id/confirmQR
    -Trả về mã QR để thanh toán
 - Tham số:
-    - 
     - seat_id (URL param, bắt buộc): ID của ghế muốn xác nhận thanh toán.
 - Yêu cầu Body:
     - user_id
@@ -370,3 +369,5 @@ Send request<br>
     - thumbnail: upload file
     - ranking: Trong nước
     - trailer: 
+## Trả về thông tin ticket
+   -ENDPOINT :GET /api/ticket/:ticket_id
