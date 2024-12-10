@@ -33,16 +33,17 @@ class CityController {
      
       const theaters = await prisma.movieTheater.findMany({
         where: { city: cityName },
-        select: { name: true }, 
+        select: { name: true, id:true }, 
       });
 
       if (theaters.length === 0) {
         return res.status(404).json({ message: 'No movie theaters found in the specified city.' });
       }
-
+      
+      const theaterName = theaters.map(theater => theater.name);
       const theaterIds = theaters.map(theater => theater.id);
-
-      return res.status(200).json({ theaterIds });
+      
+      return res.status(200).json({ theaters });
     } catch (error) {
       console.error('Error fetching movie theaters by city:', error);
       return res.status(500).json({ message: 'Internal Server Error' });
@@ -64,12 +65,12 @@ class CityController {
   }
 
   async getMovieIdsByTheaterName(req, res) {
-    const { theaterName } = req.params;
+    const { theaterIds } = req.params;
 
     try {
     
       const theater = await prisma.movieTheater.findFirst({
-        where: { name: theaterName },
+        where: { id: theaterIds },
         select: { id: true }, 
       });
 

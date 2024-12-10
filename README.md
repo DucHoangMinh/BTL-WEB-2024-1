@@ -257,15 +257,15 @@ http://localhost:3000/api/rooms/1/seats/showtime/1
     - showtime_id (integer, bắt buộc): ID của suất chiếu để liên kết vé.
     - promotion_id (integer, tùy chọn): ID của khuyến mãi, nếu có.
 ## Thanh toans bằng QR:
--  Endpoint: POST /api/rooms/:room_id/seats/:seat_id/confirmQR
+-  Endpoint: POST /api/seat/:seat_id/confirmQR
    -Trả về mã QR để thanh toán
 - Tham số:
-    - room_id (URL param, bắt buộc): ID của phòng chứa ghế.
+    - 
     - seat_id (URL param, bắt buộc): ID của ghế muốn xác nhận thanh toán.
 - Yêu cầu Body:
-    - user_id (integer, bắt buộc): ID của người dùng xác nhận thanh toán.
+    - room_id: 
     - showtime_id (integer, bắt buộc): ID của suất chiếu để liên kết vé.
-    - promotion_id (integer, tùy chọn): ID của khuyến mãi, nếu có.
+   
 
 ## Luồng đặt phim theo rạp muốn xem
   Lấy danh sách thành phố:

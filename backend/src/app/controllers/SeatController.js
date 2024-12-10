@@ -242,7 +242,7 @@ createSeats = async (req, res) => {
 
   confirmPayment = async (req, res) => {
     const { room_id, seat_id } = req.params;
-    const { user_id, showtime_id, promotion_id } = req.body;
+    const { user_id, showtime_id } = req.body;
     const currentTime = new Date();
 
     try {
@@ -283,7 +283,7 @@ createSeats = async (req, res) => {
                 user_id: parseInt(user_id),
                 showtime_id: parseInt(showtime_id),
                 seat_id: parseInt(seat_id),
-                promotion_id: promotion_id ? parseInt(promotion_id) : null,
+                // promotion_id: promotion_id ? parseInt(promotion_id) : null,
                 status: 'paid',
                 
             },
@@ -302,8 +302,8 @@ createSeats = async (req, res) => {
   confirmPaymentByQRCode = async (req, res) => {
     
     try {
-      const { room_id, seat_id } = req.params; 
-      const { user_id, showtime_id, promotion_id } = req.body;
+      const {  seat_id } = req.params; 
+      const { room_id,showtime_id} = req.body;
 
       const seat = await prisma.seat.findFirst({
         where: { id: parseInt(seat_id), room_id: parseInt(room_id), showtime_id: parseInt(showtime_id) },
@@ -352,19 +352,19 @@ createSeats = async (req, res) => {
         data: { status: 'paid', is_paid: true, hold_until: null },
       });
       console.log('Attempting to create ticket with the following data:', {
-        user_id: parseInt(user_id),
+        // user_id: parseInt(user_id),
         showtime_id: parseInt(showtime_id),
         seat_id: parseInt(seat_id),
-        promotion_id: promotion_id ? parseInt(promotion_id) : null,
+        // promotion_id: promotion_id ? parseInt(promotion_id) : null,
         status: 'paid',
       
       });
       const newTicket = await prisma.ticket.create({
         data: {
-          user_id: parseInt(user_id),
+          // user_id: parseInt(user_id),
           showtime_id: parseInt(showtime_id),
           seat_id: parseInt(seat_id),
-          promotion_id: promotion_id ? parseInt(promotion_id) : null,
+          // promotion_id: promotion_id ? parseInt(promotion_id) : null,
           status: 'paid',
         },
       });
