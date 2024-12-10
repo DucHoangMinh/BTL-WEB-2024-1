@@ -283,7 +283,7 @@ createSeats = async (req, res) => {
                 user_id: parseInt(user_id),
                 showtime_id: parseInt(showtime_id),
                 seat_id: parseInt(seat_id),
-                // promotion_id: promotion_id ? parseInt(promotion_id) : null,
+                promotion_id: promotion_id ? parseInt(promotion_id) : null,
                 status: 'paid',
                 
             },
@@ -303,7 +303,7 @@ createSeats = async (req, res) => {
     
     try {
       const {  seat_id } = req.params; 
-      const { room_id,showtime_id} = req.body;
+      const {user_id, room_id,showtime_id} = req.body;
 
       const seat = await prisma.seat.findFirst({
         where: { id: parseInt(seat_id), room_id: parseInt(room_id), showtime_id: parseInt(showtime_id) },
@@ -361,7 +361,7 @@ createSeats = async (req, res) => {
       });
       const newTicket = await prisma.ticket.create({
         data: {
-          // user_id: parseInt(user_id),
+          user_id: parseInt(user_id),
           showtime_id: parseInt(showtime_id),
           seat_id: parseInt(seat_id),
           // promotion_id: promotion_id ? parseInt(promotion_id) : null,

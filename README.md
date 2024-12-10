@@ -311,7 +311,7 @@ http://localhost:3000/api/rooms/1/seats/showtime/1
 - Yêu cầu Body:
     - user_id (integer, bắt buộc): ID của người dùng đặt ghế.
 ## Xác Nhận Thanh Toán và Tạo Vé (Confirm Payment)
-- Endpoint: POST /api/rooms/:room_id/seats/:seat_id/confirm
+- Endpoint: POST /api/seat/:room_id/seats/:seat_id/confirm
     - Mô tả: Xác nhận thanh toán cho ghế đã đặt trong phòng chỉ định và tạo vé (Ticket) cho người dùng.
 - Tham số:
     - room_id (URL param, bắt buộc): ID của phòng chứa ghế.
@@ -327,6 +327,7 @@ http://localhost:3000/api/rooms/1/seats/showtime/1
     - 
     - seat_id (URL param, bắt buộc): ID của ghế muốn xác nhận thanh toán.
 - Yêu cầu Body:
+    - user_id
     - room_id: 
     - showtime_id (integer, bắt buộc): ID của suất chiếu để liên kết vé.
    
