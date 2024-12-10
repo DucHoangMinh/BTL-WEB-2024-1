@@ -197,19 +197,17 @@ createSeats = async (req, res) => {
  
   bookSeat = async (req, res) => {
     const { room_id, seat_id, showtime_id } = req.params;
-    // const { user_id } = req.body;
     const user_id = req.user.userId;
     console.log('Decoded userId:', user_id); 
     const currentTime = new Date();
-    const holdTime = new Date(currentTime.getTime() + 10 * 60 * 1000); // Giữ chỗ trong 10 phút
+    const holdTime = new Date(currentTime.getTime() + 10 * 60 * 1000); 
 
     try {
-        // Kiểm tra ghế có tồn tại và thuộc phòng, suất chiếu đã chọn
         const seat = await prisma.seat.findFirst({
             where: {
                 id: parseInt(seat_id),
                 room_id: parseInt(room_id),
-                showtime_id: parseInt(showtime_id), // Kiểm tra suất chiếu
+                showtime_id: parseInt(showtime_id), 
             },
         });
 
@@ -217,19 +215,17 @@ createSeats = async (req, res) => {
             return res.status(404).json({ message: 'Seat not found in this room for the selected showtime' });
         }
 
-        // Kiểm tra nếu ghế đã được đặt
         if (seat.status !== 'available') {
             return res.status(400).json({ message: 'Seat is not available for booking' });
         }
 
-        // Đặt ghế trong trạng thái "on-hold" cho suất chiếu đã chọn
         await prisma.seat.update({
             where: { id: parseInt(seat_id) },
             data: {
                 status: 'on-hold',
                 hold_until: holdTime,
                 is_paid: false,
-                showtime_id: parseInt(showtime_id), // Gắn suất chiếu vào ghế đã đặt
+                showtime_id: parseInt(showtime_id),
             },
         });
 
