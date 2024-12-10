@@ -302,14 +302,22 @@ http://localhost:3000/api/rooms/1/seats/showtime/1
 ```
 
 ## Đặt Ghế (Book Seat)
-- Endpoint: POST /api/rooms/:room_id/seats/:seat_id/book
+- Endpoint: POST /api/rooms/:room_id/seats/:seat_ids/book/:showtime_id  
+    - http://localhost:3000/api/rooms/1/seats/11242,11243,11244/book/1
     - Mô tả: Đặt một ghế trong phòng chỉ định ở trạng thái "on-hold" để giữ chỗ trong 10 phút.
 - Tham số:
     - room_id (URL param, bắt buộc): ID của phòng chứa ghế.
-    - seat_id (URL param, bắt buộc): ID của ghế muốn đặt.
+    - mảng seat_ids (URL param, bắt buộc): ID của các ghế muốn đặt.
     - showtime_id (URL param, bắt buộc): ID của suất chiếu mà ghế thuộc về.
-- Yêu cầu Body:
-    - user_id (integer, bắt buộc): ID của người dùng đặt ghế.
+- Yêu cầu Header: token
+```
+{
+    "message": "Seats successfully put on hold for the selected showtime.",
+    "updatedSeats": {
+        "count": 3
+    }
+}
+```
 ## Xác Nhận Thanh Toán và Tạo Vé (Confirm Payment)
 - Endpoint: POST /api/seat/:room_id/seats/:seat_id/confirm
     - Mô tả: Xác nhận thanh toán cho ghế đã đặt trong phòng chỉ định và tạo vé (Ticket) cho người dùng.
