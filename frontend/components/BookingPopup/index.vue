@@ -30,13 +30,15 @@
         .theater-name {{ theater.name }}
     .showtime-list.d-flex.flex-wrap
       .showtime(v-for="time in showTimes" :key="id" @click="selectShowtime(time)").mb-2.cursor-pointer
-        .showtime-button(v-if="time.id % 13 === 0"  :class="{ active: selectedShowTimeId === time.id }").pa-2.mr-2 {{ time.Room.name }}, {{time.start_time.substring(11, 16)}} - {{time.end_time.substring(11, 16)}}
+        .showtime-button(:class="{ active: selectedShowTimeId === time.id }").pa-2.mr-2 {{ time.Room.name }} {{time.start_time.substring(11, 16)}} - {{time.end_time.substring(11, 16)}}
     div.text-center
       v-btn(variant="outlined" @click="emit('finish_choose_place', {selectedDate: selectedDate.toString(), selectedShowTimeId: selectedShowTimeId, selectedTheaterId: selectedTheaterId, selectedRoomId: selectedRoomId})").text-right
         | Xác nhận
 </template>
 
 <script setup>
+import {loadingStateStore} from "~/stores/loadingState.js";
+const loadingStateStoreRef = loadingStateStore()
 import axios from "axios";
 
 
@@ -65,6 +67,7 @@ const selectDate = async (date) => {
   selectedDate.value = date
   cities.value = []
   theaters.value = []
+  showTimes.value = []
   selectedCity.value = ''
   await getProvinceHaveMovieByDay()
 }
@@ -111,30 +114,41 @@ const dateList = computed(() => {
 })
 const getProvinceHaveMovieByDay = async () => {
   try {
+    loadingStateStoreRef.setLoadingState(true)
     const {data} = await axios.get(`https://api-btl-web-2024-1.vercel.app/movies/${props.movieId}/cities?date=${selectedDate.value}`)
     cities.value = data.cities
   } catch (e) {
     console.log(e)
+  } finally {
+    loadingStateStoreRef.setLoadingState(false)
   }
 }
 const getTheaterByCityAndDay = async () => {
   try {
+    loadingStateStoreRef.setLoadingState(true)
     const {data} = await axios.get(`https://api-btl-web-2024-1.vercel.app/movie-theaters/available/theaters?city=${encodeURIComponent(selectedCity.value)}&movieId=${props.movieId}&date=${selectedDate.value}`)
     theaters.value = data
   } catch (e) {
     console.log(e)
+  } finally {
+    loadingStateStoreRef.setLoadingState(false)
   }
 }
 const getShowTimeByTheater = async () => {
   try {
+    loadingStateStoreRef.setLoadingState(true)
     const {data} = await axios.get(`https://api-btl-web-2024-1.vercel.app/showtimes/available?movieId=${props.movieId}&theaterId=${selectedTheaterId.value}&date=${selectedDate.value}`)
     showTimes.value = data.showtimes
   } catch (e) {
     console.log(e)
+  } finally {
+    loadingStateStoreRef.setLoadingState(false)
   }
 }
 const initData = async () => {
+  loadingStateStoreRef.setLoadingState(true)
   await getProvinceHaveMovieByDay()
+  loadingStateStoreRef.setLoadingState(false)
 }
 onMounted(initData)
 </script>

@@ -197,17 +197,19 @@ createSeats = async (req, res) => {
  
   bookSeat = async (req, res) => {
     const { room_id, seat_id, showtime_id } = req.params;
+    console.log(showtime_id)
+    // const { user_id } = req.body;
     const user_id = req.user.userId;
     console.log('Decoded userId:', user_id); 
     const currentTime = new Date();
-    const holdTime = new Date(currentTime.getTime() + 10 * 60 * 1000); 
+    const holdTime = new Date(currentTime.getTime() + 10 * 60 * 1000);
 
     try {
         const seat = await prisma.seat.findFirst({
             where: {
                 id: parseInt(seat_id),
                 room_id: parseInt(room_id),
-                showtime_id: parseInt(showtime_id), 
+                showtime_id: parseInt(showtime_id),
             },
         });
 
