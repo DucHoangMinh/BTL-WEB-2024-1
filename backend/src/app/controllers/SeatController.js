@@ -186,7 +186,7 @@ createSeats = async (req, res) => {
             return res.status(404).json({ message: 'No seats found for the specified room and showtime' });
         }
   
-        return res.status(200).json(seats); // Trả về danh sách ghế đã sắp xếp
+        return res.status(200).json(seats); 
     } catch (error) {
         console.error('Error fetching seats with status for showtime:', error);
         return res.status(500).json({ message: 'Internal Server Error' });
@@ -198,50 +198,44 @@ createSeats = async (req, res) => {
   bookSeat = async (req, res) => {
     const { room_id, seat_ids, showtime_id } = req.params;
     console.log('Room ID:', room_id);
-    console.log('Seat IDs:', seat_ids);  // seat_ids là một chuỗi các id ghế phân cách bằng dấu phẩy
+    console.log('Seat IDs:', seat_ids);  
     console.log('Showtime ID:', showtime_id);
 
-    // Chuyển seat_ids từ chuỗi thành mảng số nguyên
     const seatIdsArray = seat_ids.split(',').map(id => parseInt(id, 10));
     console.log('Parsed Seat IDs:', seatIdsArray);
 
-    const user_id = req.user.userId;  // Lấy userId từ token
+    const user_id = req.user.userId;  
     console.log('Decoded userId:', user_id);
 
     const currentTime = new Date();
-    const holdTime = new Date(currentTime.getTime() + 10 * 60 * 1000);  // Thời gian giữ ghế
+    const holdTime = new Date(currentTime.getTime() + 10 * 60 * 1000);  
 
     try {
-        // Truy vấn tất cả các ghế trong mảng seatIds
         const seats = await prisma.seat.findMany({
             where: {
-                id: { in: seatIdsArray },  // Tìm tất cả ghế có id trong mảng seatIdsArray
-                room_id: parseInt(room_id),  // Phòng phải đúng
-                showtime_id: parseInt(showtime_id),  // Buổi chiếu phải đúng
+                id: { in: seatIdsArray }, 
+                room_id: parseInt(room_id), 
+                showtime_id: parseInt(showtime_id),  
             },
         });
 
-        // Nếu không tìm thấy ghế nào
         if (seats.length === 0) {
             return res.status(404).json({ message: 'Seats not found for the selected room and showtime' });
         }
 
-        // Kiểm tra trạng thái ghế (chỉ giữ lại những ghế có trạng thái "available")
         const unavailableSeats = seats.filter(seat => seat.status !== 'available');
         const availableSeats = seats.filter(seat => seat.status === 'available');
 
-        // Nếu có ghế không có sẵn, trả về lỗi
         if (unavailableSeats.length > 0) {
             return res.status(400).json({
                 message: 'Some seats are not available for booking',
-                unavailableSeats: unavailableSeats.map(seat => seat.id), // Các ghế không có sẵn
+                unavailableSeats: unavailableSeats.map(seat => seat.id), 
             });
         }
 
-        // Cập nhật trạng thái các ghế
         const updatedSeats = await prisma.seat.updateMany({
             where: {
-                id: { in: seatIdsArray },  // Cập nhật tất cả ghế trong mảng seatIdsArray
+                id: { in: seatIdsArray },  
             },
             data: {
                 status: 'on-hold',
