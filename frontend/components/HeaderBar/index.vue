@@ -2,20 +2,20 @@
 div
   header
     .header-container
-      a(href="/")
+      router-link(to="/")
         img(src="/img/main_logo.png", alt="Logo" class="logo")
       nav.navbar
         ul.nav-menu
           li.nav-item
-            a(href="/phim") Phim
+            router-link(to="/phim") Phim
           li.nav-item
-            a(href="/theaters") Rạp chiếu
+            router-link(to="/theaters") Rạp chiếu
           li.nav-item
-            a(href="/uu-dai") Tin Mới và Ưu Đãi
+            router-link(to="/uu-dai") Tin Mới và Ưu Đãi
           li.nav-item(v-if="userInfor.fullName === ''")
-            a(href="/auth/login") Đăng Nhập
+            router-link(to="/auth/login") Đăng Nhập
           li.nav-item(v-if="userInfor.fullName === ''")
-            a(href="/auth/register") Đăng Ký
+            router-link(href="/auth/register") Đăng Ký
           li(v-else)
             span.font-weight-bold Xin chào, {{userInfor.fullName}}
 </template>

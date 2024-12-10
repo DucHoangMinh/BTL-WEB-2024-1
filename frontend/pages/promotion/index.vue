@@ -28,7 +28,8 @@
 
 <script setup>
 import axios from "axios";
-
+import {loadingStateStore} from "~/stores/loadingState.js";
+const loadingStateStoreRef = loadingStateStore()
 const route = useRoute()
 
 const promotion = ref({});
@@ -45,7 +46,9 @@ const getPromotionDetail = async () => {
   formattedDescription.value = promotion.value?.description?.replace(/\n/g, '<br>')
 }
 const init = async () => {
+  loadingStateStoreRef.setLoadingState(true)
   await getPromotionDetail()
+  loadingStateStoreRef.setLoadingState(false)
 }
 onMounted(init)
 </script>

@@ -7,6 +7,70 @@ yarn install
 npm run dev
 ```
 ## Json for Postman
+## GET: http://localhost:3000/api/user
+token : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJlbWFpbCI6InRoYW5oZG9uZzEzMTdAZ21haWwuY29tIiwiaWF0IjoxNzMzNzYyMDgzLCJleHAiOjE3MzM4NDg0ODN9.WwMAi280aifah2LwJp9ac2JtItJulIVmcJXZXei7Yxk
+```
+{
+    "user": {
+        "id": 11,
+        "email": "thanhdong1313@gmail.com",
+        "phone_number": "123456",
+        "password": "$2b$10$Lu3DUHk4SSDNIxTl2N5CYe3W16PZHs5k6Ltn/14rIG2t2BkB1uC..",
+        "full_name": "Dong Thanh",
+        "date_of_birth": "2003-11-13T00:00:00.000Z",
+        "created_at": "2024-12-03T08:27:34.827Z"
+    }
+}
+```
+## PUT: http://localhost:3000/api/user
+token : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJlbWFpbCI6InRoYW5oZG9uZzEzMTdAZ21haWwuY29tIiwiaWF0IjoxNzMzNzYyMDgzLCJleHAiOjE3MzM4NDg0ODN9.WwMAi280aifah2LwJp9ac2JtItJulIVmcJXZXei7Yxk
+```
+{
+  "email": "thanhdong1313@gmail.com",
+  "phone_number": "9876543210",
+  "full_name": "Dong Thanh2",
+  "date_of_birth": "2003-11-14"
+}
+```
+json trả về :  
+```
+{
+    "message": "User information updated successfully",
+    "user": {
+        "id": 11,
+        "email": "thanhdong1313@gmail.com",
+        "phone_number": "9876543210",
+        "password": "$2b$10$Lu3DUHk4SSDNIxTl2N5CYe3W16PZHs5k6Ltn/14rIG2t2BkB1uC..",
+        "full_name": "Dong Thanh2",
+        "date_of_birth": "2003-11-14T00:00:00.000Z",
+        "created_at": "2024-12-03T08:27:34.827Z"
+    }
+}
+```
+## PUT: http://localhost:3000/api/user
+token : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExLCJlbWFpbCI6InRoYW5oZG9uZzEzMTdAZ21haWwuY29tIiwiaWF0IjoxNzMzNzYyMDgzLCJleHAiOjE3MzM4NDg0ODN9.WwMAi280aifah2LwJp9ac2JtItJulIVmcJXZXei7Yxk
+```
+{
+  "currentPassword": "1234567",
+  "newPassword": "123456",
+  "confirmPassword": "123456"
+}
+```
+json trả về :  
+```
+{
+    "message": "Password updated successfully",
+    "user": {
+        "id": 11,
+        "email": "thanhdong1313@gmail.com",
+        "phone_number": "9876543210",
+        "password": "$2b$10$bmRgOoFivDBs0clC9Z06/ux7N7Td2ph44Gz/wqCqdVAOm/fjYKFG2",
+        "full_name": "Dong Thanh2",
+        "date_of_birth": "2003-11-14T00:00:00.000Z",
+        "created_at": "2024-12-03T08:27:34.827Z"
+    }
+}
+```
 POST: http://localhost:3000/api/register
 ```
 {
