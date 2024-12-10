@@ -92,15 +92,14 @@ model Seat {
 
 model Showtime {
   id         Int      @id @default(autoincrement())
-  movie_id   Int
-  room_id    Int
+  movie_id   Int?
+  room_id    Int?
   show_date  DateTime
   start_time DateTime
   end_time   DateTime
-  price      Float
   Seats      Seat[]
-  Movie      Movie    @relation(fields: [movie_id], references: [id])
-  Room       Room     @relation(fields: [room_id], references: [id])
+  Movie      Movie?   @relation(fields: [movie_id], references: [id])
+  Room       Room?    @relation(fields: [room_id], references: [id])
   Ticket     Ticket[]
 
   @@map("Showtime")
