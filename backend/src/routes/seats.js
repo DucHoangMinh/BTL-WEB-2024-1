@@ -26,6 +26,6 @@ router.post('/:seat_id/book',authenticateToken, SeatController.bookSeat);
 // Xác nhận thanh toán cho ghế
 router.post('/:seat_id/confirm', SeatController.confirmPayment);
 
-router.post('/:seat_id/confirmQR', SeatController.confirmPaymentByQRCode);
+router.post('/confirm-payment', SeatController.confirmPaymentByQRCode);
 
 module.exports = router;

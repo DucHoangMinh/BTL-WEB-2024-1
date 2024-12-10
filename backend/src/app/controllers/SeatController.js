@@ -300,167 +300,123 @@ createSeats = async (req, res) => {
   };
 
   confirmPaymentByQRCode = async (req, res) => {
-    
     try {
-      const {  seat_id } = req.params; 
-      const {user_id, room_id,showtime_id} = req.body;
-
-      const seat = await prisma.seat.findFirst({
-        where: { id: parseInt(seat_id), room_id: parseInt(room_id), showtime_id: parseInt(showtime_id) },
-      });
-      console.log('Seat Data:', seat);
-      
+      const { seat_ids, user_id, room_id, showtime_id } = req.body; // Lấy mảng danh sách ghế và các thông tin cần thiết
   
-      if (seat.status !== 'available') {
-        return res.status(400).json({ message: 'Seat is not in an on-hold state.' });
+      if (!Array.isArray(seat_ids) || seat_ids.length === 0) {
+        return res.status(400).json({ message: 'Seat IDs must be a non-empty array.' });
       }
   
-      if (seat.is_paid) {
-        return res.status(400).json({ message: 'Seat is already paid.' });
+      if (!user_id || !room_id || !showtime_id) {
+        return res.status(400).json({ message: 'user_id, room_id, and showtime_id are required.' });
       }
   
-      // const currentTime = new Date();
-      // if (seat.hold_until < currentTime) {
-      //   return res.status(400).json({ message: 'Hold time for the seat has expired.' });
-      // }
-
-       const amountValue = seat.price;
-       console.log("amount", amountValue)
-       const existingTicket = await prisma.ticket.findFirst({
-        where: {
-          seat_id: parseInt(seat_id),
-          showtime_id: parseInt(showtime_id),
-        },
-      });
+      const tickets = []; // Lưu danh sách vé đã tạo
+      const errors = []; // Lưu lỗi nếu có
   
-      if (existingTicket) {
+      let totalAmount = 0; // Biến tổng tiền
+  
+      for (const seat_id of seat_ids) {
+        try {
+          // Tìm ghế trong hệ thống
+          const seat = await prisma.seat.findFirst({
+            where: {
+              id: parseInt(seat_id),
+              room_id: parseInt(room_id),
+              showtime_id: parseInt(showtime_id),
+            },
+            select: {
+              id: true,
+              price: true, // Lấy giá của ghế
+              status: true,
+              is_paid: true,
+            },
+          });
+  
+          if (!seat) {
+            errors.push({ seat_id, message: 'Seat not found.' });
+            continue;
+          }
+  
+          if (seat.status !== 'available') {
+            errors.push({ seat_id, message: 'Seat is not in an available state.' });
+            continue;
+          }
+  
+          if (seat.is_paid) {
+            errors.push({ seat_id, message: 'Seat is already paid.' });
+            continue;
+          }
+  
+          const existingTicket = await prisma.ticket.findFirst({
+            where: {
+              seat_id: parseInt(seat_id),
+              showtime_id: parseInt(showtime_id),
+            },
+          });
+  
+          if (existingTicket) {
+            errors.push({ seat_id, message: 'A ticket already exists for this seat and showtime.' });
+            continue;
+          }
+  
+          // Cập nhật trạng thái ghế
+          await prisma.seat.update({
+            where: { id: parseInt(seat_id) },
+            data: { status: 'paid', is_paid: true, hold_until: null },
+          });
+  
+          // Tạo vé mới
+          const newTicket = await prisma.ticket.create({
+            data: {
+              user_id: parseInt(user_id),
+              showtime_id: parseInt(showtime_id),
+              seat_id: parseInt(seat_id),
+              status: 'paid',
+            },
+          });
+  
+          tickets.push(newTicket); // Thêm vé vào danh sách vé đã tạo
+  
+          // Cộng giá ghế vào tổng tiền
+          totalAmount += seat.price;
+          
+        } catch (error) {
+          console.error(`Error processing seat ID ${seat_id}:`, error.message);
+          errors.push({ seat_id, message: error.message });
+        }
+      }
+  
+      // Nếu không tạo được vé nào
+      if (tickets.length === 0) {
         return res.status(400).json({
-          message: 'A ticket already exists for this seat and showtime.',
-          ticket: existingTicket,
+          message: 'No tickets were created due to errors.',
+          errors,
         });
       }
   
-
-      await prisma.seat.update({
-        where: { id: parseInt(seat_id) },
-        data: { status: 'paid', is_paid: true, hold_until: null },
-      });
-  
-     
-      await prisma.seat.update({
-        where: { id: parseInt(seat_id) },
-        data: { status: 'paid', is_paid: true, hold_until: null },
-      });
-      console.log('Attempting to create ticket with the following data:', {
-        // user_id: parseInt(user_id),
-        showtime_id: parseInt(showtime_id),
-        seat_id: parseInt(seat_id),
-        // promotion_id: promotion_id ? parseInt(promotion_id) : null,
-        status: 'paid',
-      
-      });
-      const newTicket = await prisma.ticket.create({
-        data: {
-          user_id: parseInt(user_id),
-          showtime_id: parseInt(showtime_id),
-          seat_id: parseInt(seat_id),
-          // promotion_id: promotion_id ? parseInt(promotion_id) : null,
-          status: 'paid',
-        },
-      });
-
-  
-   
-      const bankCode = '970422'; 
-      const accountNumber = '9190163130063'; 
-      const template = 'Tp8VEQR'; 
-      const addInfo = `Thanh toan ve ${newTicket.id}`; 
+      // Tạo QR code thanh toán
+      const bankCode = '970422';
+      const accountNumber = '9190163130063';
+      const template = 'Tp8VEQR';
+      const addInfo = `Thanh toan ve ${tickets.map((t) => t.id).join(',')}`;
       const accountName = 'Lotte Cinema';
-      const qrUrl = `https://img.vietqr.io/image/${bankCode}-${accountNumber}-${template}.jpg?amount=${amountValue}&addInfo=${encodeURIComponent(addInfo)}&accountName=${encodeURIComponent(accountName)}`;
+      const qrUrl = `https://img.vietqr.io/image/${bankCode}-${accountNumber}-${template}.jpg?amount=${totalAmount}&addInfo=${encodeURIComponent(addInfo)}&accountName=${encodeURIComponent(accountName)}`;
   
-     
-      
-      // if (!qrResponse || !qrResponse.data) {
-      //   return res.status(500).json({ message: 'Failed to generate QR code from VietQR' });
-      // }
-  
-      
-      // const qrCodeUrl = `data:image/jpeg;base64,${Buffer.from(qrResponse.data, 'binary').toString('base64')}`;
-  
-     
+      // Trả về kết quả
       return res.status(200).json({
-        message: 'Payment confirmed, ticket created with QR code.',
-        ticket: newTicket,
-        qrUrl, 
+        message: 'Payment confirmed, tickets created with QR code.',
+        tickets,
+        totalAmount, // Tổng tiền vé
+        qrUrl,
+        errors, // Trả về lỗi nếu có
       });
     } catch (error) {
       console.error('Error during payment process:', error.message);
       return res.status(500).json({ message: 'Internal Server Error', details: error.message });
     }
   };
-  checkPaymentStatus = async(req, res) => {
-    const { seat_id, transactionId } = req.body; // Lấy thông tin từ người dùng
-
-    if (!seat_id || !transactionId) {
-      return res.status(400).json({ message: 'Seat ID and Transaction ID are required.' });
-    }
-
-    try {
-      // Bước 1: Tìm thông tin ghế từ database
-      const seat = await prisma.seat.findUnique({
-        where: { id: parseInt(seat_id) },
-      });
-
-      if (!seat) {
-        return res.status(404).json({ message: 'Seat not found.' });
-      }
-
-      if (seat.is_paid) {
-        return res.status(400).json({ message: 'Seat is already paid.' });
-      }
-
-    
-      const verifyUrl = 'https://api.vietqr.io/v2/verify-transaction'; // API xác minh giao dịch
-      const response = await axios.post(verifyUrl, { transactionId }, {
-        headers: {
-          'x-client-id': process.env.VIETQR_CLIENT_ID, // ID khách hàng
-          'x-api-key': process.env.VIETQR_API_KEY,     // API Key
-          'Content-Type': 'application/json',
-        },
-      });
-
-      const transaction = response.data;
-
-      // Kiểm tra trạng thái giao dịch
-      if (transaction.status !== 'success') {
-        return res.status(400).json({ message: 'Payment not completed or invalid transaction.' });
-      }
-
-      // Bước 3: Đối chiếu số tiền giao dịch
-      if (transaction.amount !== seat.price) {
-        return res.status(400).json({ message: 'Incorrect payment amount.' });
-      }
-
-      // Bước 4: Cập nhật trạng thái ghế
-      await prisma.seat.update({
-        where: { id: seat.id },
-        data: { status: 'paid', is_paid: true, hold_until: null },
-      });
-
-      return res.status(200).json({
-        message: 'Payment verified successfully.',
-        seat,
-      });
-    } catch (error) {
-      console.error('Error verifying payment:', error.response?.data || error.message);
-      return res.status(500).json({ message: 'Internal Server Error' });
-    }
-  };
-
-
   
-  
-
 }
 
 module.exports = new SeatsController();
