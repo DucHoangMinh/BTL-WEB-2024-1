@@ -411,6 +411,101 @@ class MovieController {
       return res.status(500).json({ message: 'Internal Server Error' });
     }
   };
+  async getMovieAndTheaterDetails(req, res) {
+    const { movieId } = req.params;
+
+    if (!movieId) {
+      return res.status(400).json({ message: 'Movie ID is required.' });
+    }
+
+    try {
+      // Bước 1: Truy vấn thông tin phim từ movie_id
+      const movie = await prisma.movie.findUnique({
+        where: { id: parseInt(movieId) },
+        include: {
+          Showtimes: {
+            select: {
+              id: true,
+              start_time: true,
+              end_time: true,
+              room_id: true, // Lấy room_id để xử lý tiếp
+            },
+          },
+        },
+      });
+
+      if (!movie) {
+        return res.status(404).json({ message: 'Movie not found.' });
+      }
+
+      const currentTime = new Date();
+
+      // Bước 2: Truy vấn thông tin room và movieTheater từ room_id
+      const detailedShowtimes = await Promise.all(
+        movie.Showtimes.map(async (showtime) => {
+          const room = await prisma.room.findUnique({
+            where: { id: showtime.room_id },
+            select: {
+              id: true,
+              name: true,
+              movie_theater_id: true, // Lấy theater_id từ room
+            },
+          });
+
+          if (!room) {
+            throw new Error(`Room with ID ${showtime.room_id} not found.`);
+          }
+
+          const movieTheater = await prisma.movieTheater.findUnique({
+            where: { id: room.movie_theater_id },
+            select: {
+              id: true,
+              name: true,
+              city: true,
+            },
+          });
+
+          if (!movieTheater) {
+            throw new Error(`MovieTheater with ID ${room.theater_id} not found.`);
+          }
+
+          // Kiểm tra trạng thái upcoming và đặt giá trị tương ứng
+          const status = new Date(showtime.start_time) > currentTime ? 'up-coming' : 'now-showing';
+
+          return {
+            showtime_id: showtime.id,
+            start_time: showtime.start_time,
+            end_time: showtime.end_time,
+            status, // Trả về trạng thái up-coming hoặc now-showing
+            room: {
+              id: room.id,
+              name: room.name,
+            },
+            theater: {
+              id: movieTheater.id,
+              name: movieTheater.name,
+              city: movieTheater.city,
+            },
+          };
+        })
+      );
+
+      // Trả về thông tin phim và suất chiếu chi tiết
+      return res.status(200).json({
+        movie: {
+          id: movie.id,
+          title: movie.title,
+          genre: movie.genre,
+          duration: movie.duration,
+          description: movie.description,
+        },
+        showtimes: detailedShowtimes,
+      });
+    } catch (error) {
+      console.error('Error fetching movie and theater details:', error.message);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+  }
 }
 
 module.exports = new MovieController();

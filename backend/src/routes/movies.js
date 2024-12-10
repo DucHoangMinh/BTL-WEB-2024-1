@@ -35,5 +35,6 @@ router.get('/:movieId/cities', movieController.getCitiesByMovieId);
 
 router.get('/:movieId/date', movieController.getMoviesByDate)
 
+router.get('/:movieId/movie', movieController.getMovieAndTheaterDetails)
 
 module.exports = router;

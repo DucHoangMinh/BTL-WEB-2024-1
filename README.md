@@ -371,3 +371,5 @@ Send request<br>
     - trailer: 
 ## Trả về thông tin ticket
    -ENDPOINT :GET /api/ticket/:ticket_id
+## Trả về thông tin chi tiết phim
+   -ENDPOINT : GET /api/movies/:movieId/movie
