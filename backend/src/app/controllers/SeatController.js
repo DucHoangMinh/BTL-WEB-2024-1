@@ -198,6 +198,7 @@ createSeats = async (req, res) => {
   bookSeat = async (req, res) => {
     const { room_id, seat_id, showtime_id } = req.params;
     // const { user_id } = req.body;
+    console.log("showtime",showtime_id)
     const user_id = req.user.userId;
     console.log('Decoded userId:', user_id); 
     const currentTime = new Date();
@@ -209,7 +210,7 @@ createSeats = async (req, res) => {
             where: {
                 id: parseInt(seat_id),
                 room_id: parseInt(room_id),
-                showtime_id: parseInt(showtime_id), // Kiểm tra suất chiếu
+                showtime_id: parseInt(currentTime), // Kiểm tra suất chiếu
             },
         });
 
@@ -285,7 +286,7 @@ createSeats = async (req, res) => {
                 seat_id: parseInt(seat_id),
                 promotion_id: promotion_id ? parseInt(promotion_id) : null,
                 status: 'paid',
-                
+               
             },
         });
 
@@ -301,7 +302,7 @@ createSeats = async (req, res) => {
 
   confirmPaymentByQRCode = async (req, res) => {
     try {
-      const { seat_ids, user_id, room_id, showtime_id } = req.body; // Lấy mảng danh sách ghế và các thông tin cần thiết
+      const { seat_ids, user_id, room_id, showtime_id } = req.body;
   
       if (!Array.isArray(seat_ids) || seat_ids.length === 0) {
         return res.status(400).json({ message: 'Seat IDs must be a non-empty array.' });
@@ -311,10 +312,8 @@ createSeats = async (req, res) => {
         return res.status(400).json({ message: 'user_id, room_id, and showtime_id are required.' });
       }
   
-      const tickets = []; // Lưu danh sách vé đã tạo
       const errors = []; // Lưu lỗi nếu có
-  
-      let totalAmount = 0; // Biến tổng tiền
+      let totalAmount = 0; // Tổng tiền
   
       for (const seat_id of seat_ids) {
         try {
@@ -338,8 +337,9 @@ createSeats = async (req, res) => {
             continue;
           }
   
-          if (seat.status !== 'available') {
-            errors.push({ seat_id, message: 'Seat is not in an available state.' });
+          // Kiểm tra nếu trạng thái ghế không phải 'on-hold'
+          if (seat.status !== 'on-hold') {
+            errors.push({ seat_id, message: 'Seat is not in an on-hold state.' });
             continue;
           }
   
@@ -348,49 +348,18 @@ createSeats = async (req, res) => {
             continue;
           }
   
-          const existingTicket = await prisma.ticket.findFirst({
-            where: {
-              seat_id: parseInt(seat_id),
-              showtime_id: parseInt(showtime_id),
-            },
-          });
-  
-          if (existingTicket) {
-            errors.push({ seat_id, message: 'A ticket already exists for this seat and showtime.' });
-            continue;
-          }
-  
-          // Cập nhật trạng thái ghế
-          await prisma.seat.update({
-            where: { id: parseInt(seat_id) },
-            data: { status: 'paid', is_paid: true, hold_until: null },
-          });
-  
-          // Tạo vé mới
-          const newTicket = await prisma.ticket.create({
-            data: {
-              user_id: parseInt(user_id),
-              showtime_id: parseInt(showtime_id),
-              seat_id: parseInt(seat_id),
-              status: 'paid',
-            },
-          });
-  
-          tickets.push(newTicket); // Thêm vé vào danh sách vé đã tạo
-  
           // Cộng giá ghế vào tổng tiền
           totalAmount += seat.price;
-          
         } catch (error) {
           console.error(`Error processing seat ID ${seat_id}:`, error.message);
           errors.push({ seat_id, message: error.message });
         }
       }
   
-      // Nếu không tạo được vé nào
-      if (tickets.length === 0) {
+      // Nếu không có ghế hợp lệ
+      if (totalAmount === 0) {
         return res.status(400).json({
-          message: 'No tickets were created due to errors.',
+          message: 'No valid seats found to generate QR code.',
           errors,
         });
       }
@@ -399,20 +368,19 @@ createSeats = async (req, res) => {
       const bankCode = '970422';
       const accountNumber = '9190163130063';
       const template = 'Tp8VEQR';
-      const addInfo = `Thanh toan ve ${tickets.map((t) => t.id).join(',')}`;
+      const addInfo = `Thanh toan cho cac ghe ${seat_ids.join(', ')}`;
       const accountName = 'Lotte Cinema';
       const qrUrl = `https://img.vietqr.io/image/${bankCode}-${accountNumber}-${template}.jpg?amount=${totalAmount}&addInfo=${encodeURIComponent(addInfo)}&accountName=${encodeURIComponent(accountName)}`;
   
       // Trả về kết quả
       return res.status(200).json({
-        message: 'Payment confirmed, tickets created with QR code.',
-        tickets,
+        message: 'QR code generated successfully.',
         totalAmount, // Tổng tiền vé
-        qrUrl,
-        errors, // Trả về lỗi nếu có
+        qrUrl, // URL mã QR
+        errors, // Lỗi nếu có
       });
     } catch (error) {
-      console.error('Error during payment process:', error.message);
+      console.error('Error during QR code generation:', error.message);
       return res.status(500).json({ message: 'Internal Server Error', details: error.message });
     }
   };
