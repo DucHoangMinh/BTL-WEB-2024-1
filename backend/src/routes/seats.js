@@ -21,8 +21,8 @@ router.put('/:id', SeatController.updateSeat);
 router.get('/showtime/:showtime_id', SeatController.getSeatsByShowtimeAndRoom);
 
 // Đặt ghế
-router.post('/:seat_id/book',authenticateToken, SeatController.bookSeat);
-// router.post('/:seat_id/book', SeatController.bookSeat);
+router.post('/:seat_ids/book/:showtime_id',authenticateToken, SeatController.bookSeat);
+
 // Xác nhận thanh toán cho ghế
 router.post('/:seat_id/confirm', SeatController.confirmPayment);
 

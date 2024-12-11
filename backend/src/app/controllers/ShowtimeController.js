@@ -4,10 +4,10 @@ const prisma = new PrismaClient();
 class ShowtimeController {
   // Thêm một suất chiếu mới
   createShowtime = async (req, res) => {
-    const { movie_id, room_id, show_date, start_time, end_time, price } = req.body;
+    const { movie_id, room_id, show_date, start_time, end_time} = req.body;
 
     // Kiểm tra nếu thiếu trường dữ liệu
-    if (!movie_id || !room_id || !show_date || !start_time || !end_time || !price) {
+    if (!movie_id || !room_id || !show_date || !start_time || !end_time ) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
@@ -19,7 +19,6 @@ class ShowtimeController {
           show_date: new Date(show_date),
           start_time: new Date(start_time),
           end_time: new Date(end_time),
-          price: parseFloat(price)
         }
       });
 
@@ -67,7 +66,6 @@ class ShowtimeController {
           show_date: true,
           start_time: true,
           end_time: true,
-          price: true,
           Room: {
             select: {
               id: true,

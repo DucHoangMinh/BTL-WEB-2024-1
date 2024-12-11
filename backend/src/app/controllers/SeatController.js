@@ -1,6 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient({
-  log: ['query', 'info', 'warn', 'error']
+  // log: ['query', 'info', 'warn', 'error']
 });
 const axios = require('axios'); 
 
@@ -186,7 +186,7 @@ createSeats = async (req, res) => {
             return res.status(404).json({ message: 'No seats found for the specified room and showtime' });
         }
   
-        return res.status(200).json(seats); // Trả về danh sách ghế đã sắp xếp
+        return res.status(200).json(seats); 
     } catch (error) {
         console.error('Error fetching seats with status for showtime:', error);
         return res.status(500).json({ message: 'Internal Server Error' });
@@ -196,50 +196,66 @@ createSeats = async (req, res) => {
   
  
   bookSeat = async (req, res) => {
-    const { room_id, seat_id, showtime_id } = req.params;
-    // const { user_id } = req.body;
-    console.log("showtime",showtime_id)
-    const user_id = req.user.userId;
-    console.log('Decoded userId:', user_id); 
+    const { room_id, seat_ids, showtime_id } = req.params;
+    console.log('Room ID:', room_id);
+    console.log('Seat IDs:', seat_ids);  
+    console.log('Showtime ID:', showtime_id);
+
+    const seatIdsArray = seat_ids.split(',').map(id => parseInt(id, 10));
+    console.log('Parsed Seat IDs:', seatIdsArray);
+
+    const user_id = req.user.userId;  
+    console.log('Decoded userId:', user_id);
+
     const currentTime = new Date();
-    const holdTime = new Date(currentTime.getTime() + 10 * 60 * 1000); // Giữ chỗ trong 10 phút
+    const holdTime = new Date(currentTime.getTime() + 10 * 60 * 1000);  
 
     try {
-        // Kiểm tra ghế có tồn tại và thuộc phòng, suất chiếu đã chọn
-        const seat = await prisma.seat.findFirst({
+        const seats = await prisma.seat.findMany({
             where: {
-                id: parseInt(seat_id),
-                room_id: parseInt(room_id),
-                showtime_id: parseInt(currentTime), // Kiểm tra suất chiếu
+                id: { in: seatIdsArray }, 
+                room_id: parseInt(room_id), 
+                showtime_id: parseInt(showtime_id),  
             },
         });
 
-        if (!seat) {
-            return res.status(404).json({ message: 'Seat not found in this room for the selected showtime' });
+        if (seats.length === 0) {
+            return res.status(404).json({ message: 'Seats not found for the selected room and showtime' });
         }
 
-        // Kiểm tra nếu ghế đã được đặt
-        if (seat.status !== 'available') {
-            return res.status(400).json({ message: 'Seat is not available for booking' });
+        const unavailableSeats = seats.filter(seat => seat.status !== 'available');
+        const availableSeats = seats.filter(seat => seat.status === 'available');
+
+        if (unavailableSeats.length > 0) {
+            return res.status(400).json({
+                message: 'Some seats are not available for booking',
+                unavailableSeats: unavailableSeats.map(seat => seat.id), 
+            });
         }
 
-        // Đặt ghế trong trạng thái "on-hold" cho suất chiếu đã chọn
-        await prisma.seat.update({
-            where: { id: parseInt(seat_id) },
+        const updatedSeats = await prisma.seat.updateMany({
+            where: {
+                id: { in: seatIdsArray },  
+            },
             data: {
                 status: 'on-hold',
                 hold_until: holdTime,
                 is_paid: false,
-                showtime_id: parseInt(showtime_id), // Gắn suất chiếu vào ghế đã đặt
+                showtime_id: parseInt(showtime_id),
             },
         });
 
-        return res.status(200).json({ message: 'Seat successfully put on hold for booking for the selected showtime.' });
+        return res.status(200).json({
+            message: 'Seats successfully put on hold for the selected showtime.',
+            updatedSeats: updatedSeats,
+        });
+
     } catch (error) {
-        console.error('Error booking seat:', error);
+        console.error('Error booking seats:', error);
         return res.status(500).json({ message: 'Internal Server Error' });
     }
   };
+
 
   confirmPayment = async (req, res) => {
     const { room_id, seat_id } = req.params;
@@ -299,7 +315,6 @@ createSeats = async (req, res) => {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
   };
-
   confirmPaymentByQRCode = async (req, res) => {
     try {
       const { seat_ids, user_id, room_id, showtime_id } = req.body;
@@ -334,18 +349,18 @@ createSeats = async (req, res) => {
   
           if (!seat) {
             errors.push({ seat_id, message: 'Seat not found.' });
-            continue;
+            break; // Nếu không tìm thấy ghế, thoát vòng lặp
           }
   
           // Kiểm tra nếu trạng thái ghế không phải 'on-hold'
           if (seat.status !== 'on-hold') {
             errors.push({ seat_id, message: 'Seat is not in an on-hold state.' });
-            continue;
+            break; // Nếu ghế không phải on-hold, thoát vòng lặp
           }
   
           if (seat.is_paid) {
             errors.push({ seat_id, message: 'Seat is already paid.' });
-            continue;
+            break; // Nếu ghế đã thanh toán, thoát vòng lặp
           }
   
           // Cộng giá ghế vào tổng tiền
@@ -353,13 +368,14 @@ createSeats = async (req, res) => {
         } catch (error) {
           console.error(`Error processing seat ID ${seat_id}:`, error.message);
           errors.push({ seat_id, message: error.message });
+          break; // Nếu xảy ra lỗi, thoát vòng lặp
         }
       }
   
-      // Nếu không có ghế hợp lệ
-      if (totalAmount === 0) {
+      // Nếu có lỗi, trả về danh sách lỗi và không tạo mã QR
+      if (errors.length > 0) {
         return res.status(400).json({
-          message: 'No valid seats found to generate QR code.',
+          message: 'Some seats are invalid for generating QR code.',
           errors,
         });
       }
@@ -377,7 +393,6 @@ createSeats = async (req, res) => {
         message: 'QR code generated successfully.',
         totalAmount, // Tổng tiền vé
         qrUrl, // URL mã QR
-        errors, // Lỗi nếu có
       });
     } catch (error) {
       console.error('Error during QR code generation:', error.message);

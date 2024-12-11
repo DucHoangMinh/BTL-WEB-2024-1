@@ -26,7 +26,7 @@ class LoginController {
         return res.status(400).json({ message: 'Invalid password' });
       }
 
-      const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '1d' });
+      const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '1d' });
       console.log('Generated Token:', token); 
 
       return res.status(200).json({
@@ -35,7 +35,8 @@ class LoginController {
         user: {
           id: user.id,
           fullName: user.full_name,
-          email: user.email
+          email: user.email,
+          role: user.role
         }
       });
     } catch (error) {

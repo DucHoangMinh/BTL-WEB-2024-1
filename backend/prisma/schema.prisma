@@ -152,6 +152,7 @@ model User {
   full_name     String
   date_of_birth DateTime?
   created_at    DateTime    @default(now())
+  role          String?
   Feedback      Feedback[]
   Log           Log[]
   Ticket        Ticket[]

@@ -302,14 +302,22 @@ http://localhost:3000/api/rooms/1/seats/showtime/1
 ```
 
 ## Đặt Ghế (Book Seat)
-- Endpoint: POST /api/rooms/:room_id/seats/:seat_id/book
+- Endpoint: POST /api/rooms/:room_id/seats/:seat_ids/book/:showtime_id  
+    - http://localhost:3000/api/rooms/1/seats/11242,11243,11244/book/1
     - Mô tả: Đặt một ghế trong phòng chỉ định ở trạng thái "on-hold" để giữ chỗ trong 10 phút.
 - Tham số:
     - room_id (URL param, bắt buộc): ID của phòng chứa ghế.
-    - seat_id (URL param, bắt buộc): ID của ghế muốn đặt.
+    - mảng seat_ids (URL param, bắt buộc): ID của các ghế muốn đặt.
     - showtime_id (URL param, bắt buộc): ID của suất chiếu mà ghế thuộc về.
-- Yêu cầu Body:
-    - user_id (integer, bắt buộc): ID của người dùng đặt ghế.
+- Yêu cầu Header: token
+```
+{
+    "message": "Seats successfully put on hold for the selected showtime.",
+    "updatedSeats": {
+        "count": 3
+    }
+}
+```
 ## Xác Nhận Thanh Toán và Tạo Vé (Confirm Payment)
 - Endpoint: POST /api/seat/:room_id/seats/:seat_id/confirm
     - Mô tả: Xác nhận thanh toán cho ghế đã đặt trong phòng chỉ định và tạo vé (Ticket) cho người dùng.
@@ -379,3 +387,81 @@ Send request<br>
    -ENDPOINT :GET /api/ticket/:ticket_id
 ## Trả về thông tin chi tiết phim
    -ENDPOINT : GET /api/movies/:movieId/movie
+# API cho admin
+## GET Danh sách người dùng
+- Endpoint: GET /api/admin/users
+- http://localhost:3000/api/admin/users
+    - Lưu ý: gửi token kèm header
+```
+{
+    "users": [
+        {
+            "id": 1,
+            "email": "a@gmail.com",
+            "full_name": "Hoang Minh Duc",
+            "phone_number": null,
+            "role": "customer",
+            "created_at": "2024-12-02T07:49:33.296Z"
+        },
+    ]
+}
+```
+## GET thông tin chi tiết một người dùng
+- Endpoint: GET /api/admin/users/:userId
+- http://localhost:3000/api/admin/users/1
+    - Lưu ý: gửi token kèm header
+```
+{
+    "user": {
+        "id": 1,
+        "full_name": "Hoang Minh Duc",
+        "email": "a@gmail.com",
+        "phone_number": null,
+        "date_of_birth": "2003-12-04T00:00:00.000Z",
+        "created_at": "2024-12-02T07:49:33.296Z",
+        "role": "customer"
+    }
+}
+```
+## GET danh sách vé đã đặt của một người dùng
+- Endpoint: GET /api/admin/users/tickets/:userId
+- http://localhost:3000/api/admin/users/tickets/14
+    - Lưu ý: gửi token kèm header
+```
+{
+    "tickets": [
+        {
+            "id": 11,
+            "user_id": 14,
+            "showtime_id": 102,
+            "seat_id": 22619,
+            "purchase_date": "2024-12-10T15:02:48.029Z",
+            "promotion_id": null,
+            "status": "paid",
+            "Seat": {
+                "id": 22619,
+                "room_id": 1,
+                "seat_number": "H9",
+                "seat_type": null,
+                "row": "H",
+                "column": 9,
+                "status": "paid",
+                "showtime_id": 102,
+                "hold_until": null,
+                "is_paid": true,
+                "price": 50000
+            },
+            "Showtime": {
+                "id": 102,
+                "movie_id": 1,
+                "room_id": 1,
+                "show_date": "2024-12-10T00:00:00.000Z",
+                "start_time": "2024-12-10T10:00:00.000Z",
+                "end_time": "2024-12-10T12:00:00.000Z"
+            },
+            "Promotion": null
+        }
+    ]
+}
+```
+
