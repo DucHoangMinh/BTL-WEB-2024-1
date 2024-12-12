@@ -52,7 +52,8 @@ confirmation(
 import axios from "axios";
 import {loadingStateStore} from "~/stores/loadingState.js";
 import showMessages from "~/utils/toast.js";
-
+import {userInforStore} from "~/stores/userInfor.js";
+const userInforStoreRef = userInforStore()
 const loadingStateStoreRef = loadingStateStore()
 const route = useRoute()
 const router = useRouter()
@@ -74,6 +75,20 @@ const confirmOrderSeat = async () => {
     }
   })
   console.log(selectedSeatId.value)
+  // Đưa ghế vào trạng thái hold trong 10 phút
+  try {
+    loadingStateStoreRef.setLoadingState(true)
+    await axios.post(`https://api-btl-web-2024-1.vercel.app/rooms/${route.query['room']}/seats/${selectedSeatId.value.join(',')}/book/${route.query['showtime']}`, null, {
+      headers : {
+        'Authorization': `Bearer ${userInforStoreRef.getUserInfor.token}`
+      }
+    })
+    await router.push(`/pay?room=${route.query['room']}&showtime=${route.query['showtime']}&movie_id=${route.query['movie_id']}&theater_id=${route.query['theater_id']}&seat_id=${selectedSeatId.value.join(',')}`)
+  }catch (e) {
+    console.log(e)
+  } finally {
+    loadingStateStoreRef.setLoadingState(false)
+  }
 }
 
 const onChooseSeat = (row, column) => {
