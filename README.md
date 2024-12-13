@@ -464,4 +464,31 @@ Send request<br>
     ]
 }
 ```
+## GET doanh thu theo ngày ( khoảng thời gian)
+- Endpoint: GET /api/revenue/date-range?startDate=<Datetime>&endDate=<Datetime>
+- http://localhost:3000/api/revenue/date-range?startDate=2024-12-09&endDate=2024-12-10
+```
+{
+    "message": "Doanh thu từ 2024-12-09 đến 2024-12-10",
+    "revenue": 550000
+}
+```
+## GET doanh thu theo tháng 
+- Endpoint: GET /api/revenue/month?year=<year>&month=<month>
+- http://localhost:3000/api/revenue/month?year=2024&month=12
+```
+{
+    "message": "Doanh thu tháng 12 năm 2024",
+    "revenue": 550000
+}
+```
+## GET doanh thu theo năm 
+- Endpoint: GET /api/revenue/year?year=<year>
+- http://localhost:3000/api/revenue/year?year=2024
+```
+{
+    "message": "Doanh thu năm 2024",
+    "revenue": 550000
+}
+```
 
