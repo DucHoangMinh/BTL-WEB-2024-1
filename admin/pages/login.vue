@@ -10,7 +10,12 @@
       button.login-button(type="submit" @click="login") Đăng nhập
 </template>
 <script>
+import LoadingPanel from "~/components/LoadingPanel.vue";
+import LoadingMainPanel from "~/components/Layout/LoadingMainPanel.vue";
+import axios from "axios";
+
 export default {
+  components: {LoadingMainPanel, LoadingPanel},
   data() {
     return {
       email: '',
@@ -30,8 +35,29 @@ export default {
       return { isValid: true, message: "Thông tin hợp lệ." };
     },
     async login() {
-      console.log('logging in');
-      // Thực hiện logic đăng nhập của bạn ở đây
+      const validateLoginDataResult = this.validateLoginData()
+      if (!validateLoginDataResult.isValid) {
+        alert(validateLoginDataResult.message);
+        return;
+      }
+      try {
+        const response = await axios.post('https://api-btl-web-2024-1.vercel.app/login', {
+          email: this.email,
+          password: this.password
+        });
+        if(response.data.token && response.data.user.role == "admin") {
+          this.$store.commit('userInfor/setUserInfor', response.data)
+          this.$router.push("/")
+        } else {
+          alert("Email hoặc mật khẩu cho tài khoản admin không đúng")
+          return
+        }
+      } catch (e) {
+        console.log(e)
+      } finally {
+
+      }
+
     },
     async forgotPassword() {
       alert("Chức năng cập nhật ở version sau");
