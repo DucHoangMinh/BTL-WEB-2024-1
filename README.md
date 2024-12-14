@@ -423,6 +423,23 @@ Send request<br>
     }
 }
 ```
+## GET lấy thông tin lịch chiếu theo rạp
+
+   Endpoint: GET /api/showtimes/:theater_id/movies
+   body: không
+   example: http://localhost:3000/showtimes/1/movies?start_date=2024-12-01&end_date=2024-12-31
+## POST gán 1 phim vào lịch chiếu trống
+   Endpoint POST /api/showtimes/assigne-movie
+   body:
+   [
+    user_id,
+    showtime_ids: []
+   ]
+   example: http://localhost:3000/showtimes/assign-movie
+   {
+  "movie_id": 10,
+  "showtime_ids": [9]
+    }
 ## GET danh sách vé đã đặt của một người dùng
 - Endpoint: GET /api/admin/users/tickets/:userId
 - http://localhost:3000/api/admin/users/tickets/14
