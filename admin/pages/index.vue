@@ -49,16 +49,17 @@
               </h5>
             </div>
             <div class="d-flex align-center justify-center">
-              <h5>Ngày kết thúc</h5>
-              <base-input type="date" v-model="endDate" ></base-input>
+              <h5 class="mr-2">Ngày bắt đầu</h5>
+              <base-input @input="chooseStartDate" type="date" v-model="startDate" ></base-input>
             </div>
             <div class="d-flex align-center justify-center">
-              <h5>Ngày kết thúc</h5>
-              <base-input type="date" v-model="endDate"></base-input>
+              <h5 class="mr-2">Ngày kết thúc</h5>
+              <base-input @input="chooseEndDate" type="date" v-model="endDate"></base-input>
             </div>
           </div>
         </template>
         <div class="chart-area">
+          <p>{{purpleLineChart.chartData.labels}}</p>
           <line-chart
             style="height: 100%"
             :chart-data="purpleLineChart.chartData"
@@ -210,7 +211,7 @@ export default {
       purpleLineChart: {
         extraOptions: chartConfigs.purpleChartOptions,
         chartData: {
-          labels: ['JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
+          labels: ['2024-14-12'],
           datasets: [
             {
               label: 'Data',
@@ -263,8 +264,9 @@ export default {
         ],
         gradientStops: [1, 0.4, 0]
       },
-      startDate: new Date().getDate(),
-      endDate: new Date().getDate(),
+      startDate: new Date().toISOString().slice(0, 10),
+      endDate: new Date().toISOString().slice(0, 10),
+      reportByDay: [],
       blueBarChart: {
         extraOptions: chartConfigs.barChartOptions,
         chartData: {
@@ -293,18 +295,30 @@ export default {
     isRTL () {
       return this.$rtl.isRTL;
     },
-    bigLineChartCategories () {
-      return [{ name: 'Accounts', icon: 'tim-icons icon-single-02' }, {
-        name: 'Purchases',
-        icon: 'tim-icons icon-gift-2'
-      }, { name: 'Sessions', icon: 'tim-icons icon-tap-02' }];
-    }
   },
   methods: {
-    async getMonthReport(month, year){
+    async chooseStartDate() {
+      await this.getReportByDateRange(this.startDate, this.endDate)
+    },
+    async chooseEndDate() {
+      await this.getReportByDateRange(this.startDate, this.endDate)
+    },
+    async getReportByDateRange(startDate, endDate){
       try {
-        const { data } = await axios.get(`https://api-btl-web-2024-1.vercel.app/revenue/month?year=${year}&month=${month}`);
-        return data.revenue
+        const { data } = await axios.get(`https://api-btl-web-2024-1.vercel.app/revenue/date-range?startDate=${this.startDate}&endDate=${this.endDate}`);
+        console.log(data.dailyRevenue)
+        this.purpleLineChart.chartData.labels = Object.keys(data.dailyRevenue)
+        await this.initBigChart(0)
+      } catch (e) {
+        console.log(e)
+      } finally {
+
+      }
+    },
+    async getMonthReport(year){
+      try {
+        const { data } = await axios.get(`https://api-btl-web-2024-1.vercel.app/revenue/year?year=${year}`);
+        return data.monthlyRevenue
       } catch (e) {
         console.log(e)
       } finally {
@@ -313,9 +327,7 @@ export default {
     },
     async getAllMonthReport() {
       bigChartData[0] = []
-      for(let i = 1; i <= 12; i++){
-        bigChartData[0].push(await this.getMonthReport(i, 2021))
-      }
+      bigChartData[0] = Object.values(await this.getMonthReport("2024"))
     },
     async init(){
       await this.getAllMonthReport()
