@@ -7,14 +7,14 @@
           <div class="order-item">
             <span class="item-label">Số tiền thanh toán:</span>
             <span class="item-value highlight-value"
-              >{{ totalPrice.toLocaleString() }} VND</span
+              >{{ qrPaymentData.totalAmount.toLocaleString() }} VND</span
             >
           </div>
 
           <div class="order-item">
             <span class="item-label">Giá trị đơn hàng:</span>
             <span class="item-value"
-              >{{ totalPrice.toLocaleString() }} VND</span
+              >{{ qrPaymentData.totalAmount.toLocaleString() }} VND</span
             >
           </div>
           <div class="order-item">
@@ -35,7 +35,7 @@
 
     <div class="qr-section">
       <h2>Quét mã qua ứng dụng Ngân hàng/ Ví điện tử</h2>
-      <img :src="qrCodeUrl" alt="QR Code" class="qr-code" />
+      <img :src="qrPaymentData?.qrUrl" alt="QR Code" class="qr-code" />
       <div class="countdown">
         Giao dịch hết hạn sau: <strong>{{ minutes }}:{{ seconds }}</strong>
       </div>
@@ -47,50 +47,104 @@
 </template>
 
 <script>
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import showMessages from "~/utils/toast.js";
+import axios from "axios";
+import {userInforStore} from "~/stores/userInfor.js";
+import {da} from "vuetify/locale";
+import {loadingStateStore} from "~/stores/loadingState.js";
 export default {
   name: "QrPaymentPage",
-  data() {
-    return {
-      totalPrice: 65000, 
-      orderId: "54494896", 
-      supplier: "CÔNG TY TNHH 8MOVIES VIỆT NAM", 
-      qrCodeUrl: "https://via.placeholder.com/150", 
-      countdown: 600, 
-    };
-  },
-  computed: {
-    minutes() {
-      return Math.floor(this.countdown / 60)
-        .toString()
-        .padStart(2, "0");
-    },
-    seconds() {
-      return (this.countdown % 60).toString().padStart(2, "0");
-    },
-  },
-  methods: {
-    handleCancel() {
+  setup() {
+    const loadingStateStoreRef = loadingStateStore()
+    const router = useRouter();
+    const userInforStoreRef = userInforStore()
+    const route = useRoute()
+    const qrPaymentData = ref({
+      qrUrl: "",
+      totalAmount: ""
+    })
+    // Reactive state
+    const totalPrice = ref(65000);
+    const seatIds = ref([])
+    const orderId = ref("54494896");
+    const supplier = ref("CÔNG TY TNHH 8MOVIES VIẬT NAM");
+    const qrCodeUrl = ref("https://via.placeholder.com/150");
+    const countdown = ref(600);
+
+    let timer = null;
+
+    // Computed properties
+    const minutes = computed(() =>
+        Math.floor(countdown.value / 60)
+            .toString()
+            .padStart(2, "0")
+    );
+
+    const seconds = computed(() =>
+        (countdown.value % 60)
+            .toString()
+            .padStart(2, "0")
+    );
+
+    // Methods
+    const handleCancel = () => {
       if (window.confirm("Bạn có chắc chắn muốn hủy thanh toán không?")) {
         alert("Thanh toán đã được hủy.");
-        this.$router.push("/"); 
+        router.push("/");
       }
-    },
-  },
-  mounted() {
-    
-    this.timer = setInterval(() => {
-      if (this.countdown > 0) {
-        this.countdown--;
-      } else {
-        clearInterval(this.timer);
-        alert("Giao dịch đã hết hạn! Vui lòng thực hiện lại thanh toán.");
-        this.$router.push("/"); 
+    };
+    const getQRPaymentInfor = async () => {
+      try {
+        loadingStateStoreRef.setLoadingState(true)
+        const payload = {
+          seat_ids: route.query["seat_id"].split(",").map(Number),
+          user_id: userInforStoreRef.getUserInfor.id,
+          room_id: route.query["room"],
+          showtime_id: route.query["showtime"]
+        }
+        const { data } = await axios.post("https://api-btl-web-2024-1.vercel.app/seat/confirm-payment", payload)
+        console.log(data)
+        qrPaymentData.value = data
+      } catch (e) {
+        console.log(e)
+      } finally {
+        loadingStateStoreRef.setLoadingState(false)
       }
-    }, 1000);
-  },
-  beforeDestroy() {
-    
-    clearInterval(this.timer);
+    }
+
+    // Lifecycle hooks
+    // onMounted(() => {
+    //   timer = setInterval(() => {
+    //     if (countdown.value > 0) {
+    //       countdown.value--;
+    //     } else {
+    //       clearInterval(timer);
+    //       showMessages.error("Giao dịch đã hết hạn! Vui lòng thực hiện lại thanh toán.");
+    //       router.push("/");
+    //     }
+    //   }, 1000);
+    // });
+    const init = async () => {
+      await getQRPaymentInfor()
+    }
+    onMounted(init)
+    onBeforeUnmount(() => {
+      clearInterval(timer);
+    });
+
+    return {
+      totalPrice,
+      orderId,
+      supplier,
+      qrCodeUrl,
+      countdown,
+      minutes,
+      seconds,
+      handleCancel,
+      qrPaymentData
+    };
   },
 };
 </script>
