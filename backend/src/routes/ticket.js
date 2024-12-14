@@ -1,4 +1,4 @@
-// routes/city.js
+
 const express = require('express');
 const TicketController = require('../app/controllers/TicketController')
 const router = express.Router();

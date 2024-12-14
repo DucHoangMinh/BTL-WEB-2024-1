@@ -14,9 +14,10 @@ const cityRouter = require('./city');
 const ticketRouter = require('./ticket')
 const adminRouter = require('./admin');
 const revenueRouter = require('./revenue');
+const transaction = require('./transaction')
 function route(app) {
   app.use('/register', registerRouter);
-  app.use('/login', loginRouter);
+  app.use('/login', loginRouter); 
   app.use('/movies', movieRouter);
   app.use('/promotions', promotionRouter);
   app.use('/movie-theaters', movieTheaterRouter);
@@ -27,6 +28,7 @@ function route(app) {
   app.use("/seat", seatRouter)
   app.use('/user', userRouter);
   app.use('/ticket',ticketRouter);
+  app.use('/transaction',transaction);
   app.use('/admin', adminRouter);
   app.use('/revenue', revenueRouter);
   app.get('/protected', authenticateToken, (req, res) => {

@@ -555,5 +555,30 @@ Send request<br>
     "2024-12": 550000
   }
 }
-```
 
+
+```
+## POST thông tin phim lên bảng transaction
+- Endpoint: GET /api/transaction/confirm
+- body :
+  {
+    amount: int,
+    description: thông tin hóa đơn
+  }
+- Example:
+ - http://localhost:8080/transaction/confirm
+ - body:
+  {
+  "amount": 100000,
+  "description": "Thanh toan ghe 1234,1235"
+  }
+ - result:
+  {
+    "message": "Transaction created successfully.",
+    "transaction": {
+        "id": 2,
+        "amount": 100000,
+        "description": "Thanh toan ghe 1234,1235",
+        "created_at": "2024-12-14T14:31:31.999Z"
+    }
+  }

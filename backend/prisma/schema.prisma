@@ -202,3 +202,12 @@ model MovieTheater {
 
   @@map("MovieTheater")
 }
+
+model Transaction {
+  id          Int       @id @default(autoincrement())
+  amount      Float    
+  description String   
+  created_at  DateTime @default(now()) 
+
+  @@map("Transaction")
+}
