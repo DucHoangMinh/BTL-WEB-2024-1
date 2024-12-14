@@ -11,4 +11,7 @@ router.get('/', ShowtimeController.getAllShowtimes);
 // API tìm kiếm suất chiếu theo rạp và phim (luồng đặt vé)
 router.get('/available', ShowtimeController.getShowtimesByTheaterAndMovie);
 
+router.get('/:theater_id/movies', ShowtimeController.getMoviesByTheaterAndTime);
+
+router.post('/assign-movie', ShowtimeController.assignMovieToEmptyShowtimes);
 module.exports = router;

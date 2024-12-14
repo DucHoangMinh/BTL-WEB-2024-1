@@ -386,11 +386,14 @@ createSeats = async (req, res) => {
       const template = 'Tp8VEQR';
       const addInfo = `Thanh toan cho cac ghe ${seat_ids.join(', ')}`;
       const accountName = 'Lotte Cinema';
+
+      // const addInfo = `Xac nhan thanh toan ghe ${seat_ids.join(', ')}, tong tien ${totalAmount} VND`;
       const qrUrl = `https://img.vietqr.io/image/${bankCode}-${accountNumber}-${template}.jpg?amount=${totalAmount}&addInfo=${encodeURIComponent(addInfo)}&accountName=${encodeURIComponent(accountName)}`;
   
       // Trả về kết quả
       return res.status(200).json({
         message: 'QR code generated successfully.',
+        addInfo,
         totalAmount, // Tổng tiền vé
         qrUrl, // URL mã QR
       });
