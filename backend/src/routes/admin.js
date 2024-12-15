@@ -14,6 +14,6 @@ router.get('/users/:userId', authenticateAdmin, AdminController.getUserById);
 router.delete('/users/:userId', authenticateAdmin, AdminController.deleteUser);
 
 // GET danh sách vé đã đặt của một user
-router.get('/users/tickets/:userId',authenticateAdmin, AdminController.getTicketsByUser);
+router.get('/users/tickets/:userId',authenticateToken, AdminController.getTicketsByUser);
 
 module.exports = router;
