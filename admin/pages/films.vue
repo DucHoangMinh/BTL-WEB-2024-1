@@ -99,7 +99,7 @@ export default {
   methods: {
     async getFilms() {
       try {
-        const {data} = await axios.get('https://api-btl-web-2024-1.vercel.app/movies');
+        const {data} = await axios.get('http://160.191.50.189:8080/movies');
         this.films = data.movies
         this.films.forEach(film => {
           film.release_date = this.formatDateToDDMMYYYY(film.release_date)

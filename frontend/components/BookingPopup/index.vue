@@ -115,7 +115,7 @@ const dateList = computed(() => {
 const getProvinceHaveMovieByDay = async () => {
   try {
     loadingStateStoreRef.setLoadingState(true)
-    const {data} = await axios.get(`https://api-btl-web-2024-1.vercel.app/movies/${props.movieId}/cities?date=${selectedDate.value}`)
+    const {data} = await axios.get(`http://160.191.50.189:8080/movies/${props.movieId}/cities?date=${selectedDate.value}`)
     cities.value = data.cities
   } catch (e) {
     console.log(e)
@@ -126,7 +126,7 @@ const getProvinceHaveMovieByDay = async () => {
 const getTheaterByCityAndDay = async () => {
   try {
     loadingStateStoreRef.setLoadingState(true)
-    const {data} = await axios.get(`https://api-btl-web-2024-1.vercel.app/movie-theaters/available/theaters?city=${encodeURIComponent(selectedCity.value)}&movieId=${props.movieId}&date=${selectedDate.value}`)
+    const {data} = await axios.get(`http://160.191.50.189:8080/movie-theaters/available/theaters?city=${encodeURIComponent(selectedCity.value)}&movieId=${props.movieId}&date=${selectedDate.value}`)
     theaters.value = data
   } catch (e) {
     console.log(e)
@@ -137,7 +137,7 @@ const getTheaterByCityAndDay = async () => {
 const getShowTimeByTheater = async () => {
   try {
     loadingStateStoreRef.setLoadingState(true)
-    const {data} = await axios.get(`https://api-btl-web-2024-1.vercel.app/showtimes/available?movieId=${props.movieId}&theaterId=${selectedTheaterId.value}&date=${selectedDate.value}`)
+    const {data} = await axios.get(`http://160.191.50.189:8080/showtimes/available?movieId=${props.movieId}&theaterId=${selectedTheaterId.value}&date=${selectedDate.value}`)
     showTimes.value = data.showtimes
   } catch (e) {
     console.log(e)

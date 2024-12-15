@@ -566,7 +566,7 @@ Send request<br>
     description: thông tin hóa đơn
   }
 - Example:
- - http://localhost:8080/transaction/confirm
+ - http://160.191.50.189:8080/transaction/confirm
  - body:
   {
   "amount": 100000,
