@@ -10,7 +10,7 @@ import QRCode from 'qrcode'
 const ticketList = ref([])
 const getUserTicket = async () => {
   try {
-    const { data } = await axios.get(`https://api-btl-web-2024-1.vercel.app/admin/users/tickets/${userInforStoreRef.getUserInfor.id}`, {
+    const { data } = await axios.get(`http://160.191.50.189:8080/admin/users/tickets/${userInforStoreRef.getUserInfor.id}`, {
       headers: {
         'Authorization': `Bearer ${userInforStoreRef.getUserInfor.token}`
       }

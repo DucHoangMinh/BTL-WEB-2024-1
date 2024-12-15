@@ -51,7 +51,7 @@ const toggleEdit = async () => {
     if(isChangingPassword.value){
       try {
         loadingStateStoreRef.setLoadingState(true)
-        const {data} = await axios.put("https://api-btl-web-2024-1.vercel.app/user/change-password", {
+        const {data} = await axios.put("http://160.191.50.189:8080/user/change-password", {
           currentPassword: userData.value.currentPassword,
           newPassword: userData.value.newPassword,
           confirmPassword: userData.value.confirmNewPassword
@@ -78,7 +78,7 @@ const toggleEdit = async () => {
     } else {
       try {
         loadingStateStoreRef.setLoadingState(true)
-        const {data} = await axios.put("https://api-btl-web-2024-1.vercel.app/user", {
+        const {data} = await axios.put("http://160.191.50.189:8080/user", {
           email: userData.value.email,
           phone_number: null,
           full_name: userData.value.firstName + userData.value.lastName,

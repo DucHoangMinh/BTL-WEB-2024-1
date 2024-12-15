@@ -90,7 +90,7 @@ const onSelectTheater = async () => {
 const onSelectDay = async () => {
   try {
     loadingStateStoreRef.setLoadingState(true)
-    const { data } = await axios.get(`https://api-btl-web-2024-1.vercel.app/movies/avaiblebycity?city=${selectedAreaName.value}&theaterId=${selectedTheaterId.value?.id}&selectedDate=${selectedDate.value}`);
+    const { data } = await axios.get(`http://160.191.50.189:8080/movies/avaiblebycity?city=${selectedAreaName.value}&theaterId=${selectedTheaterId.value?.id}&selectedDate=${selectedDate.value}`);
     console.log(data)
   } catch (e) {
     showMessages.error(e.message)
