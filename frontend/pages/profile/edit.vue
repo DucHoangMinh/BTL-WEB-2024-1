@@ -22,7 +22,7 @@ const isChangingPassword = ref(false);
 const getUserInfor = async () => {
   try {
     loadingStateStoreRef.setLoadingState(true)
-    const {data} = await axios.get("http://localhost:8080/user", {
+    const {data} = await axios.get("http://160.191.50.189:8080/user", {
       headers: {
         'Authorization': `Bearer ${userInforStoreRef.getUserInfor.token}`
       }

@@ -65,7 +65,7 @@ const finishChoosePlace = (data) => {
 const getMovieDetail = async () => {
   try {
     const movieId = route.query.id
-    const {data} = await axios.get(`http://localhost:8080/movies/${movieId}`)
+    const {data} = await axios.get(`http://160.191.50.189:8080/movies/${movieId}`)
     movie.value = data.movie
     console.log(movie.value)
   } catch (e) {

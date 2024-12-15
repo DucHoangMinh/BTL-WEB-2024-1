@@ -104,7 +104,7 @@ export default {
           room_id: route.query["room"],
           showtime_id: route.query["showtime"]
         }
-        const { data } = await axios.post("http://localhost:8080/seat/confirm-payment", payload)
+        const { data } = await axios.post("http://160.191.50.189:8080/seat/confirm-payment", payload)
         console.log(data)
         qrPaymentData.value = data
       } catch (e) {

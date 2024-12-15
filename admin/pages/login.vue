@@ -41,7 +41,7 @@ export default {
         return;
       }
       try {
-        const response = await axios.post('http://localhost:8080/login', {
+        const response = await axios.post('http://160.191.50.189:8080/login', {
           email: this.email,
           password: this.password
         });

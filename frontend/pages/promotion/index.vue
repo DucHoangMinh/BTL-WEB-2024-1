@@ -39,7 +39,7 @@ const formattedStartDate = ref('');
 const formattedEndDate = ref('');
 const formattedDescription = ref('');
 const getPromotionDetail = async () => {
-  const { data } = await axios.get(`http://localhost:8080/promotions/${route.query.id}`)
+  const { data } = await axios.get(`http://160.191.50.189:8080/promotions/${route.query.id}`)
   promotion.value = data.promotion
   formattedStartDate.value = new Date(promotion.value?.start_date)?.toLocaleDateString()
   formattedEndDate.value = new Date(promotion.value?.end_date)?.toLocaleDateString()

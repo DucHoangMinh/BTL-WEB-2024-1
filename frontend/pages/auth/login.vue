@@ -57,7 +57,7 @@ const login = async () => {
     }
 
     loadingStateStoreRef.setLoadingState(true)
-    const response = await axios.post('http://localhost:8080/login', {
+    const response = await axios.post('http://160.191.50.189:8080/login', {
       email: email.value,
       password: password.value
     });

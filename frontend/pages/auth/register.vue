@@ -37,7 +37,7 @@ const router = useRouter()
 const signUp = async () => {
   try {
     loadingStateStoreRef.setLoadingState(true)
-    await axios.post("http://localhost:8080/register", registerData.value)
+    await axios.post("http://160.191.50.189:8080/register", registerData.value)
     loadingStateStoreRef.setLoadingState(false)
     showMessages.success('Đăng ký thành công, bạn sẽ được chuyển hướng về trang đăng nhập')
     setTimeout(async () => {
