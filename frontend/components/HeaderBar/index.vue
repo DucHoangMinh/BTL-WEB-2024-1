@@ -12,6 +12,8 @@ div
             router-link(to="/theaters") Rạp chiếu
           li.nav-item
             router-link(to="/uu-dai") Tin Mới và Ưu Đãi
+          li.nav-item
+            router-link(to="/your-ticket") Vé của bạn
           li.nav-item(v-if="userInfor.fullName === ''")
             router-link(to="/auth/login") Đăng Nhập
           li.nav-item(v-if="userInfor.fullName === ''")

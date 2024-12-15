@@ -32,6 +32,8 @@ const getUserInfor = async () => {
     userData.value.email = data.user.email
     userData.value.dateOfBirth = data.user.date_of_birth
 
+    await getUserTicket()
+
   } catch (error) {
     showMessages.error("Có lỗi xảy ra khi lấy thông tin người dùng")
   } finally {
