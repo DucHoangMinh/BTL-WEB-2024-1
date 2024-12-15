@@ -15,7 +15,7 @@ const userData = ref({
   currentPassword: "",
   newPassword: "",
   confirmNewPassword: "",
-  dateOfBirth: "",
+  dateOfBirth: ""
 });
 
 const isChangingPassword = ref(false);
@@ -30,17 +30,81 @@ const getUserInfor = async () => {
     userData.value.firstName = data.user.full_name
     userData.value.lastName = data.user.full_name
     userData.value.email = data.user.email
-    userData.value.dateOfBirth = data.user.date_of_birth
-
+    userData.value.dateOfBirth = formatDate(data.user.date_of_birth)
   } catch (error) {
+    console.log(error)
     showMessages.error("Có lỗi xảy ra khi lấy thông tin người dùng")
   } finally {
     loadingStateStoreRef.setLoadingState(false)
   }
 }
-const existingPassword = "123456";
+const formatDate = (isoDate) => {
+  const date = new Date(isoDate);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0 nên cần +1
+  const day = String(date.getDate()).padStart(2, '0'); // Đảm bảo ngày có 2 chữ số
 
-const toggleEdit = () => {
+  return `${year}-${month}-${day}`;
+};
+const toggleEdit = async () => {
+  if(isEditable.value){
+    if(isChangingPassword.value){
+      try {
+        loadingStateStoreRef.setLoadingState(true)
+        const {data} = await axios.put("https://api-btl-web-2024-1.vercel.app/user/change-password", {
+          currentPassword: userData.value.currentPassword,
+          newPassword: userData.value.newPassword,
+          confirmPassword: userData.value.confirmNewPassword
+        }, {
+          headers: {
+            'Authorization': `Bearer ${userInforStoreRef.getUserInfor.token}`
+          }
+        });
+        showMessages.success("Thay đổi mật khẩu thành công!!!")
+        userData.value = {
+          firstName: "",
+          lastName: "",
+          email: "",
+          currentPassword: "",
+          newPassword: "",
+          confirmNewPassword: "",
+          dateOfBirth: ""
+        }
+      } catch (e) {
+        showMessages.error(e.response.data.message)
+      } finally {
+        loadingStateStoreRef.setLoadingState(false)
+      }
+    } else {
+      try {
+        loadingStateStoreRef.setLoadingState(true)
+        const {data} = await axios.put("https://api-btl-web-2024-1.vercel.app/user", {
+          email: userData.value.email,
+          phone_number: null,
+          full_name: userData.value.firstName + userData.value.lastName,
+          date_of_birth: userData.value.dateOfBirth
+        }, {
+          headers: {
+            'Authorization': `Bearer ${userInforStoreRef.getUserInfor.token}`
+          }
+        });
+        showMessages.success("Thay đổi thong tin thành công!!!")
+        userData.value = {
+          firstName: "",
+          lastName: "",
+          email: "",
+          currentPassword: "",
+          newPassword: "",
+          confirmNewPassword: "",
+          dateOfBirth: ""
+        }
+      } catch (e) {
+        showMessages.error(e.response.data.message)
+      } finally {
+        loadingStateStoreRef.setLoadingState(false)
+      }
+    }
+  }
   isEditable.value = !isEditable.value;
 };
 
@@ -61,7 +125,6 @@ const saveChanges = () => {
       return;
     }
   }
-
   showMessages.success("Thông tin đã được cập nhật!");
   isEditable.value = false;
   isChangingPassword.value = false;
@@ -72,80 +135,37 @@ const init = async () => {
 onMounted(init)
 </script>
 
-<template>
-  <div class="edit-profile my-8">
-    <h2 class="title"> Thông Tin Cá Nhân</h2>
-    <form @submit.prevent="saveChanges">
-      <div class="form-group">
-        <label>Họ</label>
-        <input
-            type="text"
-            v-model="userData.firstName"
-            :disabled="!isEditable"
-        />
-      </div>
-      <div class="form-group">
-        <label>Tên</label>
-        <input
-            type="text"
-            v-model="userData.lastName"
-            :disabled="!isEditable"
-        />
-      </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" v-model="userData.email" :disabled="!isEditable"/>
-      </div>
-      <div class="form-group">
-        <label>Ngày Sinh</label>
-        <input
-            type="date"
-            v-model="userData.dateOfBirth"
-            :disabled="!isEditable"
-        />
-      </div>
-      <div class="form-group">
-        <label>Mật Khẩu Hiện Tại</label>
-        <input
-            type="password"
-            v-model="userData.currentPassword"
-            :disabled="!isEditable"
-        />
-      </div>
-      <div class="form-group custom-checkbox-group">
-        <label>Tôi muốn thay đổi mật khẩu</label>
-        <input
-            type="checkbox"
-            v-model="isChangingPassword"
-            :disabled="!isEditable"
-        />
+<template lang="pug">
+.edit-profile.my-8
+  h2.title(v-if="false")  Thông Tin Cá Nhân
+  form(@submit.prevent='saveChanges')
+    .form-group(v-if="!isChangingPassword")
+      label H&#x1ECD;
+      input(type='text' v-model='userData.firstName' :disabled='!isEditable')
+    .form-group(v-if="!isChangingPassword")
+      label T&ecirc;n
+      input(type='text' v-model='userData.lastName' :disabled='!isEditable')
+    .form-group(v-if="!isChangingPassword")
+      label Email
+      input(type='email' v-model='userData.email' :disabled='!isEditable')
+    .form-group(v-if="!isChangingPassword")
+      label Ngày sinh
+      input(type='date' v-model='userData.dateOfBirth' :disabled='!isEditable')
 
-      </div>
-
-
-      <!-- Hiển thị trường nhập mật khẩu mới nếu chọn đổi mật khẩu -->
-      <div v-if="isChangingPassword" class="form-group">
-        <label>Mật Khẩu Mới</label>
-        <input
-            type="password"
-            v-model="userData.newPassword"
-            :disabled="!isEditable"
-        />
-      </div>
-      <div v-if="isChangingPassword" class="form-group">
-        <label>Nhập Lại Mật Khẩu Mới</label>
-        <input
-            type="password"
-            v-model="userData.confirmNewPassword"
-            :disabled="!isEditable"
-        />
-      </div>
-
-      <button type="button" @click="toggleEdit" class="btn">
-        {{ isEditable ? "Xác nhận" : "Sửa" }}
-      </button>
-    </form>
-  </div>
+    .form-group.custom-checkbox-group
+      label Đổi mật khẩu
+      input(type='checkbox' v-model='isChangingPassword')
+    .form-group(v-if="isChangingPassword")
+      label Mật khẩu hiện tại
+      input(type='password' v-model='userData.currentPassword' :disabled='!isEditable')
+    .form-group(v-if='isChangingPassword')
+      label Mật khẩu mới
+      input(type='password' v-model='userData.newPassword' :disabled='!isEditable')
+    .form-group(v-if='isChangingPassword')
+      label Nhập lại mật khẩu
+      input(type='password' v-model='userData.confirmNewPassword' :disabled='!isEditable')
+    button.btn(type='button' @click='toggleEdit')
+      | {{ isEditable ? "Xác nhận" : "Sửa" }}
 </template>
 
 <style scoped>
