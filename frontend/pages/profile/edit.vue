@@ -22,7 +22,7 @@ const isChangingPassword = ref(false);
 const getUserInfor = async () => {
   try {
     loadingStateStoreRef.setLoadingState(true)
-    const {data} = await axios.get("https://api-btl-web-2024-1.vercel.app/user", {
+    const {data} = await axios.get("http://localhost:8080/user", {
       headers: {
         'Authorization': `Bearer ${userInforStoreRef.getUserInfor.token}`
       }

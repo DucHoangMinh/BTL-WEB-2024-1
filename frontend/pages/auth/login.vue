@@ -57,7 +57,7 @@ const login = async () => {
     }
 
     loadingStateStoreRef.setLoadingState(true)
-    const response = await axios.post('https://api-btl-web-2024-1.vercel.app/login', {
+    const response = await axios.post('http://localhost:8080/login', {
       email: email.value,
       password: password.value
     });

@@ -305,7 +305,7 @@ export default {
     },
     async getReportByDateRange(startDate, endDate){
       try {
-        const { data } = await axios.get(`https://api-btl-web-2024-1.vercel.app/revenue/date-range?startDate=${this.startDate}&endDate=${this.endDate}`);
+        const { data } = await axios.get(`http://localhost:8080/revenue/date-range?startDate=${this.startDate}&endDate=${this.endDate}`);
         console.log(data.dailyRevenue)
         this.purpleLineChart.chartData.labels = Object.keys(data.dailyRevenue)
         await this.initBigChart(0)
@@ -317,7 +317,7 @@ export default {
     },
     async getMonthReport(year){
       try {
-        const { data } = await axios.get(`https://api-btl-web-2024-1.vercel.app/revenue/year?year=${year}`);
+        const { data } = await axios.get(`http://localhost:8080/revenue/year?year=${year}`);
         return data.monthlyRevenue
       } catch (e) {
         console.log(e)

@@ -71,7 +71,7 @@ const clickSelectArea = async (area) => {
 const getTheatersByArea = async () => {
   try {
     loadingStateStoreRef.setLoadingState(true)
-    const { data } = await axios.get(`https://api-btl-web-2024-1.vercel.app/city/${selectedAreaName.value}/theaters-and-movies`);
+    const { data } = await axios.get(`http://localhost:8080/city/${selectedAreaName.value}/theaters-and-movies`);
     console.log(data)
     theatersByAreaList.value = data.theaters
   } catch (e) {
@@ -84,7 +84,7 @@ const getTheatersByArea = async () => {
 const getAreaList = async () => {
   try {
     loadingStateStoreRef.setLoadingState(true)
-    const { data } = await axios.get("https://api-btl-web-2024-1.vercel.app/city/cities");
+    const { data } = await axios.get("http://localhost:8080/city/cities");
     areaList.value = data.cities
     selectedAreaName.value = areaList.value[0]
     await getTheatersByArea()

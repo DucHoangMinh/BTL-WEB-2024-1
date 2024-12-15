@@ -78,7 +78,7 @@ const confirmOrderSeat = async () => {
   // Đưa ghế vào trạng thái hold trong 10 phút
   try {
     loadingStateStoreRef.setLoadingState(true)
-    await axios.post(`https://api-btl-web-2024-1.vercel.app/rooms/${route.query['room']}/seats/${selectedSeatId.value.join(',')}/book/${route.query['showtime']}`, null, {
+    await axios.post(`http://localhost:8080/rooms/${route.query['room']}/seats/${selectedSeatId.value.join(',')}/book/${route.query['showtime']}`, null, {
       headers : {
         'Authorization': `Bearer ${userInforStoreRef.getUserInfor.token}`
       }
@@ -105,7 +105,7 @@ const onChooseSeat = (row, column) => {
 
 const getSeatStatusList = async () => {
   try {
-    const { data } = await axios.get(`https://api-btl-web-2024-1.vercel.app/rooms/${route.query['room']}/seats/showtime/${route.query['showtime']}`)
+    const { data } = await axios.get(`http://localhost:8080/rooms/${route.query['room']}/seats/showtime/${route.query['showtime']}`)
     seatStatusList.value = data
   } catch (e) {
     console.log(e)
@@ -114,7 +114,7 @@ const getSeatStatusList = async () => {
 }
 const getMovieDetailById = async () => {
   try {
-    const { data } = await axios.get(`https://api-btl-web-2024-1.vercel.app/movies/${route.query['movie_id']}`)
+    const { data } = await axios.get(`http://localhost:8080/movies/${route.query['movie_id']}`)
     movieDetail.value = data.movie
   } catch (e){
     console.log(e)

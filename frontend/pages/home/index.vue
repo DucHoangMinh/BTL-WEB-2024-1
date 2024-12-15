@@ -65,15 +65,15 @@ const loadingStateStoreRef = loadingStateStore()
 
 
 const getUpComingMovies = async () => {
-  const {data} = await axios.get('https://api-btl-web-2024-1.vercel.app/movies/upcoming')
+  const {data} = await axios.get('http://localhost:8080/movies/upcoming')
   upComingMovies.value = data.movies
 }
 const getNowShowingMovies = async () => {
-  const {data} = await axios.get('https://api-btl-web-2024-1.vercel.app/movies/now-showing')
+  const {data} = await axios.get('http://localhost:8080/movies/now-showing')
   nowShowingMovies.value = data.movies
 }
 const getPromotionList = async () => {
-  const {data} = await axios.get('https://api-btl-web-2024-1.vercel.app/promotions/')
+  const {data} = await axios.get('http://localhost:8080/promotions/')
   promotionList.value = data.promotions
   console.log(promotionList.value)
 }
