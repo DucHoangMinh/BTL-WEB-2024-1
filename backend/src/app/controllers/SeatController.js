@@ -412,10 +412,10 @@ createSeats = async (req, res) => {
       }
   
       // Tạo QR code thanh toán
-      const bankCode = '970422';
-      const accountNumber = '9190163130063';
+      const bankCode = '970416';
+      const accountNumber = '18568331';
       const template = 'Tp8VEQR';
-      const addInfo = `Thanh toan cho cac ghe ${seat_ids.join(', ')}`;
+      const addInfo = `PAYMENTSEATS${seat_ids.join(', ')}`;
       const accountName = 'Lotte Cinema';
 
       // const addInfo = `Xac nhan thanh toan ghe ${seat_ids.join(', ')}, tong tien ${totalAmount} VND`;

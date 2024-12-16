@@ -12,12 +12,14 @@ div
             router-link(to="/theaters") Rạp chiếu
           li.nav-item
             router-link(to="/uu-dai") Tin Mới và Ưu Đãi
+          li.nav-item
+            router-link(to="/your-ticket") Vé của bạn
           li.nav-item(v-if="userInfor.fullName === ''")
             router-link(to="/auth/login") Đăng Nhập
           li.nav-item(v-if="userInfor.fullName === ''")
             router-link(href="/auth/register") Đăng Ký
-          li(v-else)
-            span.font-weight-bold Xin chào, {{userInfor.fullName}}
+          li.nav-item(v-else)
+            router-link(to="/profile/edit").font-weight-bold Xin chào, {{userInfor.fullName}}
 </template>
 <script setup>
 import {userInforStore} from "~/stores/userInfor.js";

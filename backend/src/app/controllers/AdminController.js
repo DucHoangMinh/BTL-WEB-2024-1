@@ -76,9 +76,9 @@ class AdminController {
     const { userId } = req.params;
 
     try {
-      if (req.user.role !== 'admin') {
-        return res.status(403).json({ message: 'Forbidden: You do not have the required permissions' });
-      }
+      // if (req.user.role !== 'admin') {
+      //   return res.status(403).json({ message: 'Forbidden: You do not have the required permissions' });
+      // }
 
       const tickets = await prisma.ticket.findMany({
         where: { user_id: parseInt(userId) },

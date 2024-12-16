@@ -14,6 +14,7 @@
         item-value="id"
         v-model="selectedTheaterId"
         return-object
+        @change="onSelectTheater"
       )
   .calendar-section
     .date-list.justify-center
@@ -62,6 +63,7 @@ const dateList = computed(() => {
 })
 const selectDate = async (date) => {
   selectedDate.value = date
+  await onSelectDay()
 }
 const clickSelectArea = async (area) => {
   selectedAreaName.value = area
@@ -80,7 +82,28 @@ const getTheatersByArea = async () => {
     loadingStateStoreRef.setLoadingState(false)
   }
 }
-
+const onSelectTheater = async () => {
+  console.log(selectedTheaterId.value)
+  console.log(selectedDate.value)
+  console.log(selectedAreaName.value)
+}
+const onSelectDay = async () => {
+  try {
+    loadingStateStoreRef.setLoadingState(true)
+    const { data } = await axios.get(`https://api-btl-web-2024-1.vercel.app/movies/avaiblebycity?city=${selectedAreaName.value}&theaterId=${selectedTheaterId.value?.id}&selectedDate=${selectedDate.value}`);
+    console.log(data)
+  } catch (e) {
+    showMessages.error(e.message)
+  } finally {
+    loadingStateStoreRef.setLoadingState(false)
+  }
+}
+watch(selectedTheaterId.value, async (newId, oldId) => {
+  console.log(newId)
+  console.log(selectedTheaterId.value)
+  console.log(selectedDate.value)
+  console.log(selectedAreaName.value)
+})
 const getAreaList = async () => {
   try {
     loadingStateStoreRef.setLoadingState(true)

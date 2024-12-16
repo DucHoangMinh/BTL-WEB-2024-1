@@ -555,8 +555,6 @@ Send request<br>
     "2024-12": 550000
   }
 }
-
-
 ```
 ## POST thông tin phim lên bảng transaction
 - Endpoint: GET /api/transaction/confirm
@@ -582,6 +580,21 @@ Send request<br>
         "created_at": "2024-12-14T14:31:31.999Z"
     }
   }
+## POST check transaction
+- Endpoint: POST api/transaction/check-description
+- http://localhost:3000/api/transaction/check-description
+body:  
+```
+{
+  "description": "Payment for order #12345"
+}
+```
+response:  
+```
+{
+    "exists": true
+}
+```
 
 ## POST xác nhận thanh toán
 - Endpoint: GET /api/payments/room_id
