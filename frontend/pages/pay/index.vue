@@ -61,6 +61,7 @@ export default {
     const router = useRouter();
     const userInforStoreRef = userInforStore()
     const route = useRoute()
+    const checkCounter = ref(0);
     const qrPaymentData = ref({
       qrUrl: "",
       totalAmount: ""
@@ -126,8 +127,42 @@ export default {
     //     }
     //   }, 1000);
     // });
+    const checkPaymentSuccess = async () => {
+      try {
+        const { data } = await axios.post("https://api-btl-web-2024-1.vercel.app/transaction/check-description", {
+          description: "PAYMENTSEATS" + route.query["seat_id"].split(",").map(Number)
+        })
+        if(data.exists){
+          showMessages.success("Thanh toán thành công! Bạn có thể xem mã qr tại trang vé của bạn")
+          setTimeout(() => {
+            clearInterval(timer);
+            router.push("/")
+          }, 3000)
+        }
+      } catch (e) {
+        console.log(e)
+      } finally {
+
+      }
+    }
     const init = async () => {
       await getQRPaymentInfor()
+      timer = setInterval(async () => {
+        if (countdown.value > 0) {
+          countdown.value--;
+          checkCounter.value = checkCounter.value + 1
+
+          if(checkCounter.value == 15){
+            await checkPaymentSuccess()
+            checkCounter.value = 0
+          }
+
+        } else {
+          clearInterval(timer);
+          showMessages.error("Giao dịch đã hết hạn! Vui lòng thực hiện lại thanh toán.");
+          router.push("/");
+        }
+      }, 1000);
     }
     onMounted(init)
     onBeforeUnmount(() => {
