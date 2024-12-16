@@ -183,7 +183,7 @@
     mounted() {
       this.initScrollbar();
       document.body.classList.add('white-content');
-      this.checkUserLogined()
+      //this.checkUserLogined()
     }
   };
 </script>
