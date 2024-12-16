@@ -39,20 +39,28 @@
 
     <!-- Dialog hiển thị danh sách vé -->
     <div v-if="isDialogVisible" class="dialog-overlay">
-      <div class="dialog-box">
-        <h2>Danh Sách Vé</h2>
-        <div v-for="ticket in selectedTickets" :key="ticket.id" class="ticket-card">
-          <img src="/path-to-ticket-image.png" alt="ticket" class="ticket-image" />
-          <div class="ticket-details">
-            <p><strong>Tên Phim:</strong> {{ ticket.movieName }}</p>
-            <p><strong>Thời Gian Chiếu:</strong> {{ ticket.showTime }}</p>
-            <p><strong>Vị Trí Ghế:</strong> {{ ticket.seat }}</p>
-            <p><strong>Ngày Mua Vé:</strong> {{ ticket.purchaseDate }}</p>
-          </div>
-        </div>
-        <button @click="closeDialog" class="close-button">Đóng</button>
+  <div class="dialog-box">
+    <h2 class="dialog-title">Danh Sách Vé</h2>
+    <div v-for="ticket in selectedTickets" :key="ticket.id" class="ticket-card">
+      <!-- Ảnh vé -->
+      <div class="ticket-image-container">
+        <img
+          src="https://www.daviesmediadesign.com/wp-content/uploads/2018/03/Spacetime-GIMP-Movie-Poster-Astronaut-Version-850.jpg"
+          alt="Movie Poster"
+          class="ticket-image"
+        />
+      </div>
+      <!-- Thông tin vé -->
+      <div class="ticket-details">
+        <p><strong>Tên Phim:</strong> {{ ticket.movieName }}</p>
+        <p><strong>Thời Gian Chiếu:</strong> {{ ticket.showTime }}</p>
+        <p><strong>Vị Trí Ghế:</strong> {{ ticket.seat }}</p>
+        <p><strong>Ngày Mua Vé:</strong> {{ ticket.purchaseDate }}</p>
       </div>
     </div>
+    <button @click="closeDialog" class="close-button">Đóng</button>
+  </div>
+</div>
   </div>
 </template>
 
@@ -162,10 +170,11 @@ button {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.6); /* Làm tối nền */
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 999;
 }
 
 .dialog-box {
@@ -183,27 +192,51 @@ button {
   z-index: 1000; /* Đảm bảo dialog nằm trên tất cả các phần khác */
 }
 
+.dialog-title {
+  font-size: 20px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
 .ticket-card {
-  display: flex;
+  display: flex; /* Sắp xếp ảnh và thông tin vé nằm ngang */
   align-items: center;
-  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+.ticket-image-container {
+  margin-right: 15px;
 }
 
 .ticket-image {
-  width: 100px;
-  margin-right: 20px;
+  width: 80px; /* Giới hạn kích thước ảnh */
+  height: auto;
+  border-radius: 4px;
 }
 
 .ticket-details p {
   margin: 5px 0;
+  font-size: 14px;
 }
 
 .close-button {
-  background-color: #f44;
+  display: block;
+  width: 100%;
+  background-color: #000000;
   color: #fff;
-  padding: 8px 16px;
+  text-align: center;
+  padding: 8px;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
-  margin-top: 10px;
+  font-size: 14px;
 }
+
+.close-button:hover {
+  background-color: #000000;
+}
+
 </style>
