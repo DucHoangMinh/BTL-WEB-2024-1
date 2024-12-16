@@ -169,12 +169,18 @@ button {
 }
 
 .dialog-box {
+  position: fixed; /* Giữ dialog cố định ở giữa */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Căn giữa */
   background: #fff;
   padding: 20px;
-  border-radius: 5px;
-  width: 80%;
-  max-height: 80%;
-  overflow-y: auto;
+  border-radius: 8px;
+  width: 500px; /* Chiều rộng cố định */
+  max-height: 80vh; /* Chiều cao tối đa */
+  overflow-y: auto; /* Hiển thị thanh cuộn nếu nội dung quá dài */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Thêm bóng */
+  z-index: 1000; /* Đảm bảo dialog nằm trên tất cả các phần khác */
 }
 
 .ticket-card {
