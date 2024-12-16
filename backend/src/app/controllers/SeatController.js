@@ -381,7 +381,7 @@ createSeats = async (req, res) => {
       }
   
       // Tạo QR code thanh toán
-      const bankCode = '970407';
+      const bankCode = '970416';
       const accountNumber = '18568331';
       const template = 'Tp8VEQR';
       const addInfo = `PAYMENTSEATS${seat_ids.join(', ')}`;
