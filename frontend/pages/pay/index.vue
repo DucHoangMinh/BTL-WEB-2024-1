@@ -114,7 +114,15 @@ export default {
         loadingStateStoreRef.setLoadingState(false)
       }
     }
+    const confirmPaymentSeat = async () => {
+      try {
+        const {data} = await axios.post(`https://api-btl-web-2024-1.vercel.app/seat/${route.query["room"]}/seats/${route.query["seat_id"]}/confirm`)
+      } catch (e) {
+        console.log(e)
+      } finally {
 
+      }
+    }
     // Lifecycle hooks
     // onMounted(() => {
     //   timer = setInterval(() => {
@@ -133,6 +141,7 @@ export default {
           description: "PAYMENTSEATS" + route.query["seat_id"].split(",").map(Number)
         })
         if(data.exists){
+          await confirmPaymentSeat()
           showMessages.success("Thanh toán thành công! Bạn có thể xem mã qr tại trang vé của bạn")
           setTimeout(() => {
             clearInterval(timer);
