@@ -4,13 +4,16 @@
     <h1 class="title">Danh Sách Người Dùng Hệ Thống</h1>
 
     <!-- Ô tìm kiếm -->
-    <div class="search-box">
-      <input
-        v-model="searchQuery"
-        @input="filterUsers"
-        placeholder="Tìm kiếm người dùng..."
-        class="search-input"
-      />
+    <div class="search-container">
+      <!-- <h3 class="search-title">Tìm Kiếm Người Dùng</h3> -->
+      <div class="search-box">
+        <input
+          v-model="searchQuery"
+          @input="filterUsers"
+          placeholder="Tìm kiếm người dùng..."
+          class="search-input"
+        />
+      </div>
     </div>
 
     <!-- Bảng danh sách người dùng -->
@@ -39,30 +42,31 @@
 
     <!-- Dialog hiển thị danh sách vé -->
     <div v-if="isDialogVisible" class="dialog-overlay">
-  <div class="dialog-box">
-    <h2 class="dialog-title">Danh Sách Vé</h2>
-    <div v-for="ticket in selectedTickets" :key="ticket.id" class="ticket-card">
-      <!-- Ảnh vé -->
-      <div class="ticket-image-container">
-        <img
-          src="https://www.daviesmediadesign.com/wp-content/uploads/2018/03/Spacetime-GIMP-Movie-Poster-Astronaut-Version-850.jpg"
-          alt="Movie Poster"
-          class="ticket-image"
-        />
-      </div>
-      <!-- Thông tin vé -->
-      <div class="ticket-details">
-        <p><strong>Tên Phim:</strong> {{ ticket.movieName }}</p>
-        <p><strong>Thời Gian Chiếu:</strong> {{ ticket.showTime }}</p>
-        <p><strong>Vị Trí Ghế:</strong> {{ ticket.seat }}</p>
-        <p><strong>Ngày Mua Vé:</strong> {{ ticket.purchaseDate }}</p>
+      <div class="dialog-box">
+        <h2 class="dialog-title">Danh Sách Vé</h2>
+        <div v-for="ticket in selectedTickets" :key="ticket.id" class="ticket-card">
+          <!-- Ảnh vé -->
+          <div class="ticket-image-container">
+            <img
+              src="https://www.daviesmediadesign.com/wp-content/uploads/2018/03/Spacetime-GIMP-Movie-Poster-Astronaut-Version-850.jpg"
+              alt="Movie Poster"
+              class="ticket-image"
+            />
+          </div>
+          <!-- Thông tin vé -->
+          <div class="ticket-details">
+            <p><strong>Tên Phim:</strong> {{ ticket.movieName }}</p>
+            <p><strong>Thời Gian Chiếu:</strong> {{ ticket.showTime }}</p>
+            <p><strong>Vị Trí Ghế:</strong> {{ ticket.seat }}</p>
+            <p><strong>Ngày Mua Vé:</strong> {{ ticket.purchaseDate }}</p>
+          </div>
+        </div>
+        <button @click="closeDialog" class="close-button">Đóng</button>
       </div>
     </div>
-    <button @click="closeDialog" class="close-button">Đóng</button>
-  </div>
-</div>
   </div>
 </template>
+
 
 <script>
 export default {
@@ -132,13 +136,17 @@ export default {
 }
 
 .search-box {
+  display: flex;
+  justify-content: center;
   margin-bottom: 20px;
 }
 
 .search-input {
   width: 100%;
-  padding: 8px;
-  font-size: 16px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
 .user-table {
