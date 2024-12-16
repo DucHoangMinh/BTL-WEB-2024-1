@@ -72,6 +72,7 @@ export default {
   align-items: center;
   height: 100vh;
   background-color: #f5f5f5;
+  padding-right: 280px;
 }
 
 .login-box {
@@ -148,6 +149,10 @@ input[type="password"] {
 .signup-link {
   text-align: center;
   margin-top: 1rem;
+}
+
+::v-deep .wrapper > .main-panel > .content {
+  padding: 0px !important;
 }
 
 .signup-link a {
