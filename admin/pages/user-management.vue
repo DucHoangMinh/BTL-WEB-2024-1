@@ -88,7 +88,7 @@ const filterUsers = () => {
 };
 const getUserList = async () => {
   try {
-    const {data} = await axios.get("https://api-btl-web-2024-1.vercel.app/admin/users", {
+    const {data} = await axios.get("http://160.191.50.189:8080/admin/users", {
       headers: {
         authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJlbWFpbCI6ImFkbWluMDFAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzM0NDQ1NjUwLCJleHAiOjE3MzQ1MzIwNTB9.ud_8Ly6vmnuLtfn7R1_EYFHcuF8LxGsGplnh1INnESE`
       },
@@ -110,7 +110,7 @@ const formatDate = (dateString) => {
 
 const showTickets = async (tickets) => {
   try {
-    const {data} = await axios.get("https://api-btl-web-2024-1.vercel.app/admin/users/tickets/" + tickets)
+    const {data} = await axios.get("http://160.191.50.189:8080/admin/users/tickets/" + tickets)
     selectedTickets.value = data.tickets;
     isDialogVisible.value = true;
   } catch (e) {

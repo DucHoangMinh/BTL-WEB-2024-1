@@ -116,7 +116,7 @@ export default {
     }
     const confirmPaymentSeat = async () => {
       try {
-        const {data} = await axios.post(`https://api-btl-web-2024-1.vercel.app/seat/payments/${route.query["room"]}`, {
+        const {data} = await axios.post(`http://160.191.50.189:8080/seat/payments/${route.query["room"]}`, {
           seat_showtime_pairs: [
             {
               seat_id: route.query["seat_id"].split(",").map(Number)[0],
@@ -145,7 +145,7 @@ export default {
     // });
     const checkPaymentSuccess = async () => {
       try {
-        const { data } = await axios.post("https://api-btl-web-2024-1.vercel.app/transaction/check-description", {
+        const { data } = await axios.post("http://160.191.50.189:8080/transaction/check-description", {
           description: "PAYMENTSEATS" + route.query["seat_id"].split(",").map(Number)
         })
         if(data.exists){
