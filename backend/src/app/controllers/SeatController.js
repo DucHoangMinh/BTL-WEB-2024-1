@@ -416,7 +416,7 @@ createSeats = async (req, res) => {
       const accountNumber = '18568331';
       const template = 'Tp8VEQR';
       const addInfo = `PAYMENTSEATS${seat_ids.join(', ')}`;
-      const accountName = 'Lotte Cinema';
+      const accountName = '8Movies Cinema';
 
       // const addInfo = `Xac nhan thanh toan ghe ${seat_ids.join(', ')}, tong tien ${totalAmount} VND`;
       const qrUrl = `https://img.vietqr.io/image/${bankCode}-${accountNumber}-${template}.jpg?amount=${totalAmount}&addInfo=${encodeURIComponent(addInfo)}&accountName=${encodeURIComponent(accountName)}`;
