@@ -17,7 +17,7 @@
             span.mx-2 {{ searRow }}
             span(v-for="seatColumn in seatColumnList" :key="seatColumn")
               span.single-seat-area.cursor-pointer(@click="() => onChooseSeat(searRow, seatColumn)" :class="{ 'current-selected': currentUserSelected.includes(`${searRow}${seatColumn}`) }")
-                v-icon(:class="getColorClass(searRow + seatColumn)") mdi mdi-sofa-single
+                v-icon(:class="[getColorClass(searRow + seatColumn), { 'current-selected': currentUserSelected.includes(`${searRow}${seatColumn}`) }]") mdi mdi-sofa-single
     v-row.seat-color-guide.my-2
       v-col(cols="6")
         p.seat-guide-text *Nhấp lại vào chỗ ngồi đã chọn để hủy.
