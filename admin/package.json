@@ -5,9 +5,9 @@
   "author": "duck",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
+    "dev": "nuxt --port 4000",
     "build": "nuxt build",
-    "start": "nuxt start",
+    "start": "nuxt start --port 4000",
     "generate": "nuxt generate"
   },
   "dependencies": {
