@@ -17,7 +17,7 @@
             span.mx-2 {{ searRow }}
             span(v-for="seatColumn in seatColumnList" :key="seatColumn")
               span.single-seat-area.cursor-pointer(@click="() => onChooseSeat(searRow, seatColumn)" :class="{ 'current-selected': currentUserSelected.includes(`${searRow}${seatColumn}`) }")
-                v-icon mdi mdi-sofa-single
+                v-icon(:class="getColorClass(searRow + seatColumn)") mdi mdi-sofa-single
     v-row.seat-color-guide.my-2
       v-col(cols="6")
         p.seat-guide-text *Nhấp lại vào chỗ ngồi đã chọn để hủy.
@@ -66,6 +66,24 @@ const currentUserSelected = ref([])
 const movieDetail = ref({})
 const openConfirmDialog = ref(false)
 const seatStatusList = ref([])
+const buyedSeat = ref([])
+
+const getColorClass = (seatName) => {
+  const seat = seatStatusList.value.find(item => item.seat_number === seatName);
+  if (seat) {
+    if (seat.status === 'paid') {
+      buyedSeat.value.push(seatName)
+      return 'paid';
+    }
+    if (seat.status === 'available') {
+      return 'available';
+    }
+    if (seat.status === 'on-hold') {
+      return 'on-hold'
+    }
+  }
+  return ''; // Trường hợp không khớp với seat nào
+};
 
 const confirmOrderSeat = async () => {
   let selectedSeatId = ref([])
@@ -92,6 +110,10 @@ const confirmOrderSeat = async () => {
 }
 
 const onChooseSeat = (row, column) => {
+  if(buyedSeat.value.includes(`${row}${column}`)){
+    showMessages.warning("Ghế này đã được mua!")
+    return
+  }
   if(currentUserSelected.value.includes(`${row}${column}`)){
     currentUserSelected.value = currentUserSelected.value.filter(seat => seat !== `${row}${column}`)
   } else {
@@ -160,4 +182,8 @@ onMounted(init)
   line-height: 18px
 .current-selected
   color: #000000 !important
+.paid
+  color: #e96106
+.available
+  color: #848484
 </style>
