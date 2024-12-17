@@ -84,7 +84,11 @@ class AdminController {
         where: { user_id: parseInt(userId) },
         include: {
           Seat: true,
-          Showtime: true,
+          Showtime: {
+            include: {
+              Movie: true,  
+            }
+          },
           Promotion: true,
         }
       });
