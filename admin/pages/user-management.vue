@@ -23,16 +23,16 @@
           <th>Họ Tên</th>
           <th>Email</th>
           <th>Ngày Sinh</th>
-          <th>Chi Tiết Vé</th>
+          <th>Danh sách Vé</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="user in filteredUsers" :key="user.id">
-          <td>{{ user.name }}</td>
+          <td>{{ user.full_name }}</td>
           <td>{{ user.email }}</td>
-          <td>{{ user.dob }}</td>
+          <td>{{ formatDate(user.created_at) }}</td>
           <td>
-            <button @click="showTickets(user.tickets)">
+            <button @click="showTickets(user.id)">
               <i class="eye-icon">👁️</i>
             </button>
           </td>
@@ -41,7 +41,7 @@
     </table>
 
     <!-- Dialog hiển thị danh sách vé -->
-    <div v-if="isDialogVisible" class="dialog-overlay">
+    <div v-if="isDialogVisible" class="dialog-overlay" @click="isDialogVisible = false">
       <div class="dialog-box">
         <h2 class="dialog-title">Danh Sách Vé</h2>
         <div v-for="ticket in selectedTickets" :key="ticket.id" class="ticket-card">
@@ -53,12 +53,11 @@
               class="ticket-image"
             />
           </div>
-          <!-- Thông tin vé -->
           <div class="ticket-details">
-            <p><strong>Tên Phim:</strong> {{ ticket.movieName }}</p>
-            <p><strong>Thời Gian Chiếu:</strong> {{ ticket.showTime }}</p>
-            <p><strong>Vị Trí Ghế:</strong> {{ ticket.seat }}</p>
-            <p><strong>Ngày Mua Vé:</strong> {{ ticket.purchaseDate }}</p>
+            <p><strong>Tên Phim:</strong> Phim id {{ ticket.Showtime.movie_id }}</p>
+            <p><strong>Thời Gian Chiếu:</strong> {{ formatDate(ticket.Showtime.start_time) }}</p>
+            <p><strong>Vị Trí Ghế:</strong> {{ ticket.Seat.row + ticket.Seat.column }}</p>
+            <p><strong>Ngày Mua Vé:</strong> {{ formatDate(ticket.purchase_date) }}</p>
           </div>
         </div>
         <button @click="closeDialog" class="close-button">Đóng</button>
@@ -83,7 +82,7 @@ const filterUsers = () => {
   const query = searchQuery.value.toLowerCase();
   filteredUsers.value = users.value.filter(
       (user) =>
-          user.name.toLowerCase().includes(query) ||
+          user.full_name.toLowerCase().includes(query) ||
           user.email.toLowerCase().includes(query)
   );
 };
@@ -94,16 +93,31 @@ const getUserList = async () => {
         authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJlbWFpbCI6ImFkbWluMDFAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzM0NDQ1NjUwLCJleHAiOjE3MzQ1MzIwNTB9.ud_8Ly6vmnuLtfn7R1_EYFHcuF8LxGsGplnh1INnESE`
       },
     });
+    users.value = data.users;
   } catch (e) {
     console.log(e)
   } finally {
 
   }
 }
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0'); // Lấy ngày và format 2 chữ số
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+  const year = date.getFullYear(); // Lấy năm
+  return `${day}-${month}-${year}`;
+};
 
-const showTickets = (tickets) => {
-  selectedTickets.value = tickets;
-  isDialogVisible.value = true;
+const showTickets = async (tickets) => {
+  try {
+    const {data} = await axios.get("https://api-btl-web-2024-1.vercel.app/admin/users/tickets/" + tickets)
+    selectedTickets.value = data.tickets;
+    isDialogVisible.value = true;
+  } catch (e) {
+    console.log(e)
+  }
+  // selectedTickets.value = tickets;
+  // isDialogVisible.value = true;
 };
 
 const closeDialog = () => {
@@ -111,8 +125,9 @@ const closeDialog = () => {
   selectedTickets.value = [];
 };
 const init = async () => {
+  document.body.classList.add('white-content');
   await getUserList()
-  // filteredUsers.value = users.value;
+  filteredUsers.value = users.value;
 }
 onMounted(init);
 </script>

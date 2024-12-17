@@ -17,14 +17,14 @@
           }"
         >
         </sidebar-item>
-        <sidebar-item
-          :link="{
-            name: $t('sidebar.icons'),
-            icon: 'tim-icons icon-atom',
-            path: '/icons'
-          }"
-        >
-        </sidebar-item>
+<!--        <sidebar-item-->
+<!--          :link="{-->
+<!--            name: $t('sidebar.icons'),-->
+<!--            icon: 'tim-icons icon-atom',-->
+<!--            path: '/icons'-->
+<!--          }"-->
+<!--        >-->
+<!--        </sidebar-item>-->
         <sidebar-item
             :link="{
             name: $t('sidebar.films'),

@@ -77,6 +77,9 @@ export default {
       }, {
         name: "Thể loại",
         value: 'genre'
+      }, {
+        name: "",
+        value:""
       }],
       showAddModel: false,
       film_genre: ['2D', '3D', 'IMAX','ScreenX','4DX','Dolby Atmos','Phụ đề','Lồng tiếng'],
@@ -121,6 +124,7 @@ export default {
     }
   },
   async mounted() {
+    document.body.classList.add('white-content');
     await this.getFilms()
   }
 }

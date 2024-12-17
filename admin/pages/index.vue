@@ -327,6 +327,7 @@ export default {
       bigChartData[0] = Object.values(await this.getMonthReport("2024"))
     },
     async init(){
+      document.body.classList.add('white-content');
       await this.getAllMonthReport()
       console.log(bigChartData[0])
       console.log("hehe")
