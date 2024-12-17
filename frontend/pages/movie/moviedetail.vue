@@ -9,8 +9,8 @@
         <p><strong>Độ tuổi:</strong> {{ movie.age || 'Không giới hạn'}}</p>
         <p><strong>Thời lượng:</strong> {{ movie.duration }} phút</p>
         <p><strong>Ngày phát hành:</strong> {{ formatDateToDDMMYYYY(movie.release_date) }}</p>
-        <p><strong>Thông tin cơ bản:</strong> {{ movie.description }}</p>
-        <p><strong>Loại:</strong> {{ movie.basic_info }}</p>
+        <p><strong>Thông tin cơ bản:</strong> {{ movie.basic_info }}</p>
+        <p><strong>Loại:</strong> {{ movie.genre }}</p>
         <button class="booking-button" @click="openBookingPopup">Đặt vé</button>
       </div>
     </div>

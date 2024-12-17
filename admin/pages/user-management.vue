@@ -48,13 +48,13 @@
           <!-- Ảnh vé -->
           <div class="ticket-image-container">
             <img
-              src="https://www.daviesmediadesign.com/wp-content/uploads/2018/03/Spacetime-GIMP-Movie-Poster-Astronaut-Version-850.jpg"
+              :src="ticket.Showtime.Movie.thumbnail"
               alt="Movie Poster"
               class="ticket-image"
             />
           </div>
           <div class="ticket-details">
-            <p><strong>Tên Phim:</strong> Phim id {{ ticket.Showtime.movie_id }}</p>
+            <p><strong>Tên Phim:</strong> Phim {{ ticket.Showtime.Movie.title }}</p>
             <p><strong>Thời Gian Chiếu:</strong> {{ formatDate(ticket.Showtime.start_time) }}</p>
             <p><strong>Vị Trí Ghế:</strong> {{ ticket.Seat.row + ticket.Seat.column }}</p>
             <p><strong>Ngày Mua Vé:</strong> {{ formatDate(ticket.purchase_date) }}</p>

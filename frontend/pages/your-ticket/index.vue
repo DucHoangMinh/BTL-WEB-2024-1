@@ -80,9 +80,9 @@ onMounted(init)
         .ticket-item(v-for="(ticket, index) in ticketList" :key="index")
           v-row
             v-col(cols="3").d-flex.align-center.justify-center
-              img.py-4.ticket-img(src="https://png.pngtree.com/template/20211023/ourlarge/pngtree-movie-tickets-star-kraft-paper-cinema-dating-retro-orange-tickets-image_708773.png")
+              img.py-4.ticket-img(:src="ticket.Showtime.Movie.thumbnail")
             v-col(cols="7").d-flex.flex-column.justify-center
-              p Phim {{ticket.Showtime.movie_id}}
+              p Phim {{ticket.Showtime.Movie.title}}
               p Thời gian chiếu: {{formatDate(ticket.Showtime.start_time)}}
               p Vị trị ghế: {{ticket.Seat.row}}{{ticket.Seat.column}}
               p Ngày mua vé: {{formatDate(ticket.purchase_date)}}
