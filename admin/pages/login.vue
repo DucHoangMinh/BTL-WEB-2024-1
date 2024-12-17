@@ -53,7 +53,7 @@ export default {
           return
         }
       } catch (e) {
-        console.log(e)
+        alert("Tài khoản hoặc mật khẩu không đúng, vui lòng đăng nhập lại")
       } finally {
 
       }

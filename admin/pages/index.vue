@@ -74,10 +74,7 @@
     <div class="col-lg-12" :class="{ 'text-right': isRTL }">
       <card type="chart">
         <template slot="header">
-          <h5 class="card-category">Daily Sales</h5>
-          <h3 class="card-title">
-            <i class="tim-icons icon-delivery-fast text-info "></i> 3,500€
-          </h3>
+          <h5 class="card-category">Số lượng thành viên mới theo tháng</h5>
         </template>
         <div class="chart-area">
           <bar-chart
@@ -270,16 +267,16 @@ export default {
       blueBarChart: {
         extraOptions: chartConfigs.barChartOptions,
         chartData: {
-          labels: ['USA', 'GER', 'AUS', 'UK', 'RO', 'BR'],
+          labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
           datasets: [
             {
-              label: 'Countries',
+              label: 'Số người',
               fill: true,
               borderColor: config.colors.info,
               borderWidth: 2,
               borderDash: [],
               borderDashOffset: 0.0,
-              data: [53, 20, 10, 80, 100, 45]
+              data: [0,0, 0, 0, 0, 0,0, 10, 10, 12, 15, 12]
             }
           ]
         },
@@ -330,6 +327,7 @@ export default {
       bigChartData[0] = Object.values(await this.getMonthReport("2024"))
     },
     async init(){
+      document.body.classList.add('white-content');
       await this.getAllMonthReport()
       console.log(bigChartData[0])
       console.log("hehe")

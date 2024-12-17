@@ -17,7 +17,7 @@ div
           li.nav-item(v-if="userInfor.fullName === ''")
             router-link(to="/auth/login") Đăng Nhập
           li.nav-item(v-if="userInfor.fullName === ''")
-            router-link(href="/auth/register") Đăng Ký
+            router-link(to="/auth/register") Đăng Ký
           li.nav-item(v-else)
             router-link(to="/profile/edit").font-weight-bold Xin chào, {{userInfor.fullName}}
 </template>

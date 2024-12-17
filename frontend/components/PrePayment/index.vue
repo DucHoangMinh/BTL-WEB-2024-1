@@ -55,7 +55,7 @@ const props = defineProps({
   showtime: {
     type: String,
     required: false,
-    default: 'Suất chiếu chưa có',
+    default: '18/12/2024',
   },
   selectedSeats: {
     type: Array,
@@ -70,12 +70,12 @@ const props = defineProps({
   cinemaName: {
     type: String,
     required: false,
-    default: 'Rạp chưa có',
+    default: '1',
   },
   screenNumber: {
     type: String,
     required: false,
-    default: 'Screen chưa có',
+    default: '102',
   },
   showDate: {
     type: String,

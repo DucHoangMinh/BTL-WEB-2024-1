@@ -116,7 +116,15 @@ export default {
     }
     const confirmPaymentSeat = async () => {
       try {
-        const {data} = await axios.post(`https://api-btl-web-2024-1.vercel.app/seat/${route.query["room"]}/seats/${route.query["seat_id"]}/confirm`)
+        const {data} = await axios.post(`https://api-btl-web-2024-1.vercel.app/seat/payments/${route.query["room"]}`, {
+          seat_showtime_pairs: [
+            {
+              seat_id: route.query["seat_id"].split(",").map(Number)[0],
+              showtime_id: route.query["showtime"]
+            }
+          ],
+          user_id: userInforStoreRef.getUserInfor.id
+        })
       } catch (e) {
         console.log(e)
       } finally {

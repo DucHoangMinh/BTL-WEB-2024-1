@@ -42,6 +42,21 @@ const createQr = async (ticket) => {
   link.click();
   document.body.removeChild(link);
 }
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+
+  // Lấy ngày, tháng, năm
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+  const year = date.getFullYear();
+
+  // Lấy giờ, phút, giây
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+};
 const init = async () => {
   try{
     loadingStateStoreRef.setLoadingState(true)
@@ -67,10 +82,10 @@ onMounted(init)
             v-col(cols="3").d-flex.align-center.justify-center
               img.py-4.ticket-img(src="https://png.pngtree.com/template/20211023/ourlarge/pngtree-movie-tickets-star-kraft-paper-cinema-dating-retro-orange-tickets-image_708773.png")
             v-col(cols="7").d-flex.flex-column.justify-center
-              p Day la ten phim
-              p Thời gian chiếu: {{ticket.Showtime.start_time}}
+              p Phim {{ticket.Showtime.movie_id}}
+              p Thời gian chiếu: {{formatDate(ticket.Showtime.start_time)}}
               p Vị trị ghế: {{ticket.Seat.row}}{{ticket.Seat.column}}
-              p Ngày mua vé: {{ticket.purchase_date}}
+              p Ngày mua vé: {{formatDate(ticket.purchase_date)}}
             v-col(cols="2").d-flex.flex-column.justify-center
               p.click-qr.cursor-pointer(@click="() => createQr(ticket)") Click để lấy mã qr
 

@@ -96,11 +96,7 @@
       },
       toggleMode(type) {
         let docClasses = document.body.classList;
-        if (type) {
-          docClasses.remove('white-content');
-        } else {
-          docClasses.add('white-content');
-        }
+        docClasses.add('white-content');
       },
       minimizeSidebar() {
         this.$sidebar.toggleMinimize();

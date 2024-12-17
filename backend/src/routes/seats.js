@@ -24,7 +24,7 @@ router.get('/showtime/:showtime_id', SeatController.getSeatsByShowtimeAndRoom);
 router.post('/:seat_ids/book/:showtime_id',authenticateToken, SeatController.bookSeat);
 
 // Xác nhận thanh toán cho ghế
-router.post('/:seat_id/confirm', SeatController.confirmPayment);
+router.post('/payments/:room_id', SeatController.confirmPayment);
 
 router.post('/confirm-payment', SeatController.confirmPaymentByQRCode);
 

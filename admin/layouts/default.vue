@@ -17,14 +17,14 @@
           }"
         >
         </sidebar-item>
-        <sidebar-item
-          :link="{
-            name: $t('sidebar.icons'),
-            icon: 'tim-icons icon-atom',
-            path: '/icons'
-          }"
-        >
-        </sidebar-item>
+<!--        <sidebar-item-->
+<!--          :link="{-->
+<!--            name: $t('sidebar.icons'),-->
+<!--            icon: 'tim-icons icon-atom',-->
+<!--            path: '/icons'-->
+<!--          }"-->
+<!--        >-->
+<!--        </sidebar-item>-->
         <sidebar-item
             :link="{
             name: $t('sidebar.films'),
@@ -34,18 +34,10 @@
         >
         </sidebar-item>
         <sidebar-item
-          :link="{
-            name: $t('sidebar.finance'),
-            icon: 'tim-icons icon-bank',
-            path: '/finance'
-          }"
-        >
-        </sidebar-item>
-        <sidebar-item
             :link="{
             name: $t('sidebar.users'),
             icon: 'tim-icons icon-single-02',
-            path: '/users-management'
+            path: '/user-management'
           }"
         ></sidebar-item>
         <sidebar-item
@@ -64,28 +56,28 @@
         >
         </sidebar-item>
 
-        <sidebar-item
-          :link="{
-            name: $t('sidebar.userProfile'),
-            icon: 'tim-icons icon-single-02',
-            path: '/user' }"
-        >
-        </sidebar-item>
+<!--        <sidebar-item-->
+<!--          :link="{-->
+<!--            name: $t('sidebar.userProfile'),-->
+<!--            icon: 'tim-icons icon-single-02',-->
+<!--            path: '/user' }"-->
+<!--        >-->
+<!--        </sidebar-item>-->
 
-        <sidebar-item
-          :link="{
-            name: $t('sidebar.regularTables'),
-            icon: 'tim-icons icon-puzzle-10',
-            path: '/regular'
-          }"
-        ></sidebar-item>
+<!--        <sidebar-item-->
+<!--          :link="{-->
+<!--            name: $t('sidebar.regularTables'),-->
+<!--            icon: 'tim-icons icon-puzzle-10',-->
+<!--            path: '/regular'-->
+<!--          }"-->
+<!--        ></sidebar-item>-->
 
-        <sidebar-item
-          :link="{
-            name: $t('sidebar.rtl'),
-            icon: 'tim-icons icon-world',
-            path: localePath('/rtl', 'ar') }"
-        ></sidebar-item>
+<!--        <sidebar-item-->
+<!--          :link="{-->
+<!--            name: $t('sidebar.rtl'),-->
+<!--            icon: 'tim-icons icon-world',-->
+<!--            path: localePath('/rtl', 'ar') }"-->
+<!--        ></sidebar-item>-->
       </template>
     </side-bar>
     <!--Share plugin (for demo purposes). You can remove it if don't plan on using it-->
@@ -181,9 +173,9 @@
       }
     },
     mounted() {
+      this.checkUserLogined()
       this.initScrollbar();
       document.body.classList.add('white-content');
-      this.checkUserLogined()
     }
   };
 </script>

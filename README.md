@@ -595,3 +595,15 @@ response:
     "exists": true
 }
 ```
+
+## POST xác nhận thanh toán
+- Endpoint: GET /api/payments/room_id
+- Endpoint example: http://localhost:8080/seat/payments/1
+- body_example:
+{
+  "seat_showtime_pairs": [
+    { "seat_id": 22596, "showtime_id": 102 },
+    { "seat_id": 22723, "showtime_id": 103 }
+  ],
+  "user_id": 1
+}
