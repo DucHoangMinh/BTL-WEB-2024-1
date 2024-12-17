@@ -68,60 +68,53 @@
 </template>
 
 
-<script>
-export default {
-  data() {
-    return {
-      searchQuery: "",
-      users: [
-        // Dữ liệu giả lập người dùng
-        {
-          id: 1,
-          name: "Nguyễn Văn A",
-          email: "a@gmail.com",
-          dob: "1995-01-01",
-          tickets: [
-            {
-              id: 101,
-              movieName: "Dậy là tên phim",
-              showTime: "2024-12-02T10:00:00.000Z",
-              seat: "A2",
-              purchaseDate: "2024-12-10T04:43:27.246Z",
-            },
-          ],
-        },
-        // Thêm nhiều user và ticket ở đây
-      ],
-      filteredUsers: [],
-      isDialogVisible: false,
-      selectedTickets: [],
-    };
-  },
-  created() {
-    this.filteredUsers = this.users;
-  },
-  methods: {
-    // Lọc người dùng theo tên hoặc email
-    filterUsers() {
-      const query = this.searchQuery.toLowerCase();
-      this.filteredUsers = this.users.filter(
-        (user) =>
+<script setup>
+import { ref, onMounted } from "vue";
+import axios from "axios";
+// import { useStore } from "vuex";
+// const store = useStore();
+const searchQuery = ref("");
+const users = ref();
+const filteredUsers = ref([]);
+const isDialogVisible = ref(false);
+const selectedTickets = ref([]);
+
+const filterUsers = () => {
+  const query = searchQuery.value.toLowerCase();
+  filteredUsers.value = users.value.filter(
+      (user) =>
           user.name.toLowerCase().includes(query) ||
           user.email.toLowerCase().includes(query)
-      );
-    },
-    // Hiển thị vé
-    showTickets(tickets) {
-      this.selectedTickets = tickets;
-      this.isDialogVisible = true;
-    },
-    // Đóng dialog
-    closeDialog() {
-      this.isDialogVisible = false;
-      this.selectedTickets = [];
-    },
-  },
+  );
 };
+const getUserList = async () => {
+  try {
+    const {data} = await axios.get("https://api-btl-web-2024-1.vercel.app/admin/users", {
+      headers: {
+        authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJlbWFpbCI6ImFkbWluMDFAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzM0NDQ1NjUwLCJleHAiOjE3MzQ1MzIwNTB9.ud_8Ly6vmnuLtfn7R1_EYFHcuF8LxGsGplnh1INnESE`
+      },
+    });
+  } catch (e) {
+    console.log(e)
+  } finally {
+
+  }
+}
+
+const showTickets = (tickets) => {
+  selectedTickets.value = tickets;
+  isDialogVisible.value = true;
+};
+
+const closeDialog = () => {
+  isDialogVisible.value = false;
+  selectedTickets.value = [];
+};
+const init = async () => {
+  await getUserList()
+  // filteredUsers.value = users.value;
+}
+onMounted(init);
 </script>
 
 <style scoped>
